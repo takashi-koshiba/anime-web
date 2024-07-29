@@ -1,0 +1,55 @@
+/*topページなどのテンプレ*/
+#left{
+	float:left;
+	/*
+	width:30%;
+	max-width:400px;
+	min-width: 200px;*/
+	padding-left: 50px;
+
+}
+#left h2,#left_main h2{
+	color:lightpink;
+	margin:0;
+	margin-top:60px;
+}
+#left hr,#left_main hr{
+	border: 3px solid lightpink;
+	margin:0;
+}#main{
+	
+	min-height: 1000px;
+	width:100%;
+	margin: 0 auto;
+
+
+
+}body #main{
+	/*min-width: 1200px;*/
+}
+ul li p{
+	font-size: 15px;
+
+}li,ul,li p{
+	margin:0px;
+}
+#left_main{
+	/*
+	width: 70%;
+	*/
+	float:right;
+
+
+	
+}#left_main #left_main_child{
+	
+	margin-left: 40px;
+
+
+}
+
+body{
+	
+	width:100%;
+
+}

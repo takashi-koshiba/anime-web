@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"><html>
+<head th:replace="~{common/header/index :: meta(~{::title},~{::link},~{::script})}">
+	<title>あ</title>
+	<link rel="stylesheet" th:href="@{/common/main/index.css}">
+	<link rel="stylesheet" th:href="@{/animeImg/index.css}">
+
+
+	<script th:src="@{/common/main/index.js}"></script>
+	<script th:src="@{/animeImg/index.js}"></script>
+	<script th:src="@{/common/main/leftPanel.js}"></script>
+	<script th:src="@{/class/class_ajax.js}"></script>
+	<script th:src="@{/class/class_upload.js}"></script>
+	<script th:src="@{/animeImg/upload.js}"></script>
+	<script th:src="@{/animeImg/edit.js}"></script>
+</head>
+
+<body>
+	<header th:replace="~{common/header/index :: header}"></header>
+	<br>
+		<div id="main">
+			<div id="left">
+				<h2>アニメ画像アップロード</h2>
+				<hr>
+				<form action="/etc/animeimg/" method="post" enctype="multipart/form-data">
+					<input id="selectFile" type="file" name="upload" multiple>
+					<input type="button" id="exe" value="実行">
+				</form>
+				
+				
+				<p id="result"></p>
+				
+				<h2>エラー</h2>
+				<hr>
+				<textarea id="error"></textarea>
+				
+			</div><!--left-->
+			
+			<div id="left_main">
+				<div id="left_main_child">
+					<h2>修正欄</h2>
+					<hr>
+					<div id="fileEdit">
+						<div style="display:none"><!--コピー用-->
+							<div id="inputEdit">
+								<p></p>
+								<input type="text">
+								<input type="hidden">
+								<input type="hidden">
+							</div><!--class:inputEdit-->
+							
+						</div>
+
+					</div><!--fileEdit-->
+					<input type="button" id="imgUpload" value="アップロード" style="display:none">
+				</div><!--left_main_child-->
+			</div><!--left_main-->
+			
+		</div><!--main-->
+</body>
+</html>

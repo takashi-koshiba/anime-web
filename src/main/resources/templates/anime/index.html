@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{common/header/index :: meta(~{::title},~{::link},~{::script})}">
+	<title>あ</title>
+	<link rel="stylesheet" th:href="@{/anime/index.css}">
+	<link rel="stylesheet" th:href="@{/common/main/index.css}">
+	<script th:src="@{/common/main/leftPanel.js}"></script>
+	<script th:src="@{/common/main/index.js}"></script>
+</head>
+
+<body>
+	<header th:replace="~{common/header/index :: header}"></header>
+		<div id="main">
+			<div id="left">
+				<h2>検索</h2>
+				<hr>
+				<input type="input">
+				<ul>
+					
+					<li>
+						
+						<a href="/anime">アニメ</a>
+
+					</li>
+					<li>
+						<a href="/anime">家計簿</a>
+						
+					</li>
+					<li>
+						<a href="/anime">本</a>
+					</li>
+					
+				</ul>
+				
+				
+			</div><!--left-->
+			
+			<div id="left_main">
+				<div id="left_main_child">
+					<h2>番組表</h2>
+					<hr>
+				</div>
+			</div><!--left_main-->
+			
+		</div><!--main-->
+</body>
+</html>

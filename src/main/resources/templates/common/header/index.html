@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="meta(title,links,scripts)">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+ 	<link rel="stylesheet" th:href="@{/common/header/index.css}">
+	<link rel="stylesheet" th:href="@{/font/index.css}">
+	<script th:src="@{/common/header/index.js}"></script>
+	
+	<th:block th:replace="${title} ?: _" />
+
+	<th:block th:replace="${links} ?: _" />
+	<th:block th:replace="${scripts} ?: _" />
+</head>
+<body>
+	<header th:fragment="header">
+		<div id="top">
+			<div id="topImg">
+			</div><!--topImg-->
+			<div id="topItem_ground">
+				<div id="topItem">
+					<div class="item" id="topItem_first">
+						<a href="/">TOP</a>
+						<div class="bor"><div></div></div>
+					</div>
+					<div class="item" id="topItem_first">
+						<a href="/anime/">アニメ</a>
+						<div class="bor"><div></div></div>
+					</div>
+					<div class="item">
+						<a href="/anime/">家計簿</a>
+						<div class="bor"><div></div></div>
+					</div>
+					<div class="item" id="topItem_end">
+						<a href="/">本</a>
+					</div><!--topItem-->
+				</div>
+
+			</div><!--topItem_ground-->
+		</div><!--top-->
+		<br>
+		
+		
+	</header>
+</body>
+</html>
