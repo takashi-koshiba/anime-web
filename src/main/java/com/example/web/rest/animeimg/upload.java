@@ -63,7 +63,11 @@ public class upload {
 			         ffmpeg(originalName,extension);
 			         
 			         Setting.makeAnimeDirectory(foldername);
-			         animeService.insert(new Anime(originalName,foldername));
+			         
+			         Anime anime =new Anime();
+			         anime.setOriginalName(originalName);
+			         anime.setFoldername(foldername);
+			         animeService.insert(anime);
 			         
 			         
 

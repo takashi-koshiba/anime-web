@@ -1,5 +1,7 @@
 package com.example.web.etc.db.Animetable;
 
+import java.util.List;
+
 import jakarta.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
@@ -24,6 +26,10 @@ public class AnimeService {
     	int row=animeJDBC.insert(anime);
     	
     	return row>0?true:false;
+    }
+    
+    public List<Anime> selectAll(){
+    	return animeJDBC.selectAll();
     }
     
 

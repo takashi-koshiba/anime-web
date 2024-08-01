@@ -1,5 +1,6 @@
 package com.example.web.etc.db.Animetable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -37,4 +38,23 @@ public class AnimeJDBC implements AnimeDao {
         
         return count;
     }
+
+
+	@Override
+	public List<Anime> selectAll() {
+        String sql = "SELECT id,originalName,foldername from anime order by  CHAR_LENGTH(foldername) desc ";
+        List<Map<String, Object>> result = jdbc.queryForList(sql);
+        
+        List<Anime> animeList = new ArrayList<>();
+        for(Map<String,Object>map:result) {
+        	Anime anime = new Anime();
+        	
+        	anime.setId((Integer)map.get("id"));
+        	anime.setFoldername((String)map.get("foldername"));
+        	anime.setOriginalName((String)map.get("originalName"));
+        	
+        	animeList.add(anime);
+        }
+		return animeList;
+	}
 }
