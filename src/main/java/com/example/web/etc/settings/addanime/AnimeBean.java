@@ -1,4 +1,4 @@
-package com.example.web.etc.animeImg;
+package com.example.web.etc.settings.addanime;
 
 import org.springframework.web.multipart.MultipartFile;
 

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"><html>
+<head th:replace="~{common/header/index :: meta(~{::title},~{::link},~{::script})}">
+	<title>あ</title>
+	<link rel="stylesheet" th:href="@{/common/main/index.css}">
+	<link rel="stylesheet" th:href="@{/etc/settings/directory/index.css}">
+
+	
+	<script th:src="@{/etc/settings/directory/index.js}"></script>
+	<script th:src="@{/class/class_ajax.js}"></script>
+</head>
+
+<body>
+	<header th:replace="~{common/header/index :: header}"></header>
+	<br>
+		<div id="main">
+			
+			<div id="left_main">
+				<h1>管理者以外は閲覧できません。</h1>
+			</div><!--left_main-->
+			
+		</div><!--main-->
+</body>
+</html>

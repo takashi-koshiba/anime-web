@@ -5,11 +5,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.web.etc.db.Animetable.AnimeService;
 import com.example.web.etc.sta.Kakasi;
 import com.example.web.etc.sta.RemoveExtension;
-import com.example.web.rest.animeimg.Animetable.AnimeService;
-
-
 @RestController
 
 public class edit {

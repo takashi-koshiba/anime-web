@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
 import java.util.Base64;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.web.rest.animeimg.Animetable.Anime;
-import com.example.web.rest.animeimg.Animetable.AnimeService;
+import com.example.web.etc.db.Animetable.Anime;
+import com.example.web.etc.db.Animetable.AnimeService;
+import com.example.web.etc.sta.Setting;
+import com.example.web.etc.sta.TextRep;
 
 
 @RestController
@@ -28,26 +31,42 @@ public class upload {
 	@PostMapping("/api/upload")
 
 	
-	public String start(@RequestPart("img") String img,@RequestPart("folder") String folder,@RequestParam("foldername") String foldername,@RequestParam("originalName") String originalName,@RequestParam("extension") String extension  )  {
+	public String start(@RequestPart("img") String img,@RequestParam("foldername") String foldername,@RequestParam("originalName") String originalName,@RequestParam("extension") String extension  )  {
 		
 		//DBに存在するか
 		boolean exist=animeService.IsExistItem(originalName);
-		System.out.print(exist);
-			
+
+		
+		//画像のアップロード先
+        String fullPath = Setting.getRoot();
+        String folder = fullPath+ "anime-web\\upload\\img\\temp\\";
 		if(!exist) {
 			File f=new File(folder+"\\");
 			
 			if(f.exists()) {
 				try{
+					
+					 //Path p=Paths.get("");
+					 //Path p2=p.toAbsolutePath();
+					 //System.out.print(p2);
+					 
 					 //byte[] bytes = file.getBytes();
-			         Path path = Paths.get(folder+"\\" + originalName+"."+extension);
-			         
-			         
+					
+					//画像をアップロード
+					String imgPath=folder+"\\" + originalName+"."+extension;
+			         Path path = Paths.get(imgPath);
 			         byte[] imgBytes=Base64.getDecoder().decode(img);
 			         Files.write(path, imgBytes);
 			         
-			         //
+			         foldername=TextRep.main(foldername);
+			         
+			         ffmpeg(originalName,extension);
+			         
+			         Setting.makeAnimeDirectory(foldername);
 			         animeService.insert(new Anime(originalName,foldername));
+			         
+			         
+
 			         
 			         return "ok";
 			         
@@ -65,6 +84,22 @@ public class upload {
 		}
 		
 	}
+
+	private void ffmpeg(String fname,String extension) throws IOException {
+		String root = Setting.getRoot();
+		String sourcePath=root+"anime-web\\upload\\img\\temp\\"+fname+"."+extension;
+		String savePath=root+"anime-web\\upload\\img\\thumbnail\\"+fname+".webp";
+		
+		String cmd="ffmpeg -i {0}   -vf scale=320:-1 -compression_level 6 -quality 30 {1}" ;
+	
+		String format= MessageFormat.format(cmd,sourcePath,savePath);	
+		 ProcessBuilder processBuilder = new ProcessBuilder("cmd.exe", "/c", format);
+
+         // コマンドを実行
+         processBuilder.start();
+
+	}
+
 	
 	
 }

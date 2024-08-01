@@ -10,7 +10,7 @@ public class Kakasi {
 	public static String main(String string) {
 	String text= string;
 	text=TextRep.main(text);
-	String format= MessageFormat.format("echo {0} | kakasi -JH",text);		
+	String format= MessageFormat.format("echo {0} | kakasi -JH -KH",text);		
 
 			
 	 try {

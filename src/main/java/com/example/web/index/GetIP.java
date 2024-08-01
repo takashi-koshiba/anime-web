@@ -7,7 +7,7 @@ import com.example.web.classes.main01;
 public class GetIP {
 	
 	//IPから名前を検索します。
-	static BeanUser GetNameAndIp(HttpServletRequest request) {
+	public static BeanUser GetNameAndIp(HttpServletRequest request) {
 		BeanUser[] user = {
 				new BeanUser("172.0.0.1","管理者",true),
 				new BeanUser("0:0:0:0:0:0:0:1","管理者",true),

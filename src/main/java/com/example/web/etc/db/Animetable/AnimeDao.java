@@ -1,4 +1,4 @@
-package com.example.web.rest.animeimg.Animetable;
+package com.example.web.etc.db.Animetable;
 
 public interface AnimeDao {
 	public int insert(Anime anime);

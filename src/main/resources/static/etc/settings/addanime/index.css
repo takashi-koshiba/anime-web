@@ -1,0 +1,42 @@
+.inputEdit .originalName, .inputEdit .title{
+	float:left;
+}.inputEdit{
+	margin-bottom: 10px;
+	height: 20px;
+
+}.inputEdit .originalName{
+	margin:0;
+}#left{
+	
+	width:400px;
+	
+}
+#left_main{
+	width: 75%;
+}
+
+#left_main{
+	width: 70%;
+}
+
+	
+
+
+#left{
+	
+	width:400px;
+	
+}
+body #main,#topImg{
+	min-width: 1200px;
+}
+.foldername{
+	width:600px;
+}
+
+#error{
+	width:100%;
+}
+
+	
+
