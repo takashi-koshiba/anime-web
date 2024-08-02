@@ -28,7 +28,7 @@ public class upload {
 	@Autowired
 	AnimeService animeService;
 	
-	@PostMapping("/api/upload")
+	@PostMapping("/anime-web/api/upload")
 
 	
 	public String start(@RequestPart("img") String img,@RequestParam("foldername") String foldername,@RequestParam("originalName") String originalName,@RequestParam("extension") String extension  )  {
@@ -89,6 +89,7 @@ public class upload {
 		
 	}
 
+	//画像を縮小
 	private void ffmpeg(String fname,String extension) throws IOException {
 		String root = Setting.getRoot();
 		String sourcePath=root+"anime-web\\upload\\img\\temp\\"+fname+"."+extension;

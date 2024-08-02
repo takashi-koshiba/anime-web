@@ -1,28 +1,28 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"><html>
-<head th:replace="~{common/header/index :: meta(~{::title},~{::link},~{::script})}">
+<head th:replace="~{anime-web/common/header/index :: meta(~{::title},~{::link},~{::script})}">
 	<title>あ</title>
-	<link rel="stylesheet" th:href="@{/common/main/index.css}">
-	<link rel="stylesheet" th:href="@{/etc/settings/addanime/index.css}">
+	<link rel="stylesheet" th:href="@{/anime-web/common/main/index.css}">
+	<link rel="stylesheet" th:href="@{/anime-web/etc/settings/addanime/index.css}">
 
 
-	<script th:src="@{/common/main/index.js}"></script>
-	<script th:src="@{/etc/settings/addanime/index.js}"></script>
-	<script th:src="@{/common/main/leftPanel.js}"></script>
-	<script th:src="@{/class/class_ajax.js}"></script>
-	<script th:src="@{/class/class_upload.js}"></script>
-	<script th:src="@{/etc/settings/addanime/upload.js}"></script>
-	<script th:src="@{/etc/settings/addanime/edit.js}"></script>
+	<script th:src="@{/anime-web/common/main/index.js}"></script>
+	<script th:src="@{/anime-web/etc/settings/addanime/index.js}"></script>
+	<script th:src="@{/anime-web/common/main/leftPanel.js}"></script>
+	<script th:src="@{/anime-web/class/class_ajax.js}"></script>
+	<script th:src="@{/anime-web/class/class_upload.js}"></script>
+	<script th:src="@{/anime-web/etc/settings/addanime/upload.js}"></script>
+	<script th:src="@{/anime-web/etc/settings/addanime/edit.js}"></script>
 </head>
 
 <body>
-	<header th:replace="~{common/header/index :: header}"></header>
+	<header th:replace="~{anime-web/common/header/index :: header}"></header>
 	<br>
 		<div id="main">
 			<div id="left">
 				<h2>アニメ画像アップロード</h2>
 				<hr>
-				<form action="/etc/settings/addanime/" method="post" enctype="multipart/form-data">
+				<form action="/anime-web/etc/settings/addanime/" method="post" enctype="multipart/form-data">
 					<input id="selectFile" type="file" name="upload" multiple>
 					<input type="button" id="exe" value="実行">
 				</form>

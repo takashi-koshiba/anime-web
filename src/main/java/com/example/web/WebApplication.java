@@ -34,7 +34,12 @@ public class WebApplication {
         	Setting.setRoot(newPath);
         	
         }
+        String url=Setting.getUrl();
         
+        if(url==null||Setting.IsUrl(url)) {
+        	String newUrl="http://localhost/";
+        	Setting.setUrl(newUrl);
+        }
         
         Setting.makeDirectory();
 

@@ -68,6 +68,26 @@ public class Setting {
 		
 
 	}
+	
+	public static void setUrl(String url) throws IOException {
+		FileOutputStream fileOut= null;
+		try {
+			fileOut = new FileOutputStream(settingfile);
+			settings.setProperty("url", url);
+			settings.store(fileOut, "setting");
+		} finally {
+			fileOut.close();
+		}
+	}
+	public static String  getUrl() {
+		
+		return settings.getProperty("url");
+	}
+	public static boolean IsUrl(String url) {
+
+		return url.matches("^https?://[\\w\\/.-]*/");
+	}
+	
 	public static String getSettingfile() {
 		return settingfile;
 	}
@@ -75,17 +95,17 @@ public class Setting {
 	    try {
 	        String fullPath = Setting.getRoot();
 	        
-	        Path dir = Paths.get(fullPath, "anime-web", "upload", "img", "thumbnail");
+	        Path dir = Paths.get(fullPath,"content", "anime-web", "upload", "img", "thumbnail");
 	        Files.createDirectories(dir);
-	        dir = Paths.get(fullPath, "anime-web", "upload", "img", "temp");
+	        dir = Paths.get(fullPath,"content", "anime-web", "upload", "img", "temp");
 	        Files.createDirectories(dir);	        
-	        dir = Paths.get(fullPath, "anime-web", "upload", "video", "thumbnail");
+	        dir = Paths.get(fullPath,"content", "anime-web", "upload", "video", "thumbnail");
 	        Files.createDirectories(dir);	        
-	        dir = Paths.get(fullPath, "anime-web", "anime", "video");
+	        dir = Paths.get(fullPath,"content", "anime-web", "anime", "video");
 	        Files.createDirectories(dir);        
-	        dir = Paths.get(fullPath, "anime-web", "anime", "other", "content");
+	        dir = Paths.get(fullPath,"content", "anime-web", "anime", "other", "content");
 	        Files.createDirectories(dir);      
-	        dir = Paths.get(fullPath, "anime-web", "anime", "other", "log");     
+	        dir = Paths.get(fullPath,"content", "anime-web", "anime", "other", "log");     
 	        Files.createDirectories(dir);
 
 	        

@@ -1,0 +1,23 @@
+#left{
+	
+	width:300px;
+	
+}
+#left_main{
+	width: 70%;
+}
+body #main,#topImg{
+	min-width: 1200px;
+}
+.rank{
+	background-color: red;
+	width:100%;
+	height:350px;
+}
+.rank-anime{
+	background-color: blue;
+	height:150px;
+	
+}
+	
+

@@ -12,17 +12,18 @@ import com.example.web.index.GetIP;
 
 @Controller
 public class directory {
-	@GetMapping("/etc/settings/directory/")
+	@GetMapping("/anime-web/etc/settings/directory/")
 	public ModelAndView  start(HttpServletRequest request) {
 		
 		ModelAndView model;
 		BeanUser user =GetIP.GetNameAndIp(request);
 
-		if(user.isRoot()) {
-			model= new ModelAndView("etc/settings/directory/index");
+		if(user.isAdmin()) {
+			model= new ModelAndView("anime-web/etc/settings/directory/index");
 			model.addObject("path",Setting.getRoot());
+			model.addObject("url",Setting.getUrl());
 		}else {
-			 model= new ModelAndView("etc/error/admin/index");
+			 model= new ModelAndView("anime-web/etc/error/admin/index");
 			
 		}
 		return model;
@@ -30,9 +31,9 @@ public class directory {
 		
 	}
 	
-	@GetMapping("/etc/settings/directory")
+	@GetMapping("/anime-web/etc/settings/directory")
 	public String start2() {
-		return "redirect:/etc/settings/directory/";
+		return "redirect:/anime-web/etc/settings/directory/";
 	}
 /*
 	@PostMapping("/etc/animeimg/")

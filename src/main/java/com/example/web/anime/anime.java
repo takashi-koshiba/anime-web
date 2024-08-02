@@ -8,16 +8,16 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class anime {
 
-	@GetMapping("/anime")
+	@GetMapping("/anime-web/anime")
 	public ModelAndView  start() {
-		ModelAndView model= new ModelAndView("anime/index");
+		ModelAndView model= new ModelAndView("/anime-web/anime/index");
 
 		
 		return model;
 	}
-	@GetMapping("/anime/")
+	@GetMapping("/anime-web/anime/")
 	public String  start1() {
-		return "redirect:/anime";
+		return "redirect:/anime-web/anime";
 	}
 	
 }

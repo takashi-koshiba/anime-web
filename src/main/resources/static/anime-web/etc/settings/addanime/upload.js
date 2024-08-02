@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded",function(){
 			let ajax = [];
 
 			for (let i = 0; i < fileCount; i++) {
-			    ajax[i] = new class_ajax('/api/upload');
+			    ajax[i] = new class_ajax('/anime-web/api/upload');
 				
 			    ajax[i].args('img', base64[i].value);
 				ajax[i].args('foldername',foldername[i].value)

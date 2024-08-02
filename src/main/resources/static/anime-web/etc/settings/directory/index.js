@@ -1,13 +1,15 @@
 document.addEventListener("DOMContentLoaded",function(){
 	let root = document.getElementById("root");
-	let result=document.getElementById("result");
+	let documentResult=document.getElementById("rootResult");
+	let urlResult=document.getElementById("urlResult");
+	let url=document.getElementById("url");
 
 
 	root.addEventListener('input',function(){
-		if(root.value==""){
+		if(this.value==""){
 			
 		}else{
-			let ajax = new class_ajax('/api/directory/');
+			let ajax = new class_ajax('/anime-web/api/directory/root/');
 			ajax.args('path',this.value);
 			ajax.run();
 			
@@ -16,14 +18,34 @@ document.addEventListener("DOMContentLoaded",function(){
 				console.dir(this.response);
 				
 				if(this.response!="true"){
-					result.innerText="パスが存在しません。"
+					rootResult.innerText="パスが存在しません。"
 				}else{
-					result.innerText="";
+					rootResult.innerText="";
 				}
 
 			}
 		}
 		
+	})
+	url.addEventListener('input',function(){
+		if(this.value==""){
+			
+		}else{
+			let ajax2 = new class_ajax('/anime-web/api/directory/url/');
+			ajax2.args('url',this.value);
+			ajax2.run();
+			
+			ajax2.xhr.onload = function() {
+				console.dir(this.response);
+				
+				if(this.response!="true"){
+					urlResult.innerText="urlの形式ではありません。"
+				}else{
+					urlResult.innerText="";
+				}
+
+			}
+		}
 	})
 
 	let button =document.getElementById('button');
@@ -32,9 +54,10 @@ document.addEventListener("DOMContentLoaded",function(){
 		if(root.value==""){
 			
 		}else{
-			let ajax2 = new class_ajax('/api/change-directory/');
+			let ajax2 = new class_ajax('/anime-web/api/change-directory/');
 
 			ajax2.args('path',root.value);
+			ajax2.args('url',url.value);
 			ajax2.run();
 			
 			//console.dir(originalName[i]);
@@ -51,6 +74,9 @@ document.addEventListener("DOMContentLoaded",function(){
 				    case "2":
 				        alert("ディレクトリの設定に失敗しました。");
 				        break;
+					case "3":
+						alert("指定された値はurlの形式ではありません。");
+						break;
 				    default:
 				        alert("不明");
 				        break;

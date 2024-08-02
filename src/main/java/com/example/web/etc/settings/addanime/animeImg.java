@@ -11,14 +11,14 @@ import com.example.web.index.GetIP;
 
 @Controller
 public class animeImg {
-	@GetMapping("/etc/settings/addanime/")
+	@GetMapping("/anime-web/etc/settings/addanime/")
 	public ModelAndView  start(HttpServletRequest request) {
 		BeanUser user =GetIP.GetNameAndIp(request);
 		ModelAndView model;
-		if(user.isRoot()) {
-			model= new ModelAndView("etc/settings/addanime/index");
+		if(user.isAdmin()) {
+			model= new ModelAndView("anime-web/etc/settings/addanime/index");
 		}else {
-			 model= new ModelAndView("etc/error/admin/index");
+			 model= new ModelAndView("anime-web/etc/error/admin/index");
 			
 		}
 		return model;
@@ -26,9 +26,9 @@ public class animeImg {
 		
 	}
 	
-	@GetMapping("/etc/settings/addanime")
+	@GetMapping("/anime-web/etc/settings/addanime")
 	public String start2() {
-		return "redirect:/etc/settings/addanime/";
+		return "redirect:/anime-web/etc/settings/addanime/";
 	}
 /*
 	@PostMapping("/etc/animeimg/")

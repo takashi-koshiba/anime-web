@@ -18,22 +18,31 @@ import com.example.web.index.GetIP;
 public class Folder {
 
 	
-	@PostMapping("/api/directory/")
+	@PostMapping("/anime-web/api/directory/root/")
 	public boolean start(@RequestPart("path") String path)  {
 		
 		return PathClass.IsExistFolder(path);
 		
 		
 	}
-	@PostMapping("/api/change-directory/")
-	public Integer start2(@RequestPart("path") String path,HttpServletRequest request) throws IOException{
+	@PostMapping("/anime-web/api/directory/url/")
+	public boolean start3(@RequestPart("url") String url)  {
+		
+		return Setting.IsUrl(url);
+		
+		
+	}
+	@PostMapping("/anime-web/api/change-directory/")
+	public Integer start2(@RequestPart("path") String path,@RequestPart("url") String url,HttpServletRequest request) throws IOException{
 		
 		BeanUser user =GetIP.GetNameAndIp(request);
 		Integer result;
 		if(!PathClass.IsExistFolder(path)) {
 			result=1;
-		}else if(!user.isRoot()) {
+		}else if(!user.isAdmin()) {
 			result=2;
+		}else if(!Setting.IsUrl(url)) {
+			result=3;
 		}
 		else {
 			try {
@@ -41,6 +50,8 @@ public class Folder {
 				
 				//フォルダを作成
 				result=Setting.makeDirectory()? 0 : 2;
+				
+				Setting.setUrl(url);
 			} catch (IOException e) {
 				result=2;
 				

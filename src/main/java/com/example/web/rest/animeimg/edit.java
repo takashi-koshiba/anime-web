@@ -14,7 +14,7 @@ public class edit {
 	@Autowired
 	AnimeService animeService;
 	
-	@PostMapping("/api/edit")
+	@PostMapping("/anime-web/api/edit")
 	public editBean start(@RequestPart("filename") String filename)  {
 		
 		String title=RemoveExtension.main(filename);

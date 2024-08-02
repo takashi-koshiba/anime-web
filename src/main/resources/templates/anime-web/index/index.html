@@ -1,30 +1,30 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"><html>
-<head th:replace="~{common/header/index :: meta(~{::title},~{::link},~{::script})}">
+<head th:replace="~{anime-web/common/header/index :: meta(~{::title},~{::link},~{::script})}">
 	<title>あ</title>
-	<link rel="stylesheet" th:href="@{/index/index.css}">
-	<link rel="stylesheet" th:href="@{/common/main/index.css}">
-	<script th:src="@{/common/main/index.js}"></script>
+	<link rel="stylesheet" th:href="@{/anime-web/index/index.css}">
+	<link rel="stylesheet" th:href="@{/anime-web/common/main/index.css}">
+	<script th:src="@{/anime-web/common/main/index.js}"></script>
 	
 </head>
 
 <body>
-	<header th:replace="~{common/header/index :: header}"></header>
+	<header th:replace="~{anime-web/common/header/index :: header}"></header>
 	<br>
 	<div id="main">
 		<div id="left">
-			<div id="root" th:if="${user.root}">
+			<div id="root" th:if="${user.admin}">
 				<h2>管理者用</h2>
 				<hr>
 				<ul>
 
 					<li>
-						<a href="/etc/settings/addanime/">アニメ追加</a>
+						<a href="/anime-web/etc/settings/addanime/">アニメ追加</a>
 					
 
 					</li>
 					<li>
-						<a href="/etc/settings/directory/">ディレクトリ設定</a>
+						<a href="/anime-web/etc/settings/directory/">ディレクトリ設定</a>
 					</li>
 
 					
@@ -43,7 +43,7 @@
 									
 					</li>
 					<li>
-						<a href="/anime">本</a>
+						<a href="/anime-web/anime">本</a>
 					</li>
 								
 				</ul>

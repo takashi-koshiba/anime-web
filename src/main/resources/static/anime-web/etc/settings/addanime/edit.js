@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded",function(){
 			let flag=false;
 			
 			for (let i = 0; i < fileCount; i++) {
-			    ajax[i] = new class_ajax('/api/edit');
+			    ajax[i] = new class_ajax('/anime-web/api/edit');
 				
 			    ajax[i].args('filename', files[i].name);
 				

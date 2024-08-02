@@ -3,7 +3,7 @@ a,p,h1,h2,h3{
 }
 @font-face{
 	font-family: mainFont;
-	src:url("/font/ShipporiMinchoB1-Bold.ttf");
+	src:url("/anime-web/font/ShipporiMinchoB1-Bold.ttf");
 }
 a{
 	text-decoration: none;

@@ -14,7 +14,7 @@ public class SelectAll {
 	@Autowired
 	AnimeService animeService;
 	
-	@GetMapping("/api/db/select-all/")
+	@GetMapping("/anime-web/api/db/select-all/")
 	public List<Anime> start()  {
 		return animeService.selectAll();
 	}
