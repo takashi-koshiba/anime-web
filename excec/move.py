@@ -9,7 +9,7 @@ import sys
 import re
 TS_FILES_DIR = 'D:\\TV\\ts\\'  #移動元のTSファイルのディレクトリ
 MKV_FILES_PATH = 'D:\\TV\\ts\\encoded\\'  # エンコードしたmkv動画があるディレクトリ
-COMP_DIR = 'D:\\TV\\ts\\temp\\'  # DBでTSファイルの名前が一致したら移動するためのディレクトリ
+COMP_DIR = 'D:\\TV\\ts\\comp\\'  # DBでTSファイルの名前が一致したら移動するためのディレクトリ
 
 
 DB_CONFIG = {
@@ -77,7 +77,7 @@ def process_ffprobe(video):
     return json.loads(process.stdout)
 
 def process_outputImg(root_dir,  foldername,mkv_file):
-    new_dir = root_dir+'content\\anime-web\\anime\\img\\'+foldername
+    new_dir = os.path.join(root_dir, "content\\anime-web\\anime\\img\\", foldername)
     os.makedirs(new_dir,exist_ok=True)
     
     cmd = f"ffmpeg  -i \"{mkv_file}\" -r 1/60 -vf scale=-1:480 -q:v 3 \"{new_dir}\\output_%03d.jpg\""
@@ -158,7 +158,7 @@ def StrToDate(str):
             return match.group()  # Return the matched string
     
     print("No pattern matched")
-    return None  # Return None if no pattern matches
+    return "2000-01-01"  # Return None if no pattern matches
 
 # Example usage:
 
