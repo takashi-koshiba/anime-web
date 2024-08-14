@@ -6,7 +6,7 @@ mb_regex_encoding('UTF-8');
 //実行後　：＃０１   (   全角のシャープ + 全角の二桁の数字　＋話
 
 //下記をコメントアウトしてリネームしたい動画があるフォルダを指定してください。
-//rename_anime("D:\\ts\\");
+//rename_anime("D:\\TV\\ts\\");
 
 function rename_anime($name){
 $count=0;
@@ -25,6 +25,7 @@ $count=0;
 
 
   for($i=0;$i<$count_opt;$i++){
+    echo $i."/".$count_opt."\r\n";
     $match_num="";
     $re="";//上書き保存防止
     exec($cmd, $opt);
