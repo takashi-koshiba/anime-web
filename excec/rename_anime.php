@@ -15,7 +15,7 @@ $count=0;
     $count++;
     $name=htmlspecialchars($name);
     $cmd = "dir /B $name";
-    exec($cmd, $opt);
+    //exec($cmd, $opt);
   
     $rename_count=0;
     $count_opt=count($opt);
