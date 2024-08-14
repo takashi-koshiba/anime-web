@@ -26,13 +26,23 @@ def connect_db():
     return mysql.connector.connect(**DB_CONFIG)
 
 
-def execute_query(query, fetch_all=True):
-    conn = connect_db()
-    cursor = conn.cursor()
-    cursor.execute(query)
-    result = cursor.fetchall() if fetch_all else cursor.fetchone()
-    cursor.close()
-    conn.close()
+def execute_query(query, params=None):
+    try:
+        conn = connect_db()
+        cursor = conn.cursor()
+        if params:
+            cursor.execute(query, params)
+        else:
+            cursor.execute(query)
+        result = cursor.fetchall()
+    except mysql.connector.Error as err:
+        print(f"エラークエリ: {query}")
+        print(f"内容: {err}")
+        result = None
+    finally:
+        conn.commit()
+        cursor.close()
+        conn.close()
     return result
 
 
@@ -43,8 +53,8 @@ def insert_query(query):
         cursor.execute(query)  
         code = 0
     except Exception as e:
-        print("Error executing query: " + query)
-        print("Exception: " + str(e))  
+        print("エラークエリ: " + query)
+        print("内容: " + str(e))  
         code = 1
     finally:
         conn.commit()  
@@ -61,9 +71,16 @@ def get_root_dir():
 
 
 def get_video_id(video_path):
+ 
     basename = os.path.splitext(os.path.basename(video_path))[0]
-    query = f"SELECT video_id FROM video WHERE fname='{basename}';"
-    result = execute_query(query)
+    
+ 
+    query = "SELECT video_id FROM video WHERE fname=%s;"
+    params = (basename,)
+
+    result = execute_query(query, params)
+    
+    # 結果が存在する場合、そのvideo_idを返す。存在しない場合はNoneを返す。
     return result[0][0] if result else None
 
 
