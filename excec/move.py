@@ -7,9 +7,11 @@ import os
 import subprocess
 import sys
 import re
+import cv2
+from tqdm import tqdm
 TS_FILES_DIR = 'D:\\TV\\ts\\'  #移動元のTSファイルのディレクトリ
 MKV_FILES_PATH = 'D:\\TV\\ts\\encoded\\'  # エンコードしたmkv動画があるディレクトリ
-TEMP_DIR = 'D:\\TV\\ts\\temp\\'  # DBでTSファイルの名前が一致したら移動するためのディレクトリ
+TEMP_DIR = 'D:\\TV\\ts\\encoding\\'  # DB一致したタイトルのTSファイルの移動先ディレクトリ
 
 
 DB_CONFIG = {
@@ -36,26 +38,20 @@ def execute_query(query, fetch_all=True):
 
 def insert_query(query):
     try:
-        conn = connect_db()
+        conn = connect_db()  
         cursor = conn.cursor()
-        cursor.execute(query)
-    except Exception:
-        print("error:"+query)
-        conn.rollback()
-        conn.commit()
-        cursor.close()
-        conn.close()
-        sys.exit()
-        
+        cursor.execute(query)  
+        code = 0
+    except Exception as e:
+        print("Error executing query: " + query)
+        print("Exception: " + str(e))  
+        code = 1
     finally:
-        conn.commit()
-        cursor.close()
-        conn.close()
-        
-
+        conn.commit()  
+        cursor.close() 
+        conn.close()  
     
-        
-
+    return code
 
 
 def get_root_dir():
@@ -77,12 +73,25 @@ def process_ffprobe(video):
     return json.loads(process.stdout)
 
 def process_outputImg(root_dir,  foldername,mkv_file):
-    new_dir = os.path.join(root_dir, "content\\anime-web\\anime\\img\\", foldername)
+    new_dir = os.path.join(root_dir, "content\\anime-web\\anime\\img\\", foldername,os.path.splitext(os.path.basename(mkv_file))[0])
     os.makedirs(new_dir,exist_ok=True)
     
-    cmd = f"ffmpeg  -i \"{mkv_file}\" -r 1/60 -vf scale=-1:480 -q:v 3 \"{new_dir}\\output_%03d.jpg\""
-    subprocess.run(cmd, shell=True, capture_output=True, text=True, encoding='utf-8')
-
+    cap = cv2.VideoCapture(mkv_file)
+    totalframecount = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    video_fps = cap.get(cv2.CAP_PROP_FPS)                 # フレームレートを取得する
+    video_len_sec = totalframecount / video_fps         
+    
+    loopCount=100
+    loopLenSec=int(video_len_sec/100)
+                  
+    tq = tqdm(total = loopCount)
+    for   i in range(loopCount):
+        #cmd = f"ffmpeg  -i \"{mkv_file}\"  -vf scale=-1:480 -q:v 3 \"{new_dir}\\output_%03d.jpg\""
+        cmd = f"ffmpeg -ss {loopLenSec*i} -i \"{mkv_file}\"  -vsync vfr  -vf scale=-1:480 -q:v 3 -frames:v 1 \"{new_dir}\\output_{i}.jpg\" "
+        subprocess.run(cmd, shell=True, capture_output=True, text=True, encoding='utf-8')
+        
+        tq.update(1)
+    tq.close()
 
 def insertVideoInfo(video, video_id):
     video_info = process_ffprobe(video)
@@ -138,7 +147,14 @@ def main():
                 video_dir = os.path.join(root_dir, "content\\anime-web\\anime\\video\\", foldername)
                 if os.path.isdir(video_dir):
                     filebasename=os.path.splitext(os.path.basename(mkv_file))[0]
-                    insertVideoName(anime_id,filebasename)#ファイル名を書き込み
+                    err = insertVideoName(anime_id,filebasename)#ファイル名を書き込み
+                    if err==1 :
+                        print("失敗しました。"+mkv_file)
+                        continue;
+
+                        
+                        
+                        
                     video_id = get_video_id(filebasename)
                     insertVideoInfo(mkv_file, video_id)#コメント数などを書き込み
                     process_outputImg(root_dir,foldername,mkv_file)#画像の切り出し
@@ -164,7 +180,7 @@ def StrToDate(str):
 
 def insertVideoName(anime_id,fname):
     sql=f"INSERT INTO video (anime_id,fname) VALUES({anime_id},\"{fname}\")"
-    insert_query(sql)
-    
+    err = insert_query(sql)
+    return err
 if __name__ == "__main__":
     main()
