@@ -3,19 +3,26 @@ mb_regex_encoding('UTF-8');
 //[新]1話,１話,第1話,第１話, ＃１,#1,第一話、第壱話,
 //上記のようなファイル名を変換します。
 
-//実行後　：＃０１   (   全角のシャープ + 全角の二桁の数字　＋話
-
+//実行後　：_０１  
 //下記をコメントアウトしてリネームしたい動画があるフォルダを指定してください。
 //rename_anime("D:\\TV\\ts\\");
 
+$nowd=date("YmdHis");
+$cmd = "mysqldump -u java -pjava -x --all-databases > D:\\java-web\\data\\bk\\$nowd.dump";
+exec($cmd, $opt);
+
 function rename_anime($name){
 $count=0;
+
+
+
+
 
   do{
     $count++;
     $name=htmlspecialchars($name);
     $cmd = "dir /B $name";
-    //exec($cmd, $opt);
+    exec($cmd, $opt);
   
     $rename_count=0;
     $count_opt=count($opt);
@@ -28,9 +35,10 @@ $count=0;
     echo $i."/".$count_opt."\r\n";
     $match_num="";
     $re="";//上書き保存防止
-    exec($cmd, $opt);
+    
+    //exec($cmd, $opt);
 
-    if(preg_match('/ts$/',$opt[$i]) || preg_match('/mp4$/',$opt[$i])|| preg_match('/mkv$/',$opt[$i])){
+    if(preg_match('/ts$/',$opt[$i]) || preg_match('/mp4$/',$opt[$i])|| preg_match('/mkv$/',$opt[$i])|| preg_match('/ts.program.txt$/',$opt[$i])|| preg_match('/ts.err$/',$opt[$i])|| preg_match('/ass$/',$opt[$i])){
 
 
 
@@ -39,37 +47,46 @@ $count=0;
         if(preg_match('/\［新\］/u',$opt[$i])){
 			     $re = (str_replace('［新］', '', $opt[$i]));
 			     $rename_count++;
-          
+
 		    }
         elseif(preg_match('/\[新\]/u',$opt[$i])){
           //$kkka1[$i] = (mb_ereg_replace('[[新]]', "", $opt[$i]));
           $re=str_replace('[新]','',$opt[$i]);
           //print $kkka1[$i];
           $rename_count++;
+
         }elseif(preg_match("/\[終\]/u", $opt[$i])){
     				$re=str_replace('[終]','',$opt[$i]);
     				//print $kkka1[$i];
     				$rename_count++;
+
     		}
         elseif(preg_match("/\［終\］/u", $opt[$i])){
     				$re=str_replace('\［終\］','',$opt[$i]);
     				//print $kkka1[$i];
     				$rename_count++;
+
     		}
         elseif(preg_match('/♯/u',$opt[$i])){
-          $re = (str_replace('♯', '＃', $opt[$i]));
+          $re = (str_replace('♯', '_', $opt[$i]));
 
           $rename_count++;
 
         }
         elseif(preg_match('/#/u',$opt[$i])){
-           $re = (str_replace('#', '＃', $opt[$i]));
+           $re = (str_replace('#', '_', $opt[$i]));
           $rename_count++;
 
-        }
+
+        } elseif(preg_match('/＃/u',$opt[$i])){
+          $re = (str_replace('＃', '_', $opt[$i]));
+         $rename_count++;
+
+
+       }
         //第　全角数字　話
-        elseif(!preg_match('/＃[０-９]{2,4}/u',$opt[$i])&&
-          preg_match("/[第＃]\d{1,4}[話]/u", $opt[$i], $matches, PREG_OFFSET_CAPTURE) ){
+        elseif(!preg_match('/_[０-９]{2,4}/u',$opt[$i])&&
+          preg_match("/[第_]\d{1,4}[話]/u", $opt[$i], $matches, PREG_OFFSET_CAPTURE) ){
           $match_str=$matches[0][0];//マッチした文字
            $num_len=mb_strlen($match_str)-2;//数字の文字数
           $match_num=mb_substr($match_str,1,$num_len);//数字だけにする
@@ -79,18 +96,18 @@ $count=0;
           }
           if(mb_strlen($num_len==1)){
 
-            $re =str_replace($match_str, "＃０{$match_num_kana}", $opt[$i]);
+            $re =str_replace($match_str, "_０{$match_num_kana}", $opt[$i]);
           }else{
-            $re = str_replace($match_str, "＃{$match_num_kana}", $opt[$i]);
+            $re = str_replace($match_str, "_{$match_num_kana}", $opt[$i]);
           }
 
           $rename_count++;
         }
         //１文字専用
-        elseif(preg_match('/＃[０-９]{1}[話]/u',$opt[$i])&&!preg_match('/＃[０-９]{2,}/u',$opt[$i])&&
-          preg_match("/[第＃]\d{1}[話]/u", $opt[$i], $matches, PREG_OFFSET_CAPTURE) ){
+        elseif(preg_match('/_[０-９]{1}[話]/u',$opt[$i])&&!preg_match('/_[０-９]{2,}/u',$opt[$i])&&
+          preg_match("/[第_]\d{1}[話]/u", $opt[$i], $matches, PREG_OFFSET_CAPTURE) ){
 
-          $match_str=$matches[0][0];//マッチした文字
+          $match_str=$matches[0];//マッチした文字
            $num_len=mb_strlen($match_str)-1;//数字の文字数
           $match_num=mb_substr($match_str,1,$num_len);//数字だけにする
           $match_num_kana=mb_convert_kana($match_num,'N');//数字を全角にする
@@ -99,17 +116,17 @@ $count=0;
           }
           if(mb_strlen($num_len==1)){
 
-            $re = str_replace($match_str, "＃０{$match_num_kana}", $opt[$i]);
+            $re = str_replace($match_str, "_０{$match_num_kana}", $opt[$i]);
           }else{
-            $re = str_replace($match_str, "＃{$match_num_kana}", $opt[$i]);
+            $re = str_replace($match_str, "_{$match_num_kana}", $opt[$i]);
           }
 
           $rename_count++;
         }
-        elseif(preg_match('/＃[０-９]{1}/u',$opt[$i])&&!preg_match('/＃[０-９]{2,}/u',$opt[$i])&&
-          preg_match("/[第＃]\d{1}/u", $opt[$i], $matches, PREG_OFFSET_CAPTURE) ){
+        elseif(preg_match('/_[０-９]{1}/u',$opt[$i])&&!preg_match('/_[０-９]{2,}/u',$opt[$i])&&
+          preg_match("/[第_]\d{1}/u", $opt[$i], $matches, PREG_OFFSET_CAPTURE) ){
 
-          $match_str=$matches[0][0];//マッチした文字
+          $match_str=$matches[0];//マッチした文字
           $num_len=mb_strlen($match_str)-1;//数字の文字数
           $match_num=mb_substr($match_str,1,$num_len);//数字だけにする
           $match_num_kana=mb_convert_kana($match_num,'N');//数字を全角にする
@@ -118,17 +135,17 @@ $count=0;
           }
           if(mb_strlen($num_len==1)){
             
-            $re =  str_replace($match_str, "＃０{$match_num_kana}", $opt[$i]);
+            $re =  str_replace($match_str, "_０{$match_num_kana}", $opt[$i]);
           }else{
-            $re = str_replace($match_str, "＃{$match_num_kana}", $opt[$i]);
+            $re = str_replace($match_str, "_{$match_num_kana}", $opt[$i]);
           }
 
           $rename_count++;
         }        //全角数字　話
 
-        elseif(!preg_match('/＃[０-９]{2,4}/u',$opt[$i])&&
-          preg_match("/[第＃]\d{1,4}/u", $opt[$i], $matches) ){
-          $match_str=$matches[0][0];//マッチした文字
+        elseif(!preg_match('/_[０-９]{2,4}/u',$opt[$i])&&
+          preg_match("/[第_]\d{1,4}/u", $opt[$i], $matches) ){
+          $match_str=$matches[0];//マッチした文字
           $num_len=mb_strlen($match_str)-1;//数字の文字数
           $match_num=mb_substr($match_str,1,$num_len);//数字だけにする
           $match_num_kana=mb_convert_kana($match_num,'N');//数字を全角にする
@@ -136,17 +153,17 @@ $count=0;
             $match_num_kana=$match_num;
           }
           if(mb_strlen($num_len==1)){
-            $re = str_replace($match_str,"＃０{$match_num_kana}",$opt[$i]);
+            $re = str_replace($match_str,"_０{$match_num_kana}",$opt[$i]);
            
           }else{
-            $re = str_replace($match_str, "＃{$match_num_kana}", $opt[$i]);
+            $re = str_replace($match_str, "_{$match_num_kana}", $opt[$i]);
           }
 
           $rename_count++;
         }
 
-        elseif(!preg_match('/＃[０-９]{2,4}/u',$opt[$i])&&
-        preg_match("/[第＃].{0,4}[話夜羽回幕闇]/u", $opt[$i], $matches, PREG_OFFSET_CAPTURE)) 
+        elseif(!preg_match('/_[０-９]{2,4}/u',$opt[$i])&&
+        preg_match("/[第_].{0,4}[話夜羽回幕闇]/u", $opt[$i], $matches, PREG_OFFSET_CAPTURE)) 
          {
           $subStr = substr($opt[$i],0,$matches[0][1]);
           $kanji2NumberArr=kanji2Number($matches[0][0]);
@@ -170,7 +187,11 @@ $count=0;
         //リネーム
         if($rename_count>0&& $re!=""){
 
-          rename("$name\\$opt[$i]", "$name\\$re");
+
+          $original=mb_convert_encoding($name.$opt[$i], "SJIS-win", "UTF-8");
+          $new = mb_convert_encoding($name.$re, "SJIS-win", "UTF-8");
+          rename($original, $new);
+
 
         }
 
