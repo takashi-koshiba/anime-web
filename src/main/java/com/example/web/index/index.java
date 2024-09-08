@@ -13,7 +13,7 @@ public class index {
 	
 	@RequestMapping("/anime-web/")
 	public ModelAndView start(HttpServletRequest request) {
-		ModelAndView model= new ModelAndView("/anime-web/index/index");
+		ModelAndView model= new ModelAndView("anime-web/index/index");
 		BeanUser user =GetIP.GetNameAndIp(request);
 		model.addObject("user",user);
 		

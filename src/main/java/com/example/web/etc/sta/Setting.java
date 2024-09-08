@@ -107,6 +107,8 @@ public class Setting {
 	        Files.createDirectories(dir);      
 	        dir = Paths.get(fullPath,"content", "anime-web", "anime", "other", "log");     
 	        Files.createDirectories(dir);
+	        dir = Paths.get(fullPath,"content", "anime-web", "anime", "img");     
+	        Files.createDirectories(dir);
 
 	        
 	        return true;
@@ -127,7 +129,7 @@ public class Setting {
 	        folder=folder.trim();
 
 	        
-	        Path dir = Paths.get(fullPath, "anime-web", "anime", "video",folder);
+	        Path dir = Paths.get(fullPath, "content","anime-web", "anime", "video",folder);
 	        Files.createDirectories(dir);
 	        
 	       

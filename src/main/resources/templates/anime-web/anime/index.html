@@ -1,11 +1,19 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{anime-web/common/header/index :: meta(~{::title},~{::link},~{::script})}">
+
+
 	<title>あ</title>
 	<link rel="stylesheet" th:href="@{/anime-web/anime/index.css}">
+	<link rel="stylesheet" th:href="@{/anime-web/anime/slide.css}">
 	<link rel="stylesheet" th:href="@{/anime-web/common/main/index.css}">
+	<script th:src="@{/anime-web/anime/animeYear.js}"></script>
 	<script th:src="@{/anime-web/common/main/leftPanel.js}"></script>
 	<script th:src="@{/anime-web/common/main/index.js}"></script>
+	<script th:src="@{/anime-web/anime/slide.js}"></script>
+	
+	<script th:src="@{/anime-web/class/class_ajax.js}"></script>
+	
 </head>
 
 <body>
@@ -15,7 +23,7 @@
 				<h2>検索</h2>
 				<hr>
 				<input type="input">
-				<ul>
+				<ul id="search">
 					
 					<li>
 						
@@ -35,15 +43,59 @@
 				
 			</div><!--left-->
 			
+			
+			
+			
+			<!--横スクロールテンプレ-->
+			<div id="rank-animeTemplate" style="display: none;">
+				<div class="rank-anime-child">
+					<div class="rank-anime-img-div">
+						<img  src="">					
+					</div><!--rank-anime-img-div-->
+					<div class="div-title">
+						<p class="anime-title"></p>
+						<p class="anime-info">
+							<span class="rank-value">1/63</span>
+							<span class="score-txt">偏差値:</span>
+							<span class="anime-score"></span>
+						</p>
+					</div><!--div-title-->
+				
+				</div>
+
+			</div><!--rank-anime-->
+			<!--横スクロールテンプレここまで-->
 			<div id="left_main">
-				<div id="left_main_child">
+				<div class="left_main_child" >
 					<h2>ランキング</h2>
 					<hr>
-					<div class="rank">
-						<div class="rank-anime">
-							<img src="https://main.zebra-basking.ts.net/content/anime-web/upload/img/thumbnail/a.webp">
-						</div>
+					
+					<div class="rank" id="rank_all">
+						<div class="scrollButton"></div>
+							<div class="rank-scroll">
+								<div class="rank-div">																										</div><!--rank-anime-->
+								</div><!--rank-div-->
+							<div class="scrollButton"></di>
+						</div>	<!--rank-scroll-->																																																			<!--kakeeeee-->
+					</div><!--rank-->
+				
+					<h2>シーズン別ランキング</h2>
+					<select  id="animeyear">
+
 						
+					</select>
+					
+					<hr>
+
+
+
+					<div class="rank">
+						<div class="scrollButton"></div>
+							<div class="rank-scroll">
+								<div class="rank-div">																										</div><!--rank-anime-->
+								</div><!--rank-div-->
+							<div class="scrollButton"></di>
+						</div>	<!--rank-scroll-->																																																			<!--kakeeeee-->
 					</div><!--rank-->
 				</div><!--left_main_child-->
 			</div><!--left_main-->

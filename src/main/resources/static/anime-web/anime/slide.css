@@ -1,0 +1,74 @@
+
+.rank-scroll{
+	background-color: red;
+
+	min-height: 200px;
+	overflow-x: scroll;
+	display: flex;
+	width: 100%;
+
+}.rank-scroll::-webkit-scrollbar{
+	display: none;
+}
+
+.rank-div,.rank{
+	display: flex;
+}.scrollButton{
+	min-width: 30px;
+	min-height: 100%;
+	background-color: rgb(0, 255, 0);
+}.anime-title{
+	margin: 0;
+	margin-bottom:40px;
+
+	font-weight: bold;
+}
+.rank-anime{
+
+	background-color: aqua;
+
+
+
+	margin:0;
+
+
+}.anime-info{
+	position: absolute;
+	bottom:-13px;
+}
+.rank-anime-child{
+	position: relative;
+	width:250px;/* slide.jsと同じ値にしてください*/
+	background-color: rgb(0, 128, 255);
+	height: 100%;
+}
+
+.rank-anime img{
+	max-width: 250px;
+	height: 150px;
+}
+.rank-anime-img-div{
+	display: flex;
+	justify-content: center;
+
+
+	background-color: beige;
+}
+.div-title, .subject{
+	margin: 3px 10px;
+	
+	
+}
+.subject{
+	margin-top:10px;
+	
+
+}
+.subject p {
+	margin: 0;
+	font-weight: 100;
+	font-size: 16px;
+	font-weight: bold;
+	
+
+}

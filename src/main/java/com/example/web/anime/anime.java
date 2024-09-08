@@ -10,7 +10,7 @@ public class anime {
 
 	@GetMapping("/anime-web/anime")
 	public ModelAndView  start() {
-		ModelAndView model= new ModelAndView("/anime-web/anime/index");
+		ModelAndView model= new ModelAndView("anime-web/anime/index");
 
 		
 		return model;
@@ -19,5 +19,5 @@ public class anime {
 	public String  start1() {
 		return "redirect:/anime-web/anime";
 	}
-	
+
 }

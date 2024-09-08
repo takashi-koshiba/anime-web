@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded",function(){
 	let fileEdit=document.getElementById('fileEdit');
 	let inputEdit=document.getElementById('inputEdit');
 	
-	const pattern = /data:(image\/jpeg|image\/png)/;
+	const pattern = /data:(image\/jpeg|image\/png|image\/webp)/;
 	let upload=new class_upload(pattern);
 	
 	//エラーがあれば出力

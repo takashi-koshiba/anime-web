@@ -1,23 +1,26 @@
 #left{
 	
-	width:300px;
+	width:200px;
 	
 }
 #left_main{
 	width: 70%;
+	
+
+}.left_main_child{
+	margin-right: 125px;
+	margin-left: 90px !important ;
+
 }
 body #main,#topImg{
 	min-width: 1200px;
 }
-.rank{
-	background-color: red;
-	width:100%;
-	height:350px;
+#search{
+	margin-left:-15px;
 }
-.rank-anime{
-	background-color: blue;
-	height:150px;
-	
-}
+
+
+
+
 	
 

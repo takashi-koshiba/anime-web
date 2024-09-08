@@ -39,7 +39,7 @@ public class upload {
 		
 		//画像のアップロード先
         String fullPath = Setting.getRoot();
-        String folder = fullPath+ "anime-web\\upload\\img\\temp\\";
+        String folder = fullPath+ "content\\anime-web\\upload\\img\\temp\\";
 		if(!exist) {
 			File f=new File(folder+"\\");
 			
@@ -92,10 +92,10 @@ public class upload {
 	//画像を縮小
 	private void ffmpeg(String fname,String extension) throws IOException {
 		String root = Setting.getRoot();
-		String sourcePath=root+"anime-web\\upload\\img\\temp\\"+fname+"."+extension;
-		String savePath=root+"anime-web\\upload\\img\\thumbnail\\"+fname+".webp";
+		String sourcePath=root+"content\\anime-web\\upload\\img\\temp\\"+fname+"."+extension;
+		String savePath=root+"content\\anime-web\\upload\\img\\thumbnail\\"+fname+".webp";
 		
-		String cmd="ffmpeg -i {0}   -vf scale=320:-1 -compression_level 6 -quality 30 {1}" ;
+		String cmd="echo Y | ffmpeg -i {0}   -vf scale=640:-1 -compression_level 5 -quality 80 {1}" ;
 	
 		String format= MessageFormat.format(cmd,sourcePath,savePath);	
 		 ProcessBuilder processBuilder = new ProcessBuilder("cmd.exe", "/c", format);

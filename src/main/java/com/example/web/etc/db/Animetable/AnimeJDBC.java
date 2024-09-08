@@ -24,37 +24,51 @@ public class AnimeJDBC implements AnimeDao {
 
     @Override
     public int countRow(String text) {
-        String sql = "SELECT count(*) as rownumber FROM anime WHERE originalName=? OR foldername=?";
-        Object[] params = {text, text};
-        List<Map<String, Object>> result = jdbc.queryForList(sql, params);
+    	try {
+    		
+    	
+    		String sql = "SELECT count(*) as rownumber FROM anime WHERE originalName=? OR foldername=?";
+    		Object[] params = {text, text};
+    		List<Map<String, Object>> result = jdbc.queryForList(sql, params);
 
-        // クエリ結果からカウント値を取得し、intにキャスト
-        int count = 0;
-        if (!result.isEmpty() && result.get(0).get("rownumber") != null) {
-            count = ((Number) result.get(0).get("rownumber")).intValue();
-        }
+    		// クエリ結果からカウント値を取得し、intにキャスト
+    		int count = 0;
+    		if (!result.isEmpty() && result.get(0).get("rownumber") != null) {
+    			count = ((Number) result.get(0).get("rownumber")).intValue();
+    		}
 
-        System.out.print(count);
+    		System.out.print(count);
         
-        return count;
+    		return count;
+    	}catch (Exception e) {
+        	return 0;
+    	}
     }
 
 
 	@Override
 	public List<Anime> selectAll() {
-        String sql = "SELECT id,originalName,foldername from anime order by  CHAR_LENGTH(foldername) desc ";
-        List<Map<String, Object>> result = jdbc.queryForList(sql);
+		try {
+			
+		
+			String sql = "SELECT id,originalName,foldername from anime order by  CHAR_LENGTH(foldername) desc ";
+			List<Map<String, Object>> result = jdbc.queryForList(sql);
         
-        List<Anime> animeList = new ArrayList<>();
-        for(Map<String,Object>map:result) {
-        	Anime anime = new Anime();
+			List<Anime> animeList = new ArrayList<>();
+			for(Map<String,Object>map:result) {
+				Anime anime = new Anime();
         	
-        	anime.setId((Integer)map.get("id"));
-        	anime.setFoldername((String)map.get("foldername"));
-        	anime.setOriginalName((String)map.get("originalName"));
+				anime.setId((Integer)map.get("id"));
+				anime.setFoldername((String)map.get("foldername"));
+				anime.setOriginalName((String)map.get("originalName"));
         	
-        	animeList.add(anime);
-        }
-		return animeList;
+				animeList.add(anime);
+			}
+			return animeList;
+    	}catch (Exception e) {
+	 		List<Anime> animeList = new ArrayList<>();
+	 		animeList.add(new Anime());
+	 		return animeList;
+    	}
 	}
 }

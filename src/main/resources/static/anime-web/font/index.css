@@ -1,12 +1,18 @@
 a,p,h1,h2,h3{
-	font-family: mainFont;
+	font-family: mainFontBoldEx, "MS Pゴシック";
+}
+.font-Regular{
+	font-family: mainFontRegular, "MS Pゴシック";
 }
 @font-face{
-	font-family: mainFont;
+	font-family: mainFontBoldEx;
 	src:url("/anime-web/font/ShipporiMinchoB1-Bold.ttf");
+}
+@font-face{
+	font-family: mainFontRegular;
+	src:url("/anime-web/font/ShipporiMinchoB1-Regular.ttf");
 }
 a{
 	text-decoration: none;
-;
 }
 

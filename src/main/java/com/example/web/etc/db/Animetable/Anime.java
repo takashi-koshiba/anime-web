@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class Anime {
-	private int id;
+	private Integer id;
 	private String originalName;
 	private String foldername;
 	

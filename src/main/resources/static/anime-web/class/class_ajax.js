@@ -16,6 +16,7 @@ class class_ajax{
                 this.xhr.open('POST', this.path, true);
                 
                 //this.post_data.append('mode', 1);
+				console.dir(this.post_data);
                 this.xhr.send(this.post_data);
 
                 //var a =document.getElementById('a');

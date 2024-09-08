@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded",function(){
 			    ajax[i] = new class_ajax('/api/upload');
 				
 			    ajax[i].args('img', base64[i].value);
-				ajax[i].args('folder', "C:\\Users\\muu4\\Documents\\新しいフォルダー\\");
+			//	ajax[i].args('folder', "C:\\Users\\muu4\\Documents\\新しいフォルダー\\");
 				ajax[i].args('foldername',foldername[i].value)
 				ajax[i].args('originalName',originalName[i].innerText);
 				ajax[i].args('extension',extension[i].value);

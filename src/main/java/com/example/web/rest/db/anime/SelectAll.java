@@ -19,5 +19,5 @@ public class SelectAll {
 		return animeService.selectAll();
 	}
 	
-	
+
 }
