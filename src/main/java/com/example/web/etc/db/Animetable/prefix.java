@@ -3,11 +3,10 @@ package com.example.web.etc.db.Animetable;
 import lombok.Data;
 
 @Data
-public class Anime {
+public class prefix {
 	private Integer id;
-	private String originalName;
-	private String foldername;
+	private String txt;
+	
 	
 
-	
 }

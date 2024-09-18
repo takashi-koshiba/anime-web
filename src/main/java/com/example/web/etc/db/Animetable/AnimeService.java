@@ -31,7 +31,14 @@ public class AnimeService {
     public List<Anime> selectAll(){
     	return animeJDBC.selectAll();
     }
-    
+
+    public List<prefix> selectPrefixAll(){
+    	return animeJDBC.selectPrefixAll();
+    }
+    public List<AnimeSort>selectAllSortByText(Integer charId){
+		return animeJDBC.selectAllSortByText(charId);
+    	
+    }
 
 
 }

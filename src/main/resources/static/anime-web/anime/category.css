@@ -1,0 +1,24 @@
+.tab p{
+	margin:0;
+	display: inline;
+	font-size: 14px;
+}
+.tab{
+	text-align: center;
+	width:60px;
+	display: inline-block;
+	
+
+	
+}#textcategory{
+	margin:auto;
+	width:180px;
+	
+}#textcategoryP{
+	margin-top:40px;
+}#prefixButtons{
+	margin-top:10px
+}.prefixButton{
+	width: 35px;
+	height: 35px;
+}

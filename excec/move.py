@@ -12,11 +12,11 @@ from tqdm import tqdm
 import sys
 
 
-sys.stdout.reconfigure(encoding='cp932', errors='ignore')
+sys.stdout.reconfigure(encoding='utf-8', errors='ignore')
 TS_FILES_DIR = 'D:\\TV\\ts\\'  #移動元のTSファイルのディレクトリ
 MKV_FILES_PATH = 'D:\\TV\\ts\\encoded\\'  # エンコードしたmkv動画があるディレクトリ
 TEMP_DIR = 'D:\\TV\\ts\\encoding\\'  # DB一致したタイトルのTSファイルの移動先ディレクトリ
-
+PORT=8080  #実行しているjavaのポート番号
 
 DB_CONFIG = {
     'host': "localhost",
@@ -35,6 +35,7 @@ def execute_query(query, params=None):
         conn = connect_db()
         cursor = conn.cursor()
         if params:
+
             cursor.execute(query, params)
         else:
             cursor.execute(query)
@@ -52,6 +53,7 @@ def execute_query(query, params=None):
 
 def insert_query(query):
     try:
+
         conn = connect_db()  
         cursor = conn.cursor()
         cursor.execute(query)  
@@ -69,7 +71,7 @@ def insert_query(query):
 
 
 def get_root_dir():
-    url = "http://localhost:8080/anime-web/api/setting/"
+    url = f"http://localhost:{PORT}/anime-web/api/setting/"
     response = requests.get(url)
     return json.loads(response.text)['documentRoot']
 
@@ -110,7 +112,7 @@ def process_outputImg(root_dir,  foldername,mkv_file):
         tq = tqdm(total = loopCount)
         for   i in range(loopCount):
             #cmd = f"ffmpeg  -i \"{mkv_file}\"  -vf scale=-1:480 -q:v 3 \"{new_dir}\\output_%03d.jpg\""
-            cmd = f"echo Y| ffmpeg -ss {loopLenSec*i} -i \"{mkv_file}\"  -vsync vfr  -vf scale=-1:480 -q:v 3 -frames:v 1 \"{new_dir}\\output_{i}.jpg\" "
+            cmd = f"echo Y| ffmpeg -ss {loopLenSec*i} -i \"{mkv_file}\"  -vsync vfr  -vf scale=640:360 -q:v 3 -frames:v 1 \"{new_dir}\\output_{i}.jpg\" "
             subprocess.run(cmd, shell=True, capture_output=True, text=True, encoding='utf-8')
             
             tq.update(1)
@@ -123,19 +125,24 @@ def insertVideoInfo(video, video_id):
     video_info = process_ffprobe(video)
     streams_info = video_info.get('streams', [])
     err=0
+    come_byte=0
+    video_time=""
+    date=None
     for value in streams_info:
         tags = value.get('tags', {})
         title = tags.get('title', '')
-        come_byte=0
+        
         video_time = tags.get('DURATION-eng')
         date = StrToDate(os.path.splitext(os.path.basename(video))[0])
         if 'NicoJK' in title:
             come_byte = tags.get('NUMBER_OF_BYTES-eng')
-            break;
+            break
             
     query = f'''
         INSERT INTO jk_rownumber (video_id, come_byte, video_time,hiduke) 
-        VALUES({video_id}, "{come_byte}", "{video_time}","{date}")
+        VALUES({video_id}, "{come_byte}", "{video_time}",
+         {"NULL" if not date else f'"{date}"'}
+        )
     '''
     err = insert_query(query)
     return err 
@@ -147,8 +154,9 @@ def move_files_to_folder(files, destination_folder,videoid=0):
 
     try:
         
-        for file_path in files:
-            shutil.move(file_path, destination_folder)
+        #for file_path in files:
+        print(files)
+        shutil.move(files, destination_folder)
             
     except Exception as e:
         print("Error details: " + str(e))  
@@ -174,9 +182,11 @@ def main():
     for anime_name, _, _ in anime_data:
         for ts_file in ts_files:
             if anime_name in ts_file:
+                print(TEMP_DIR)
                 move_files_to_folder(ts_file, TEMP_DIR)
+                print(ts_file)
 
-    #DBと一致したらmkvファイルを移動する
+    #DBと一致したらエンコードしたmkvファイルを移動する
     mkv_files = glob.glob(os.path.join(MKV_FILES_PATH, '*.mkv'))
     mkv_files.sort(key=os.path.getmtime)
     mkvCount=0
@@ -192,8 +202,8 @@ def main():
                     filebasename=os.path.splitext(os.path.basename(mkv_file))[0]
                     err = insertVideoName(anime_id,filebasename)#ファイル名を書き込み
                     if err==1 :
-                        print("Failed to write video table:"+mkv_file)
-                        continue;
+                        print("error:Failed to write video table:"+mkv_file)
+                        continue
 
                         
                         
@@ -202,10 +212,10 @@ def main():
                     err = insertVideoInfo(mkv_file, video_id)#コメント数などを書き込み
                     
                     if err ==1:
-                        print("Failed to write video information.")
+                        print("info:Failed to write video information.")
                         
                     process_outputImg(root_dir,foldername,mkv_file)#画像の切り出し
-                    move_files_to_folder([mkv_file], video_dir,video_id)#移動
+                    move_files_to_folder(mkv_file, video_dir,video_id)#移動
                     
                         
                 else:

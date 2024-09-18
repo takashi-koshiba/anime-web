@@ -2,7 +2,7 @@ package com.example.web.etc.sta;
 
 public class TextRep {
 	public static String main(String text2) {
-		String text=text2;
+		String text=(text2.toUpperCase());
 		text=text.trim();
 		text=text.replace("ゐ", "い");
 		text=text.replace("ゑ", "え");
@@ -58,7 +58,7 @@ public class TextRep {
 		text=text.replace("F", "Ｆ");
 		text=text.replace("G", "Ｇ");
 		text=text.replace("H", "Ｈ");
-		text=text.replace("I", "い");
+		text=text.replace("I", "Ｉ");
 		text=text.replace("J", "Ｊ");
 		text=text.replace("K", "Ｋ");
 		text=text.replace("L", "Ｌ");

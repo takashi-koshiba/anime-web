@@ -16,9 +16,52 @@ body #main,#topImg{
 	min-width: 1200px;
 }
 #search{
-	margin-left:-15px;
+	width:200px;
+}
+.anime-info{
+	font-family: mainFontExtraBoldEx, "MS Pゴシック";
+}
+#season_h2{
+	display: inline;
 }
 
+#seasonTitle_div{
+	margin-top:20px;
+	width: 400px;
+}.animeAllChild{
+
+
+
+}
+.allAnimeChild{
+
+	float: left;
+	background-color: red;
+	height:220px;
+	margin-top:10px;
+	margin-bottom:10px;
+}#animeAll{
+
+}
+#allAnimeTitle{
+
+	width:340px;
+
+}#maxImg_p{
+	display: inline;
+	margin:0;float:right;
+	font-size: 24px;
+}#maxImg{
+	display: inline;
+	margin:0;
+	float:left;
+}#load_div{
+	width:100px;
+	height:100px;
+	margin:auto;
+}#load_div p{
+	margin-top:50px;
+}
 
 
 

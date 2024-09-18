@@ -5,14 +5,14 @@ document.addEventListener("DOMContentLoaded",function(){
 	
 	let topImgWidth=document.getElementById('topImg').style.height;
 	let topItem=document.getElementById('topItem');
-	console.dir(topItem);
+
 	
 
 	let leftTop=left.offsetHeight;
 	
 
 	window.addEventListener("scroll",function(){
-		console.dir(leftTop);
+
 		if(topItem_groundHeight<=this.pageYOffset){
 			topItem_ground.style.position="fixed";	
 			topItem_ground.style.top="0px";

@@ -1,0 +1,20 @@
+#searchResult{
+	background-color: beige;
+	position: absolute;
+	width:300px;
+	padding-top:3px;
+	padding-bottom:3px;
+	padding-left: 3px;
+	padding-right: 3px;
+	max-height:500px;
+	z-index: 30;
+}
+.searchChild{
+	margin:0;
+}
+.searchChild p{
+	margin:0;
+	border-top:1px solid;
+	font-size: 12px;
+	
+}

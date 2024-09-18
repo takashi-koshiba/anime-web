@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.web.etc.db.Animetable.Anime;
 import com.example.web.etc.db.Animetable.AnimeService;
+import com.example.web.etc.sta.Kakasi;
 import com.example.web.etc.sta.Setting;
 import com.example.web.etc.sta.TextRep;
 
@@ -66,7 +67,7 @@ public class upload {
 			         
 			         Anime anime =new Anime();
 			         anime.setOriginalName(originalName);
-			         anime.setFoldername(foldername);
+			         anime.setFoldername(TextRep.main(Kakasi.main(foldername)));
 			         animeService.insert(anime);
 			         
 			         

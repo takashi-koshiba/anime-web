@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded",function(){
 	let leftTop=left.offsetTop;
 
 	window.addEventListener("scroll",function(){
-		console.dir(leftTop-topItem_groundHeight);
+
 		if(topItem_groundHeight<=this.pageYOffset){
 			left.style.position="fixed";	
 			left.style.top=(leftTop-topItem_groundHeight)+"px";

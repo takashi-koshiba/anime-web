@@ -87,7 +87,7 @@ def main():
     #なおファイル名は動画のファイル名と一致している必要があります。
     #rename_anime.phpを実行する際に下記パスを指定して同じファイル名になるようにしてください。
     
-    #root_dir = r'D:\\java-web\\data\\bangumi\\'
+    root_dir = r'D:\\java-web\\data\\bangumi\\'
     
     
     # クエリ結果を取得
@@ -109,8 +109,75 @@ def main():
 
         
     tq.close()
+
    
+    insertRanked_anime()
+    insertRanked_anime_season()
+
+def insertRanked_anime_season():
+    insert_query("delete from ranked_anime_season")
+    sql = """
     
+               insert into ranked_anime_season ( select id,year,season,rank() over (order by score desc ),score,originalName,foldername,txt   from anime
+                    left join
+                    (
+                        -- あらすじ
+                        select video_id,txt,anime_id  from video_prog
+                        join video using(video_id)
+                        where video_id IN(
+                        select min(video_id) from(
+
+                            select min(hiduke),anime_id,video_id from jk_rownumber
+                            join video using(video_id)
+                            where video_id IN(select video_id from video_prog)
+                                group by anime_id,video_id
+
+                        )as minTitle_videoId group by anime_id
+                        )
+                        
+                    )as summary on anime.id=summary.anime_id
+                    join score  using(anime_id)
+                   
+                    order by score desc 
+)
+    """
+    insert_query(sql)
+def insertRanked_anime():
+    insert_query("delete from ranked_anime")
+    sql = """
+    
+                insert into ranked_anime (
+                            
+                    select id,originalName,foldername,score,txt , rank() over (order by score desc ) from anime
+                    left join
+                    (
+                        -- あらすじ
+                        select video_id,txt,anime_id  from video_prog
+                        join video using(video_id)
+                        where video_id IN(
+                        select min(video_id) from(
+
+                            select min(hiduke),anime_id,video_id from jk_rownumber
+                            join video using(video_id)
+                            where video_id IN(select video_id from video_prog)
+                                group by anime_id,video_id
+
+                        )as minTitle_videoId group by anime_id
+                        )
+                        
+                    )as summary on anime.id=summary.anime_id
+                    join (
+                        select anime_id,score,rank() over (order by score desc ) from
+                        (
+                            select distinct anime_id,score from score
+                        )as score  
+                    )  as score using(anime_id)
+
+                    order by score desc 
+
+            );
+    """
+    insert_query(sql)
 def execute(program_dir, start_keywords, end_keywords,except_keywords,video_id):
     try:
         with open(program_dir, 'r') as f:
@@ -119,6 +186,7 @@ def execute(program_dir, start_keywords, end_keywords,except_keywords,video_id):
             
             prog_text=""
             for line in f:
+
                 line = line.strip()
                 
                 if line in start_keywords:
@@ -136,7 +204,7 @@ def execute(program_dir, start_keywords, end_keywords,except_keywords,video_id):
                 print("does not exist program details :videoid:"+str(video_id))
                 
             sql = f"insert into video_prog (video_id,txt) values({video_id},\"{prog_text}\")"
-            insert_query(sql);
+            insert_query(sql)
                 
             return start_flag, end_flag
 

@@ -4,8 +4,9 @@ mb_regex_encoding('UTF-8');
 //上記のようなファイル名を変換します。
 
 //実行後　：_０１  
-//下記をコメントアウトしてリネームしたい動画があるフォルダを指定してください。
-//rename_anime("D:\\TV\\ts\\");
+//下記をコメントアウトして任意のパスに変更してください
+//rename_anime("D:\\TV\\ts\\");#TSファイルがあるディレクトリ
+//rename_anime("D:\\java-web\\data\\bangumi\\");#番組情報があるディレクトリ
 
 $nowd=date("YmdHis");
 $cmd = "mysqldump -u java -pjava -x --all-databases > D:\\java-web\\data\\bk\\$nowd.dump";
@@ -21,7 +22,7 @@ $count=0;
   do{
     $count++;
     $name=htmlspecialchars($name);
-    $cmd = "dir /B $name";
+    $cmd = "chcp 65001 & dir /B $name";
     exec($cmd, $opt);
   
     $rename_count=0;
@@ -32,6 +33,7 @@ $count=0;
 
 
   for($i=0;$i<$count_opt;$i++){
+    $opt[$i]=mb_convert_encoding($opt[$i], "SJIS-win", "UTF-8");
     echo $i."/".$count_opt."\r\n";
     $match_num="";
     $re="";//上書き保存防止
@@ -47,7 +49,6 @@ $count=0;
         if(preg_match('/\［新\］/u',$opt[$i])){
 			     $re = (str_replace('［新］', '', $opt[$i]));
 			     $rename_count++;
-
 		    }
         elseif(preg_match('/\[新\]/u',$opt[$i])){
           //$kkka1[$i] = (mb_ereg_replace('[[新]]', "", $opt[$i]));
@@ -59,7 +60,6 @@ $count=0;
     				$re=str_replace('[終]','',$opt[$i]);
     				//print $kkka1[$i];
     				$rename_count++;
-
     		}
         elseif(preg_match("/\［終\］/u", $opt[$i])){
     				$re=str_replace('\［終\］','',$opt[$i]);
@@ -77,9 +77,10 @@ $count=0;
            $re = (str_replace('#', '_', $opt[$i]));
           $rename_count++;
 
-
         } elseif(preg_match('/＃/u',$opt[$i])){
           $re = (str_replace('＃', '_', $opt[$i]));
+          echo $opt[$i];
+          echo $re;
          $rename_count++;
 
 
@@ -125,8 +126,9 @@ $count=0;
         }
         elseif(preg_match('/_[０-９]{1}/u',$opt[$i])&&!preg_match('/_[０-９]{2,}/u',$opt[$i])&&
           preg_match("/[第_]\d{1}/u", $opt[$i], $matches, PREG_OFFSET_CAPTURE) ){
+          
+          $match_str=$matches[0][0];//マッチした文字
 
-          $match_str=$matches[0];//マッチした文字
           $num_len=mb_strlen($match_str)-1;//数字の文字数
           $match_num=mb_substr($match_str,1,$num_len);//数字だけにする
           $match_num_kana=mb_convert_kana($match_num,'N');//数字を全角にする
@@ -180,7 +182,7 @@ $count=0;
           }
           //echo $subStr.$resultStr.substr($opt[$i],strlen($subStr.$kanji2NumberArr[0]))."\r\n";
           //echo $opt[$i];
-            //$rename_count++;
+            //$rename_count++;echo "aaaaddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
         }
 
 
@@ -191,8 +193,7 @@ $count=0;
           $original=mb_convert_encoding($name.$opt[$i], "SJIS-win", "UTF-8");
           $new = mb_convert_encoding($name.$re, "SJIS-win", "UTF-8");
           rename($original, $new);
-
-
+          
         }
 
         

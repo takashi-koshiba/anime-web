@@ -7,13 +7,19 @@
 	<link rel="stylesheet" th:href="@{/anime-web/anime/index.css}">
 	<link rel="stylesheet" th:href="@{/anime-web/anime/slide.css}">
 	<link rel="stylesheet" th:href="@{/anime-web/common/main/index.css}">
+	<link rel="stylesheet" th:href="@{/anime-web/anime/topDown.css}">
+	<link rel="stylesheet" th:href="@{/anime-web/anime/category.css}">
+	<link rel="stylesheet" th:href="@{/anime-web/anime/search.css}">
 	<script th:src="@{/anime-web/anime/animeYear.js}"></script>
+	
 	<script th:src="@{/anime-web/common/main/leftPanel.js}"></script>
 	<script th:src="@{/anime-web/common/main/index.js}"></script>
 	<script th:src="@{/anime-web/anime/slide.js}"></script>
 	
 	<script th:src="@{/anime-web/class/class_ajax.js}"></script>
-	
+	<script th:src="@{/anime-web/anime/animeAll.js}"></script>
+	<script th:src="@{/anime-web/anime/prefix.js}"></script>
+	<script th:src="@{/anime-web/anime/search.js}"></script>
 </head>
 
 <body>
@@ -22,24 +28,23 @@
 			<div id="left">
 				<h2>検索</h2>
 				<hr>
-				<input type="input">
-				<ul id="search">
-					
-					<li>
-						
-						<a href="/anime-web/anime">アニメ</a>
-
-					</li>
-					<li>
-						<a href="/anime-web/anime">家計簿</a>
-						
-					</li>
-					<li>
-						<a href="/anime-web/anime">本</a>
-					</li>
-					
-				</ul>
+				<input type="text" id="search" placeholder="漢字NG！" >
+				<div id="searchResult" style="position: absolute;">
+				</div><!--searchResult-->
 				
+				
+				<div id="textcategoryP">
+					<div id="textcategory">
+						<div class="tab"><p>平仮名</p></div>
+						<div class="tab"><p>英字</p></div>
+						<div class="tab" ><p>その他</p></div>
+						<div class="tab" ><p>全部</p></div>
+					</div>
+				</div><!--textcategoryP-->
+				<div id="prefixButtons">
+		
+				</div>
+
 				
 			</div><!--left-->
 			
@@ -61,45 +66,80 @@
 						</p>
 					</div><!--div-title-->
 				
-				</div>
+				</div><!--rank-anime-child-->
+
+			</div><!--rank-animeTemplate-->
+			<!--横スクロールテンプレここまで-->
+			
+			<!--アニメ全部テンプレ-->
+			<div class="allAnimeChild rank-anime" id="animeAllTemplate" style="display:none">
+				<div class="animeAllChild rank-anime-child ">
+					<div class="rank-anime-img-div">
+						<img  src="">					
+					</div><!--rank-anime-img-div-->
+					<div class="div-title">
+						<p class="anime-title">テスト</p>
+						<p class="anime-info">
+							<span class="score-txt">偏差値:</span>
+							<span class="anime-score">50.3</span>
+						</p>
+					</div><!--div-title-->
+				
+				</div><!--animeAllChild-->
 
 			</div><!--rank-anime-->
-			<!--横スクロールテンプレここまで-->
+			<!--アニメ全部テンプレここまで-->
+			
 			<div id="left_main">
 				<div class="left_main_child" >
 					<h2>ランキング</h2>
 					<hr>
 					
 					<div class="rank" id="rank_all">
-						<div class="scrollButton"></div>
+						<div class="scrollButton leftButton"></div>
 							<div class="rank-scroll">
 								<div class="rank-div">																										</div><!--rank-anime-->
 								</div><!--rank-div-->
-							<div class="scrollButton"></di>
+							<div class="scrollButton rightButton"></di>
 						</div>	<!--rank-scroll-->																																																			<!--kakeeeee-->
 					</div><!--rank-->
 				
-					<h2>シーズン別ランキング</h2>
-					<select  id="animeyear">
-
-						
-					</select>
-					
+					<div id="seasonTitle_div">
+						<h2 id="season_h2">シーズン別ランキング</h2>
+						<select id="animeyear"></select>
+					</div><!--seasonTitle-->				
 					<hr>
-
-
-
 					<div class="rank">
-						<div class="scrollButton"></div>
+						<div class="scrollButton leftButton"></div>
 							<div class="rank-scroll">
 								<div class="rank-div">																										</div><!--rank-anime-->
 								</div><!--rank-div-->
-							<div class="scrollButton"></di>
+							<div class="scrollButton rightButton"></di>
 						</div>	<!--rank-scroll-->																																																			<!--kakeeeee-->
 					</div><!--rank-->
 				</div><!--left_main_child-->
+				
+				<div class="left_main_child">
+					<div id="allAnimeTitle">
+
+						<h2>アニメ</h2>
+					</div>
+					<hr>
+					<div id="animeAllP">
+						<div id="animeAll">
+						</div><!--animeAll-->		
+					</div>
+					<div id="load_div">
+							
+						
+					</div>	
+				</div><!--left_main_child-->
+
 			</div><!--left_main-->
-			
+
+
 		</div><!--main-->
+
 </body>
+
 </html>

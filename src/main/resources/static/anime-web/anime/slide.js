@@ -2,7 +2,7 @@
 document.addEventListener("DOMContentLoaded",function(){
 	let rank=document.getElementsByClassName('rank');
 	let rankWidth=rank[0].children[1].offsetWidth;
-	let anime_childW=250; //cssの画像の横幅と合わせる
+	let anime_childW=200; //cssの画像の横幅と合わせる
 	let ImgCount=Math.floor(rankWidth/anime_childW);
 	
 	let margins=rankWidth-(anime_childW*ImgCount);
@@ -18,13 +18,14 @@ document.addEventListener("DOMContentLoaded",function(){
 	let url=root+"api/db/rankedAnime/";
 	let rankObj=[];
 	
+	let imgWidth=200;
+	let imgHeight=150;
 	
-	//シーズン別ランキングを取得
-	let seasonData;
-	getRankSeasonData(root+"api/db/rankedAnimeSeason/").then((result) =>{
+	let seasonData; 
+	awaitgetSeasonRank(root).then(result => {
 		seasonData=result;
-	})
-	
+	})	
+
 	//apiから画像のパスとファイル名を取得
 	getRankAllData(root,url).then((result) =>{
 		imgRootUrl= result[1];
@@ -207,7 +208,8 @@ document.addEventListener("DOMContentLoaded",function(){
 		const rank_animeTemplate=document.getElementById('rank-animeTemplate');
 		let rank_div=document.getElementsByClassName('rank-div')[rankIndex];
 
-		let maxImg=imgData.length<initImgCount-1?imgData.length:initImgCount;
+		let maxImg=imgData.length<initImgCount?imgData.length:initImgCount;
+
 		for(let i=0;i<maxImg;i++){
 			
 			
@@ -225,6 +227,7 @@ document.addEventListener("DOMContentLoaded",function(){
 		rank_anime.setAttribute('class','rank-anime');
 		rank_anime.setAttribute('id','');
 		
+
 		let originalName=imgData[index]['originalName'];
 
 		let rank_animeTitle=rank_anime.children[0].children[1].children[0];
@@ -237,12 +240,18 @@ document.addEventListener("DOMContentLoaded",function(){
 		anime_score.innerText=imgData[index]['score'];
 		
 		let rank_animeImg=rank_anime.children[0].children[0].children[0];
+		
+		
+		
 		rank_animeImg.setAttribute("src",imgRootUrl['url']+'content/anime-web/upload/img/thumbnail/'+originalName+".webp");
 		
-		
+		//let imgSizeArr=calImgSize(rank_animeImg.naturalWidth,rank_animeImg.naturalHeight,200,150);
+		//console.dir(rank_animeImg.naturalWidth)
+		//rank_animeImg.style.width=imgSizeArr[0]
 		
 		return rank_anime;
 	}
+	
 
 	function calculateMargin(rank_scroll,anime_childW){
 		let rankWidth=rank_scroll.offsetWidth;
@@ -262,10 +271,11 @@ document.addEventListener("DOMContentLoaded",function(){
 	}
 
 	async function  api(url) {
+
 		const response = await fetch(url);
 		const json = await response.json(); 
-
 		return json;
+
 	}
 	async function getRankSeasonData(url){
 		
@@ -345,7 +355,15 @@ document.addEventListener("DOMContentLoaded",function(){
 		
 	}
 
-
+	function calImgSize(w,h,imgWidth,imgHeight){
+		let ratioW=imgWidth/w;
+		let ratioH=imgHeight/h;
+		
+		let ratio=ratioW>ratioH?ratioH:ratioW;
+		
+		return [ratioW*ratio,ratioH*ratio]
+		
+	}
 	function centering(rank_scroll,anime_childW,rankObj,initImgCount,imgData,imgRootUrl,rank_animeTemplate){
 		let pos=rank_scroll.scrollLeft;
 		let imgMargin=parseFloat(rank_scroll.children[0].children[0].style.marginLeft);
@@ -370,6 +388,26 @@ document.addEventListener("DOMContentLoaded",function(){
 		rankObj.index=scrollPos;	
 
 		
+	}
+
+	async function getSeasonRank(root) {
+
+		let url=new URL(window.location.href);
+		let year=url.searchParams.get('year');
+		let season=url.searchParams.get('season');
+		
+		let urlApi=root + "api/db/rankedAnimeSeason/";
+		if(year!=null&&season!=null){
+			urlApi=urlApi+"?year="+year+"&season="+season;
+		}
+		let result = await getRankSeasonData(urlApi);
+	    return result;
+
+	}
+
+	async function awaitgetSeasonRank(root) {
+	    let data = await getSeasonRank(root);
+	    return data
 	}
 });
 
