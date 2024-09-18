@@ -6,11 +6,8 @@ mb_internal_encoding("UTF-8");
 
 //実行後　：_０１  
 //下記をコメントアウトしてリネームしたい動画があるフォルダを指定してください。
-rename_anime("D:\\TV\\ts\\");
-rename_anime("D:\\java-web\\data\\bangumi\\");
-rename_anime("D:\\java-web\\data\gomi\\");
-rename_anime("D:\\TV\\ts\\encoding\\");
-rename_anime("D:\\TV\\ts\\encoded\\");
+//rename_anime("D:\\TV\\ts\\");#TSファイルがあるディレクトリ
+//rename_anime("D:\\java-web\\data\\bangumi\\");#番組情報があるディレクトリ
 
 //rename_anime('D:\\java-web\\data\\program\\php\\新しいフォルダー\\');
 $nowd=date("YmdHis");
