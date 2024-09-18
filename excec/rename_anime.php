@@ -1,13 +1,18 @@
 <?php
-mb_regex_encoding('UTF-8');
+//mb_regex_encoding('UTF-8');
+mb_internal_encoding("UTF-8");
 //[新]1話,１話,第1話,第１話, ＃１,#1,第一話、第壱話,
 //上記のようなファイル名を変換します。
 
 //実行後　：_０１  
-//下記をコメントアウトして任意のパスに変更してください
-//rename_anime("D:\\TV\\ts\\");#TSファイルがあるディレクトリ
-//rename_anime("D:\\java-web\\data\\bangumi\\");#番組情報があるディレクトリ
+//下記をコメントアウトしてリネームしたい動画があるフォルダを指定してください。
+rename_anime("D:\\TV\\ts\\");
+rename_anime("D:\\java-web\\data\\bangumi\\");
+rename_anime("D:\\java-web\\data\gomi\\");
+rename_anime("D:\\TV\\ts\\encoding\\");
+rename_anime("D:\\TV\\ts\\encoded\\");
 
+//rename_anime('D:\\java-web\\data\\program\\php\\新しいフォルダー\\');
 $nowd=date("YmdHis");
 $cmd = "mysqldump -u java -pjava -x --all-databases > D:\\java-web\\data\\bk\\$nowd.dump";
 exec($cmd, $opt);
@@ -23,22 +28,27 @@ $count=0;
     $count++;
     $name=htmlspecialchars($name);
     $cmd = "chcp 65001 & dir /B $name";
+    //$cmd = "powershell -Command \"Get-ChildItem -Name -LiteralPath '$name'\"";
     exec($cmd, $opt);
-  
+    
+    
     $rename_count=0;
     $count_opt=count($opt);
  
-
+    
 
 
 
   for($i=0;$i<$count_opt;$i++){
-    $opt[$i]=mb_convert_encoding($opt[$i], "SJIS-win", "UTF-8");
+    //$opt[$i]=mb_convert_encoding($opt[$i], "SJIS-win", "UTF-8");
+   // echo $opt[$i];
     echo $i."/".$count_opt."\r\n";
     $match_num="";
     $re="";//上書き保存防止
     
     //exec($cmd, $opt);
+
+
 
     if(preg_match('/ts$/',$opt[$i]) || preg_match('/mp4$/',$opt[$i])|| preg_match('/mkv$/',$opt[$i])|| preg_match('/ts.program.txt$/',$opt[$i])|| preg_match('/ts.err$/',$opt[$i])|| preg_match('/ass$/',$opt[$i])){
 
@@ -79,8 +89,7 @@ $count=0;
 
         } elseif(preg_match('/＃/u',$opt[$i])){
           $re = (str_replace('＃', '_', $opt[$i]));
-          echo $opt[$i];
-          echo $re;
+
          $rename_count++;
 
 
@@ -190,9 +199,18 @@ $count=0;
         if($rename_count>0&& $re!=""){
 
 
-          $original=mb_convert_encoding($name.$opt[$i], "SJIS-win", "UTF-8");
-          $new = mb_convert_encoding($name.$re, "SJIS-win", "UTF-8");
+          $original=mb_convert_encoding($name.$opt[$i], "SJIS", "UTF-8");
+          $new = mb_convert_encoding($name.$re, "SJIS", "UTF-8");
+
+
+
+          if (!file_exists($original)) {
+            echo $original."は存在しません。";
+            continue;
+          }
+
           rename($original, $new);
+
           
         }
 
@@ -205,7 +223,7 @@ $count=0;
   $opt="";
 
 
-}while($rename_count!=0&&$count<10);//修正箇所が複数ある場合があるので何回も実行します。
+}while($rename_count!=0&&$count<4);//修正箇所が複数ある場合があるので何回も実行します。
 
 }
 
