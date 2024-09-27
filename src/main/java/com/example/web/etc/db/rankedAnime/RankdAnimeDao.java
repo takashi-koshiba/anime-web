@@ -7,4 +7,5 @@ public interface RankdAnimeDao {
 	//public int countRow(String text);
 	public List<RankedAnime> selectAll();
 	public RankedAnime selectOne(Integer animeId);
+	public Integer countRow();
 }

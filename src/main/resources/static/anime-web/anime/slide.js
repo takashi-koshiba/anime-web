@@ -165,7 +165,9 @@ document.addEventListener("DOMContentLoaded",function(){
 
 			let rank_value=imgData[index]['ranking']+"/"+imgData.length;
 			let anime_score=imgData[index]['score'];
-			setAnimeElem(rank_scroll,index,url,originalName,rank_value,anime_score);
+			
+			let img_href= "./video/"+imgData[index]['anime_id'];
+			setAnimeElem(rank_scroll,index,url,originalName,rank_value,anime_score,img_href);
 			
 		}else if(imgData.length>index){//追加
 			let element=createAnimeElements(imgData,imgRootUrl,rank_animeTemplate,imgMargin,index);
@@ -239,12 +241,12 @@ document.addEventListener("DOMContentLoaded",function(){
 		rank_value.innerText=imgData[index]['ranking']+"/"+imgData.length;
 		anime_score.innerText=imgData[index]['score'];
 		
-		let rank_animeImg=rank_anime.children[0].children[0].children[0];
-		
-		
-		
+		let rank_animeImg=rank_anime.children[0].children[0].children[0].children[0];
 		rank_animeImg.setAttribute("src",imgRootUrl['url']+'content/anime-web/upload/img/thumbnail/'+originalName+".webp");
 		
+		let img_a=rank_anime.children[0].children[0].children[0];
+		img_a.setAttribute("href","./anime/video/"+imgData[index]['anime_id']);
+				
 		//let imgSizeArr=calImgSize(rank_animeImg.naturalWidth,rank_animeImg.naturalHeight,200,150);
 		//console.dir(rank_animeImg.naturalWidth)
 		//rank_animeImg.style.width=imgSizeArr[0]
@@ -333,16 +335,20 @@ document.addEventListener("DOMContentLoaded",function(){
 		}
 	}
 	function delElem(imgIndex,rank_scroll){
-		setAnimeElem(rank_scroll,imgIndex,"","","","");
+		setAnimeElem(rank_scroll,imgIndex,"","","","","");
 	}
 
-	function setAnimeElem(rank_scroll,imgIndex,url,title,rank_value,anime_score){
+	function setAnimeElem(rank_scroll,imgIndex,url,title,rank_value,anime_score,img_href){
 		let item=rank_scroll.children[0].children[imgIndex];
 
-		let img=item.children[0].children[0].children[0];
+		let img=item.children[0].children[0].children[0].children[0];
+
 		let animeTitle=item.children[0].children[1].children[0];
 		img.setAttribute('src',url);
 		animeTitle.innerText=title;
+		
+		let img_a=item.children[0].children[0].children[0];
+		img_a.setAttribute("href",img_href);
 		
 		let anime_info=item.children[0].children[1].children[1];
 		let rank_value_p=anime_info.children[0];

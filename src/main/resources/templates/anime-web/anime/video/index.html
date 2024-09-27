@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"><html>
+<head th:replace="~{anime-web/common/header/index :: meta(~{::title},~{::link},~{::script})}">
+	<title>あ</title>
+
+
+	<link rel="stylesheet" th:href="@{/anime-web/video/index.css}">
+	<script th:src="@{/anime-web/common/main/index.js}"></script>
+	<script th:src="@{/anime-web/video/index.js}"></script>
+</head>
+
+<body>
+	<header th:replace="~{anime-web/common/header/index :: header}"></header>
+	<br>
+	<div id="main">
+		<div id="left">
+			<h2 th:text="${anime.originalName}"></h2>
+			<hr>
+			<div id="summary_div">
+				<p >
+					<span>あらすじ：</span><br>
+					<span id="summary_p" th:text="${animeInfo.txt}"></span>
+				</p>
+			</div>
+			
+			
+			<p class="_p">エピソード</p>
+			
+				<th:block th:each="epi:${video}">
+					<div id="videos">
+						<div class="episode">
+							<div class="thumb">
+								<img th:src="${thumnailPath}+${epi.fname}+'/output_0.jpg'">
+							</div>
+							<div class="episodeTitle">
+								<p th:text="${epi.fname}"></p>
+							</div>
+						</div>
+					</div><!--videos-->
+					
+				</th:block>
+
+				
+				
+			
+		</div>
+		
+
+		
+		
+		<div id="left_main">
+			
+			<div id="left_main_child">
+				<h2>情報</h2>
+				<hr>
+
+				<div id="poster">
+					<img id="poster_img">
+				</div>
+				
+				<div id="data" class="sub">
+					<div class="label">
+						<p >データ</p>
+					</div>
+					
+					<div id="info">
+						
+						<p>
+							<span>アニメid</span>
+							<span>:</span>
+							<span th:text="${anime.id}"></span>
+
+						</p>
+					
+						<p >
+							<span>ランキング</span>
+							<span>:</span>
+							
+							<span th:text="${animeInfo.ranking}"></span>/
+							<span th:text="${rows}"></span>
+						</p>
+						
+						<p>
+							<span>偏差値</span>
+							<span>:</span>
+							<span th:text="${animeInfo.score}"></span>
+
+						</p>
+						
+					</div><!--info-->
+					
+					
+				</div>
+				
+				
+				
+			</div>
+		</div><!--left_main-->
+		
+	</div><!--main-->
+</body>
+</html>

@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded",function(){
 	let animeAll = document.getElementById("animeAll");
 	
 	
-	let InitrowCount=2;//表示する行の数
+	let InitrowCount=3;//表示する行の数
 	let anime_childW=200; //cssの画像の横幅と合わせる
 	let anime_childH=240;//cssと合わせる
 	let obj={
@@ -51,10 +51,9 @@ function animeLoad(obj,initImgCount,anime_childW,anime_childH,animeData,root){
 	let scrollY=window.scrollY;
 	let loadDivY=load_div.getBoundingClientRect().y;
 	
-
 	//表示ができるなら表示
-	if((scrollY>loadDivY ||window.innerHeight >loadDivY)&&(animeData.length>obj.index+1)){
-		
+	if((scrollY+window.innerHeight>loadDivY )&&(animeData.length>obj.index+1)){
+
 		AddAnimeElements(obj,initImgCount,anime_childW,anime_childH,animeData,root);
 		setMargin(animeAll,anime_childW);
 		return true;
@@ -134,11 +133,14 @@ function AddAnime(index,animeAll,initImgCount,animeData,root,anime_childW){
 function cloneElements(animeAllTemplate,index,animeData,root){
 	let animeAllT = animeAllTemplate.cloneNode(true);
 	animeAllT.style.display="block";
-	let img=animeAllT.children[0].children[0].children[0];
-	
+	let img=animeAllT.children[0].children[0].children[0].children[0];
 	let originalName=animeData[index].originalName;	
 	img.setAttribute('src',root.url+'content/anime-web/upload/img/thumbnail/'+originalName+".webp")
 	
+	
+	let img_a=animeAllT.children[0].children[0].children[0];
+	img_a.setAttribute("href","./anime/video/"+animeData[index]['id']);
+			
 	
 	animeAllT.children[0].children[1].children[0].innerText=animeData[index]['originalName'];
 

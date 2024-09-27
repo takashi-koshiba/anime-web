@@ -21,6 +21,10 @@ public class SelectAll {
 	public List<Anime> start()  {
 		return animeService.selectAll();
 	}
+	@GetMapping("/anime-web/api/db/select-one/{id}")
+	public Anime start5(@PathVariable Integer id)  {
+		return animeService.selectOne(id).getFirst();
+	}
 
 	@GetMapping("/anime-web/api/db/select-allSort/{charId}")
 	public List<AnimeSort> start2(@PathVariable Integer charId)  {

@@ -72,6 +72,20 @@ public class RankedAnimeJDBC implements RankdAnimeDao {
 		
     }
     
+    @Override
+    public Integer countRow() {
+    	try {
+    		String sql = "SELECT count(*) as c  from ranked_anime";
+            Map<String, Object> result = jdbc.queryForMap(sql);
+
+            return (Integer.parseInt(result.get("c").toString()));
+
+    	}catch (Exception e) {
+    	
+            return 0;
+        }
+    }
+    
 	@Override
 	public List<RankedAnime> selectAll() {
 	 	try {

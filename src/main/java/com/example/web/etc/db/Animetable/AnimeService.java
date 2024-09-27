@@ -31,7 +31,9 @@ public class AnimeService {
     public List<Anime> selectAll(){
     	return animeJDBC.selectAll();
     }
-
+    public List<Anime> selectOne(Integer id){
+    	return animeJDBC.selectOne(id);
+    }
     public List<prefix> selectPrefixAll(){
     	return animeJDBC.selectPrefixAll();
     }

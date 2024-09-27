@@ -45,7 +45,31 @@ public class AnimeJDBC implements AnimeDao {
         	return 0;
     	}
     }
-
+    @Override
+	public List<Anime> selectOne(Integer id) {
+		try {
+			
+		
+			String sql = "SELECT id,originalName,foldername from anime where id =? ";
+			List<Map<String, Object>> result = jdbc.queryForList(sql,id);
+        
+			List<Anime> animeList = new ArrayList<>();
+			for(Map<String,Object>map:result) {
+				Anime anime = new Anime();
+        	
+				anime.setId((Integer)map.get("id"));
+				anime.setFoldername((String)map.get("foldername"));
+				anime.setOriginalName((String)map.get("originalName"));
+        	
+				animeList.add(anime);
+			}
+			return animeList;
+    	}catch (Exception e) {
+	 		List<Anime> animeList = new ArrayList<>();
+	 		animeList.add(new Anime());
+	 		return animeList;
+    	}
+	}
 
 	@Override
 	public List<Anime> selectAll() {

@@ -28,6 +28,11 @@ public class RankedAnimeService {
     	return row>0?true:false;
     }
   */  
+    
+    public Integer countRow() {
+    	return rankedAnimeJDBC.countRow(); 
+    }
+    
     public List<RankedAnime> selectAll(){
     	return rankedAnimeJDBC.selectAll(); 
     }

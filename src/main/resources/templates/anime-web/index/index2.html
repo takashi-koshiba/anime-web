@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"><html>
+<head th:replace="~{anime-web/common/header/index :: meta(~{::title},~{::link},~{::script})}">
+	<title>あ</title>
+	<link rel="stylesheet" th:href="@{/anime-web/index/index.css}">
+	<link rel="stylesheet" th:href="@{/anime-web/common/main/index.css}">
+	<script th:src="@{/anime-web/common/main/index.js}"></script>
+	
+</head>
+
+<body>
+	<header th:replace="~{anime-web/common/header/index :: header}"></header>
+	<br>
+	<div id="main">
+		<div id="left">
+			<div id="root" th:if="${user.admin}">
+				<h2>管理者用</h2>
+				<hr>
+				<ul>
+
+					<li>
+						<a href="/anime-web/etc/settings/addanime/">アニメ追加</a>
+					
+
+					</li>
+					<li>
+						<a href="/anime-web/etc/settings/directory/">ディレクトリ設定</a>
+					</li>
+
+					
+				
+				</ul>
+			</div><!--root-->
+			<h2>ユーザー情報</h2>
+				<hr>
+				<ul>
+					<li>
+						<p>IPアドレス：<span th:text="${user.ip}"> </span></p>
+
+					</li>
+					<li>
+						<p>ユーザー名：<span th:text="${user.name}"> </span></p>
+									
+					</li>
+					<li>
+						<a href="/anime-web/anime">本</a>
+					</li>
+								
+				</ul>
+		</div><!--left-->
+		
+		<div id="left_main">
+			<div id="left_main_child">
+				<h2>番組表</h2>
+				<hr>
+			</div>
+		</div><!--left_main-->
+		
+	</div><!--main-->
+</body>
+</html>
