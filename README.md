@@ -17,5 +17,5 @@
 <ul>
   <li>kakasiをインストール</li>
   <li>ffmpegをインストール</li>
-  <li>execフォルダ配下のdb1.sqlからdbをリストア</li>
+  <li>execフォルダ配下のdb1.sqlからdbをリストア(データベース名はdb1です)</li>
 </ul>
