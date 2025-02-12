@@ -1,0 +1,58 @@
+
+.fileElem{
+	
+	width:300px;
+	margin:0 10px;
+	
+}
+.input_p{
+	display: inline;
+	margin: 0;
+}
+#view_div{
+	width: 100%;
+	height: 500px;
+	
+}
+#view_div_child{
+
+	width: 100%;
+	
+	
+	background-color: red;
+}#view_div_child2{
+	margin:0 auto;
+	width: 99%;
+	display: flex;
+	justify-content: start;
+	flex-wrap: wrap;
+	background-color: rgb(255, 255, 128);
+}
+#left_main_child{
+	padding-right: 50px;
+}
+
+.item_div{
+	width: 200px;
+	height: 165px;
+	background-color: red;
+}
+
+img{
+	max-width:280px;
+	max-height:140px;
+}
+#fname_div{
+	float: left;
+	width:300px;
+	height: 15px;
+}
+#sort_div{
+	float: right;
+	width:70px;
+	height: 50px;
+	margin-bottom: 50px;
+}
+#search_div{
+	width: 400px;
+}

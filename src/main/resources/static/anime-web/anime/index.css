@@ -1,7 +1,13 @@
+
 #left{
-	
-	width:200px;
-	
+	position: absolute;
+	width:250px;
+	height: 100%;
+	z-index:30;
+	background-color: whitesmoke;
+	border-radius: 5px;
+}#left_div{
+	width: 200px;
 }
 #left_main{
 	width: 70%;
@@ -12,11 +18,13 @@
 	margin-left: 90px !important ;
 
 }
-body #main,#topImg{
-	min-width: 1200px;
+a,a:hover,:visited{
+	color: inherit;
+	font-weight: bold;
 }
+
 #search{
-	width:200px;
+	width:192px;
 }
 .anime-info{
 	font-family: mainFontExtraBoldEx, "MS Pゴシック";
@@ -28,20 +36,18 @@ body #main,#topImg{
 #seasonTitle_div{
 	margin-top:20px;
 	width: 400px;
-}.animeAllChild{
-
-
-
 }
 .allAnimeChild{
 
-	float: left;
 
 	height:220px;
 	margin-top:10px;
 	margin-bottom:10px;
 }#animeAll{
-
+	display: flex;
+	justify-content: start;
+	flex-wrap: wrap;
+	margin: 0 auto;
 }
 #allAnimeTitle{
 
@@ -62,8 +68,43 @@ body #main,#topImg{
 }#load_div p{
 	margin-top:50px;
 }
+.animeAllChild{
+	margin:0 10px;
+}
+@media screen and (max-width: 1200px) {
+	body #main,#topImg{
+		width:100% !important;
+	}
+	#textcategoryP,#prefixButtons{
+		display: none;
+	}
+	#left,#left_main{
+		float:none !important;
+	}
+	#left_main,#search,#seasonTitle_div{
+		width:98% !important;
+		padding-block: 0;
+		padding-inline: 0;
+		padding:0;
+		border-width: 0.5;
+	}
+	#left{
+		width:100% !important;
+		padding:0 !important;
+		position:static !important;
+	}
+	.left_main_child{
+		margin:0 !important;
+		
+	}#season_h2{
+		font-size: 20px;
+	}
+	
 
+ }
 
+ 
+ 
 
 	
 

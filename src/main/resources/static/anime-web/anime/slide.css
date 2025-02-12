@@ -21,6 +21,10 @@
 }.scrollButton:hover{
 	background-color:rgba(192, 192, 192,0.5);
 }
+.img_a{
+	display: flex;
+	align-items: flex-end;
+}
 
 .rightButton::before {
   content: "";
@@ -61,38 +65,20 @@
 
 	font-weight: bold;
 }
-.rank-anime{
-
-
-
-
-}.anime-info{
+.anime-info{
 	position: absolute;
 	bottom:-13px;
 }
-.rank-anime-child{
-	position: relative;
-	width:200px;/* slide.jsと同じ値にしてください*/
-	background-color: rgb(230, 230, 230);
-	height: 100%;
-}
+
 
 .rank-anime img{
 
-	max-width:200px;
-	height:100px;
+	max-width:280px;
+	max-height:140px;
 }.rank-anime img:hover{
 	opacity: 0.5;
 }
-.rank-anime-img-div{
-	display: flex;
-	justify-content: center;
-	width:200px;
-	height:100px;
 
-
-	background-color: whitesmoke;
-}
 .div-title, .subject{
 	margin: 3px 10px;
 	
@@ -110,4 +96,47 @@
 	font-weight: bold;
 	
 
+}
+
+
+@media (min-width: 901px) {
+	.rank-anime-child{
+		position: relative;
+		width:280px;/*                  画像の                  */
+		background-color: rgb(230, 230, 230);
+		height: 100%;
+	}
+	.rank-anime-img-div{
+		display: flex;
+		justify-content: center;
+		width:280px;
+		height:140px;
+	
+	
+		background-color: whitesmoke;
+	}
+}
+
+
+@media (max-width: 900px) {
+	.rank-anime-child{
+		position: relative;
+		width:150px;/*                  画像の                  */
+		background-color: rgb(230, 230, 230);
+		height: 100%;
+	}
+	.rank-anime-img-div{
+		display: flex;
+		justify-content: center;
+		width:150px;
+		height:140px;
+	
+	
+		background-color: whitesmoke;
+	}
+	.rank-anime img{
+
+		max-width:150px;
+		max-height:140px;
+	}
 }

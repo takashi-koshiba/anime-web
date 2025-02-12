@@ -1,12 +1,14 @@
 package com.example.web;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.example.web.etc.sta.PathClass;
 import com.example.web.etc.sta.Setting;
+import com.example.web.etc.sta.uplaodColumn;
 
 @SpringBootApplication
 public class WebApplication {
@@ -26,6 +28,7 @@ public class WebApplication {
         
         
         String path=Setting.getRoot();
+        System.out.println("ドキュメントルート:"+Paths.get(path).toAbsolutePath());
         if(path==null || !PathClass.IsExistFolder(path)) {
         	String newPath=System.getProperty("user.dir");
         	System.out.println(path+"は存在しないディレクトリです。");
@@ -34,11 +37,15 @@ public class WebApplication {
         	Setting.setRoot(newPath);
         	
         }
-        String url=Setting.getUrl();
-        
-        if(url==null||Setting.IsUrl(url)) {
-        	String newUrl="http://localhost/";
-        	Setting.setUrl(newUrl);
+       
+
+        String videoPath=Setting.getVideoPath();
+        if(videoPath==null||!PathClass.IsExistFolder(videoPath)) {
+        	String newPath=System.getProperty("user.dir")+"\\content\\anime-web\\anime\\video\\";
+        	Setting.setVideoPath(newPath);
+        	
+        	System.out.println(videoPath+"は存在しないディレクトリです。");
+        	System.out.println(newPath+"を登録しました。");
         }
         
         Setting.makeDirectory();
@@ -46,7 +53,9 @@ public class WebApplication {
         System.out.println(Setting.getRoot()+Setting.getSettingfile()
         +"を読み込みました。");
         
-
+        
+        //ファイルアップロードのファイルタイプを設定
+        uplaodColumn.setColumnList();
         SpringApplication.run(WebApplication.class, args);
     }
 }

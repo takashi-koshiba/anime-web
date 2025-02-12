@@ -7,7 +7,18 @@ import java.nio.file.Paths;
 
 public class PathClass {
 	public static boolean IsExistFolder(String path) {
-		Path p=Paths.get(path);
-		return Files.exists(p);
+		try {
+			Path p=Paths.get(path);
+			Boolean result = Files.exists(p);
+			return result;
+			
+		}catch(Exception e){
+			e.getStackTrace();
+			return false;
+		}
+		
+		
+		
+		
 	}
 }

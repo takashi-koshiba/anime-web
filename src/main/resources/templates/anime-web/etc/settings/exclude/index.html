@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"><html>
+<head th:replace="~{anime-web/common/header/index :: meta(~{::title},~{::link},~{::script})}">
+	<title>あ</title>
+	<link rel="stylesheet" th:href="@{/anime-web/common/main/index.css}">
+	<link rel="stylesheet" th:href="@{/anime-web/etc/settings/exclude/index.css}">
+
+
+	<script th:src="@{/anime-web/common/main/index.js}"></script>
+	<script th:src="@{/anime-web/etc/settings/exclude/index.js}"></script>
+	<script th:src="@{/anime-web/common/main/leftPanel.js}"></script>
+
+
+</head>
+
+<body>
+	<header th:replace="~{anime-web/common/header/index :: header}"></header>
+	<br>
+		<div id="main">
+			<div id="left">
+				<h2>アニメ除外</h2>
+				<hr>
+			
+				
+				
+				<p id="result"></p>
+				
+				
+				
+			</div><!--left-->
+			
+			<div id="left_main">
+				<div id="left_main_child">
+					<h2>リスト</h2>
+					<hr>
+					
+						<form action="./" method="post"  >
+							<div id="list">
+								<th:block th:each="exclude : ${excludeTitle}">
+									<input class="inputText" type="text" name="title" th:value="${exclude.title}" >
+									<br>
+								</th:block>
+								<input class="inputText" type="text" name="title"  >
+							</div>
+							<input type="submit" value="送信する">
+						</form>
+					
+				</div><!--left_main_child-->
+			</div><!--left_main-->
+			
+		</div><!--main-->
+</body>
+</html>

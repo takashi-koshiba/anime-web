@@ -21,7 +21,20 @@ public class AnimeJDBC implements AnimeDao {
                 anime.getOriginalName(), anime.getFoldername());
         return row;
     }
+    @Override
+    public void insertAlias(Integer id,String alias){
 
+        jdbc.update("INSERT INTO alias(anime_id, fname) VALUES(?, ?)",
+               id,alias);
+     
+    }
+    @Override
+    public void delAlias(Integer id){
+
+        jdbc.update("delete from alias where anime_id = ? ",
+               id);
+     
+    }
 
     @Override
     public int countRow(String text) {
@@ -70,15 +83,11 @@ public class AnimeJDBC implements AnimeDao {
 	 		return animeList;
     	}
 	}
-
-	@Override
-	public List<Anime> selectAll() {
+	
+	
+	private List<Anime> getSelectAll(List<Map<String, Object>> result) {
 		try {
 			
-		
-			String sql = "SELECT id,originalName,foldername from anime  order by  CHAR_LENGTH(foldername) desc ";
-			List<Map<String, Object>> result = jdbc.queryForList(sql);
-        
 			List<Anime> animeList = new ArrayList<>();
 			for(Map<String,Object>map:result) {
 				Anime anime = new Anime();
@@ -96,6 +105,42 @@ public class AnimeJDBC implements AnimeDao {
 	 		return animeList;
     	}
 	}
+	@Override
+	public List<Anime> selectGt(Integer length) {
+		String sql ="SELECT id,originalName,foldername from anime where CHAR_LENGTH(foldername) > ?  order by  CHAR_LENGTH(foldername) desc" ;
+		List<Map<String, Object>> result = jdbc.queryForList(sql,length);
+		return getSelectAll(result);
+	}
+	
+	@Override
+	public List<Anime> selectAll() {
+		String sql ="SELECT id,originalName,foldername from anime  order by  CHAR_LENGTH(foldername) desc" ;
+		List<Map<String, Object>> result = jdbc.queryForList(sql);
+		return getSelectAll(result);
+	}
+	@Override
+	public List<Anime> selectAliasOne(Integer id) {
+		try {
+			
+		
+			String sql = "select fname from alias  where anime_id = ? ";
+			List<Map<String, Object>> result = jdbc.queryForList(sql,id);
+        
+			List<Anime> animeList = new ArrayList<>();
+			for(Map<String,Object>map:result) {
+				Anime anime = new Anime();
+				anime.setOriginalName((String)map.get("fname"));
+        	
+				animeList.add(anime);
+			}
+			return animeList;
+    	}catch (Exception e) {
+	 		List<Anime> animeList = new ArrayList<>();
+	 		animeList.add(new Anime());
+	 		return animeList;
+    	}
+	}
+	
 	
 	@Override
 	public List<prefix> selectPrefixAll(){

@@ -1,0 +1,156 @@
+#form_div{
+	width:300px;
+	height: 180px;
+
+
+	
+	background-color: rgb(255, 221, 255);
+	
+	border-radius: 0 0 10px 10px;
+	padding-top: 10px;
+	padding-left: 10px;
+	
+}
+.menuTitle_p{
+	width:300px;
+	margin-top: 0px;
+	margin-bottom: 0;
+	
+	padding-left: 10px;
+	background-color:rgb(211, 33, 158);
+	border-radius: 5px 5px 0 0 ;
+	color: azure;
+}
+.selectedButton{
+	outline: solid 2px rgb(180, 70, 200);
+	border-radius: 10px;
+	background-color:rgb(235, 105, 230) ;
+	/*background-color:  rgb(252, 118, 245);*/
+}
+#menu{
+	width: 350px;
+
+	
+	position: fixed;
+	z-index: 106;
+left:-310px;
+	transition: 0.5s all;
+	
+}
+
+#main-menu{
+	width:310px;
+	background-color: rgb(255, 244, 255);
+	border-radius: 5px;
+	float:left;
+}
+#menu-button{
+	width: 30px;
+	height: 80px;
+	background-color:rgb(255, 221, 255);
+	float:left;
+	border-radius: 0 3px 3px 0;
+	
+}#menu-button:hover{
+	cursor: pointer;
+}
+
+#menu-button p{
+	 writing-mode: vertical-rl;
+	 margin:0;
+	 text-align: center;
+	 
+
+}
+
+#fname_div{
+
+	width:300px;
+	height: 30px;
+	margin-bottom: 10px;
+}
+#sort_div{
+	width:400px;
+	height: 50px;
+	margin-bottom: 10px;
+}
+#sort_column p{
+	margin:0;
+	float:left;
+	height: 40px;
+}
+#sort_order{
+
+	width:260px;
+	height: 50px;
+	margin-bottom:10px ;
+	
+}
+#sort_column{
+
+	float:left;
+	width:200px;
+	height: 50px;
+}
+#menu_link{
+
+	
+	border-radius: 0 0 10px 10px;
+	width:310px;
+	height: 50px;
+	background-color: rgb(255, 221, 255);
+}
+
+.link_div{
+	margin:0;
+	display:inline-block;
+}
+.linkElem p{
+	text-align: center;
+	margin: 0 auto;
+	padding-top: 4px;
+	
+	font-size: 14px;
+}
+.linkElem{
+	margin: 0 auto;
+}
+.link_div{
+	width:100px;
+	height: 30px;
+	background-color:  rgb(252, 118, 245);
+	border-radius: 10px;
+}
+.link_div:hover{
+	background-color:  rgba(252, 118, 245,0.5);
+	cursor: pointer;
+}
+link_div:active{
+	background-color:  rgba(252, 118, 245,0.2);
+}
+.linkElem{
+	width:98px;
+	height: 30px;
+	
+	
+}
+#menu_link_div{
+	padding-top: 10px;
+}.link_a,.link_a:visited{
+	color:rgb(0, 0, 0);
+}
+#menuCancel{
+	opacity: 0.8;
+	z-index: 105;
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	background-color: gray;
+	display: none;
+}
+#submit{
+	width:50px;
+	background-color: rgb(255, 0, 255);
+	color: white;
+	
+}

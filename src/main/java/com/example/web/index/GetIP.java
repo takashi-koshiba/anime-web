@@ -11,6 +11,7 @@ public class GetIP {
 		BeanUser[] user = {
 				new BeanUser("172.0.0.1","管理者",true),
 				new BeanUser("0:0:0:0:0:0:0:1","管理者",true),
+				new BeanUser("::1","管理者",true),
 		};
 		
 		String ip=main01.getIp(request);

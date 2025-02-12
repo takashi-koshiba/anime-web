@@ -1,0 +1,173 @@
+
+
+
+@media (min-width: 901px) {
+	.fileElem{
+		width: 300px;
+		padding:10px 10px;	
+	}
+	.rank-anime-img-div a img{
+		max-width:280px;
+		max-height:140px;
+	}
+	.div-title2 p{
+		font-size: 16px;
+	}
+}@media (max-width: 900px) {
+	.fileElem{	
+		width: 200px;
+		padding:10px 10px;
+			
+	}
+	.rank-anime-child{
+		width: 180px !important;
+	}.rank-anime-img-div{
+		width: 180px !important;
+		height:100px !important;;
+	}
+	.rank-anime-img-div a img{
+		max-width:180px;
+		max-height:100px;
+	}
+	.div-title2 p{
+		font-size: 14px;
+	}
+}@media (max-width: 600px) {
+	.fileElem{	
+		width: 120px;
+		padding:10px 10px;
+			
+	}
+	.rank-anime-child{
+		width: 100px !important;
+	}.rank-anime-img-div{
+		width: 100px !important;
+		height:60px !important;;
+	}
+	.rank-anime-img-div a img{
+		max-width:100px;
+		max-height:60px;
+	}	
+	.div-title2 p{
+		font-size: 12px;
+	}
+	#left_main_child{
+		padding-right: 10px !important;
+		
+	}
+}
+.div-title2 p{
+	word-wrap: break-word;
+	margin-bottom:30px;
+}
+.input_p{
+	display: inline;
+	margin: 0;
+}
+#view_div{
+	width: 100%;
+	
+
+	
+}
+#view_div_child{
+
+	width: 100%;
+	
+	
+	background-color: red;
+}#view_div_child2{
+	margin:0 auto;
+	width: 90%;
+	display: flex;
+	justify-content: start;
+	flex-wrap: wrap;
+	background-color: rgb(255, 255, 128);
+}
+#left_main_child{
+	padding-right: 50px;
+	margin-bottom: 60px;
+}
+
+.item_div{
+	width: 200px;
+	height: 165px;
+	background-color: red;
+}
+
+
+
+#search_div{
+	width: 400px;
+}
+
+#itemViewBack{
+	position: fixed;
+	background-color:  rgba(192, 192, 192,0.8);
+	z-index:101;
+	width: 100%;
+	height: 100%;
+	display: none;
+	
+}
+.div-title2 a:visited,a{
+	color: blue;
+}.div-title2 a:hover{
+	color:red;
+}
+
+#itemView{
+	
+	background-color: rgba(192, 192, 192,1.0);
+	width: 80%;
+	height: 100%;
+	margin: 0 auto;
+	
+}
+#itemView img,#itemView video,#itemView audio{
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+
+	position: relative;
+	
+}
+.content_item:hover{
+	opacity: 0.5;
+}
+
+
+#itemViewMenu{
+	width: 100%;
+	height:100%;
+	background-color: red;
+	
+}
+.rank-anime-img-div a img:hover{
+	opacity: 0.5;
+	cursor: pointer;
+}
+#page{
+	float:right;
+}
+#bottom-div{
+	position:fixed;
+
+	left: 50%;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	transform: translateX(-50%);
+	bottom: 0px;
+	background-color: rgba(200,200,200,0.7);
+	
+	width: 100%;
+}
+.delLabel{
+	position: absolute;
+	
+	bottom:0;
+	right: 0;
+	font-family: mainFontRegular, "MS Pゴシック";
+	font-weight: bold;
+}
+

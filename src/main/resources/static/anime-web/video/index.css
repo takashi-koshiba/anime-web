@@ -8,34 +8,82 @@
 	max-width:400px;
 	min-width: 200px;*/
 	padding-left: 50px;
+	padding-right:50px;
 
+}.summary{
+	font-size: 18px;
+}.title{
+	font-size: 20px;
+}
+
+.episodeTitle a{
+	color:black;
+}
+.episodeTitle a:hover{
+	opacity: 0.3;
 }
 p{
 
 
+}.div_a{
+	background-color: pink;
+	
+	display: inline;
+	padding: 2px;
+	border-radius: 3px;
+	margin-left: 40px;
+	cursor: pointer;
+}._a,._a:visited{
+	color:blue;
 }
-#videos{
+._a:hover{
+	color: red;
+}
+.videos{
 	margin-bottom:10px;
 	border: 2px solid lightgray;
-	height: 160px;
+	/*heightはjsで制御してます。*/
+}.info_text{
+	color:grey;
+	margin-top:0;
+	margin-bottom:0;
+	margin-left:4px;
+	
+	
 }
 
 .thumb img{
 	
-	max-height: 100px;
-	max-width: 100px;
+	max-height: 300px;
+	max-width: 200px;
+}.info_time{
+	margin-left: 0px;
+	
+}
+.videoinfo p{
+	display: inline;
+}
+.videoinfo{
+	width:600px;
+
+	display:inline-block;
 }
 .thumb{
 	text-align: center;
-	width:100px;
-	height: 100px;
+	width:200px;
+
 
 	margin-right: 10px;
 
 	float:left;
+}.info_tag{
+	background-color:hotpink;
+	border-radius: 10%;
+	padding:1px;
+	color: honeydew;
 }
 
-#left h2,#left_main h2{
+#left h1,#left_main h1,#left h2,#left_main h2{
 	color:lightpink;
 	margin:0;
 	margin-top:60px;
@@ -45,7 +93,7 @@ p{
 	margin:0;
 }#left_main{
 	
-	width:20%;
+	
 	
 
 }#poster{
@@ -73,11 +121,14 @@ p{
 #info p{
 
 	margin-left:20px;
+	margin-top: 3px;
+	margin-bottom: 3px;
 	
 }
+
 #poster_img{
 
-	width: 50%;
+	width: 80%;
 
 	margin: auto;
 	display: block;
@@ -92,6 +143,8 @@ p{
 body{
 	min-width: 1200px;
 }
+
+
 ul li p{
 	font-size: 15px;
 
@@ -99,9 +152,7 @@ ul li p{
 	margin:0px;
 }
 #left_main{
-	/*
-	width: 70%;
-	*/
+
 	float:right;
 
 
@@ -128,3 +179,24 @@ body{
 	display: inline;
 	margin:0;
 }
+.videoInfoPropaty{
+	width:240px;
+	
+}
+
+@media screen and (max-width: 1200px) {
+    body{
+        min-width: auto;
+		
+     }
+	 #left_main{
+		display:none;
+	 }
+	 #left{
+		float:none;
+		width:auto;
+		min-width: auto;
+		padding-left: 15px;
+		padding-right:15px;
+	 }
+ }

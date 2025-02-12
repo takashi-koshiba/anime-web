@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"><html>
+<head th:replace="~{anime-web/common/header/index :: meta(~{::title},~{::link},~{::script})}">
+	<title>あ</title>
+	<link rel="stylesheet" th:href="@{/anime-web/uploader/index.css}">
+	<link rel="stylesheet" th:href="@{/anime-web/common/main/index.css}">
+	
+	<script th:src="@{/anime-web/class/class_ajax.js}"></script>
+	<script th:src="@{/anime-web/class/class_upload.js}"></script>
+		
+	<script th:src="@{/anime-web/uploader/index.js}"></script>
+</head>
+
+<body>
+	<header th:replace="~{anime-web/common/header/index :: header}"></header>
+	<br>
+	<div id="main">
+				
+		<div id="left_main">
+			<div id="left_main_child">
+				<h2>アップロード</h2>
+				<hr>
+				<input type="file" id="file" multiple>
+				
+				<br>
+				<br>
+				
+				<input id="submit" type="submit"  value="送信">
+				
+
+				
+				<div id="prog">
+					<progress id="bar" max="100" value="0"></progress>
+					<p class="bar_p" id="per_p">0%</p>
+					<p id="bar_txt" class="bar_p"></p>
+				</div>
+				
+				<p id="result" class="bar_p"></p>
+				
+				
+				<p><a href="/anime-web/uploader/login/create">アカウント作成</a>/
+					<a href="/anime-web/uploader/logout/">ログアウト</a>
+					/<a href="/anime-web/uploader/view/">表示</a>
+				</p>
+				
+				
+				<h2>エラー</h2>
+				<hr>
+				<textarea id="error"></textarea>
+			</div><!--left_main_child-->
+		</div><!--left_main-->
+				
+	</div><!--main-->
+			
+
+
+
+
+
+</body>
+</html>

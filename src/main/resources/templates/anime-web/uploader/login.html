@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"><html>
+<head th:replace="~{anime-web/common/header/index :: meta(~{::title},~{::link},~{::script})}">
+	<title>あ</title>
+	<link rel="stylesheet" th:href="@{/anime-web/uploader/index.css}">
+	<link rel="stylesheet" th:href="@{/anime-web/common/main/index.css}">
+	<script th:src="@{/anime-web/class/class_ajax.js}"></script>
+	
+	<script th:src="@{/anime-web/uploader/login.js}"></script>
+</head>
+
+<body>
+	<header th:replace="~{anime-web/common/header/index :: header}"></header>
+	<br>
+	<div id="main">
+				
+		<div id="left_main">
+			<div id="left_main_child">
+				<h2>ログイン</h2>
+				<hr>
+				<div  class="label_login">
+					<select name="month" id="user_select">
+						<th:block th:each="user : ${users}">
+							<option th:value="${user.id}" th:text="${user.name}"></option>
+						</th:block>
+						
+					</select>
+				</div>
+				
+				<br>
+				
+				<div class="label_login">
+					<label>
+						<p class="p" >パスワード  :   </p>
+						<input type="password" id="pw" >
+					</label>
+				</div>
+				
+				<br>
+				
+				<input id="submit" type="submit"  value="送信">
+				
+				<a href="/anime-web/uploader/login/create">アカウント作成</a>
+			
+			</div><!--left_main_child-->
+		</div><!--left_main-->
+				
+	</div><!--main-->
+			
+
+
+
+
+
+</body>
+</html>

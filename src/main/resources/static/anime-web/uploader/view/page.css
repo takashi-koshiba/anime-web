@@ -1,0 +1,31 @@
+#page-div{
+	
+	height: 40px;
+	margin: 0 auto;
+    display: flex;
+	justify-content: center;
+
+
+}
+#previous,#next{
+	width: 40px;
+}
+.pageButton{
+    
+	height: 30px;
+	min-width: 30px;
+	display: inline-block;
+	margin: 0 5px;
+	padding:5px;
+	background-color: darkgoldenrod;
+}
+.pageButton p{
+
+	margin:auto;
+	text-align: center;
+	
+}#pegeButtons{
+
+	margin-left: 20px;
+	margin-right: 20px;
+}

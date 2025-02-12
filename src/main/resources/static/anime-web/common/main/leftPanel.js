@@ -10,8 +10,8 @@ document.addEventListener("DOMContentLoaded",function(){
 			left.style.position="fixed";	
 			left.style.top=(leftTop-topItem_groundHeight)+"px";
 		}else{
-			left.style.position="relative";	
-			left.style.top=0+"px";
+			left.style.position="absolute";	
+			left.style.top=149+"px";
 	
 		}
 		

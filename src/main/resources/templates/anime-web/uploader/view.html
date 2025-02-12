@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"><html>
+<head th:replace="~{anime-web/common/header/index :: meta(~{::title},~{::link},~{::script})}">
+	<title>あ</title>
+
+	<link rel="stylesheet" th:href="@{/anime-web/uploader/view/view.css}">
+	<link rel="stylesheet" th:href="@{/anime-web/uploader/view/menu.css}">
+	<link rel="stylesheet" th:href="@{/anime-web/uploader/view/page.css}">
+	<link rel="stylesheet" th:href="@{/anime-web/common/main/index.css}">
+	<link rel="stylesheet" th:href="@{/anime-web/uploader/index.css}">
+	<link rel="stylesheet" th:href="@{/anime-web/uploader/index.css}">
+	
+	<link rel="stylesheet" th:href="@{/anime-web/anime/slide.css}">
+	<link rel="stylesheet" th:href="@{/anime-web/font/index.css}">
+	
+	
+	<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+	<script th:src="@{/anime-web/uploader/view/view.js}"></script>
+	<script th:src="@{/anime-web/uploader/view/menu.js}"></script>
+	<script th:src="@{/anime-web/class/class_ajax.js}"></script>
+</head>
+
+<body>
+	<div id="menuCancel">
+	</div>
+
+
+	<!--ファイルを表示-->
+	<div id="itemViewBack">
+	
+		<div id="itemView">
+			
+		</div>
+		<!--
+		<div id="itemViewMenu">
+			
+		</div>-->
+	</div>
+	<header th:replace="~{anime-web/common/header/index :: header}"></header>
+
+	<!--ハンバーガーメニュー-->
+	<div id="menu">
+		<form action="#" method="get" name="a">
+			<div id="main-menu">
+				<p class="menuTitle_p">ファイル検索</p>
+				<div id="form_div">
+				
+						<div id="fname_div">
+							<label><p class="input_p">ファイル名</p>:<input type="text" name="fname" th:value="${fname}"></label>
+							
+						</div>
+
+						
+						<div id="sort_div">
+							
+							<div id="sort_column">
+								<p>並び替え:</p>
+								<select name="column" >
+									<th:block th:each="column : ${selectedColumns}">
+									 	<option th:value="${column.id}" th:text="${column.value}" 
+										        th:selected="${column.id==selectedColumn}"    >
+										</option>
+								
+									</th:block>
+									
+								</select>
+								
+							</div><!--sort_column-->
+							
+							<div id="sort_order">
+								<label><p class="input_p">昇順</p>:<input type="radio" name="sort" value="0" th:checked="${0 == selectedSort}"></label>
+								<br>
+								<label><p class="input_p">降順</p>:<input type="radio" name="sort" value="1" th:checked="${1 == selectedSort}"></label>
+								
+							</div>
+						</div><!--sort_div-->
+						
+						
+						<label><p class="input_p">ファイルタイプ</p>:
+
+							<select name="ftype" >
+								<th:block th:each="type : ${types}">
+								 	<option th:value="${type.id}" th:text="${type.value}" 
+									        th:selected="${type.id==selectedType}"    >
+									</option>
+							
+								</th:block>
+								
+								<option value="-1" th:selected="${-1 == selectedType}">全部</option>
+							</select>
+						</label>
+					  <input type="hidden" name="page" value="1">		
+					  <p><input id="submit" type="submit" value="検索" /></p>
+	
+
+				</div><!--form_div-->
+				<p class="menuTitle_p">リンク</p>
+				<div id="menu_link">
+					<div id="menu_link_div">
+						
+						<a class="link_a" href="./upload">
+							<div class="link_div">
+								<div class="linkElem">
+									<p>アップロード</p>
+								</div>
+							</div>
+
+						</a>
+						<a class="link_a" href="./logout">
+							<div class="link_div">
+								<div class="linkElem">
+									<p>ログアウト</p>
+								</div>
+							</div>
+						</a>
+						
+							<div class="link_div" id="delButton">
+								<div class="linkElem">
+									<p>ファイル削除</p>
+								</div>
+							</div>
+						
+					</div><!--menu_link_div-->
+				</div><!--menu_link-->
+				
+				
+				<p class="menuTitle_p">画質</p>
+				<div id="menu_link">
+					<div id="menu_link_div">
+						
+						
+						<div class="link_div" >
+							<div class="linkElem qltSelect">
+								<p>低</p>
+							</div>
+						</div>
+
+					
+						<div class="link_div">
+							<div class="linkElem qltSelect">
+								<p>高</p>
+							</div>
+						</div>
+						<div class="link_div">
+							<div class="linkElem qltSelect selectedButton">
+								<p>自動</p>
+							</div>
+						</div>
+					</div><!--menu_link_div-->
+				</div><!--menu_link-->
+			</div><!--menu-->
+				
+			
+			
+		
+			<div id="menu-button">
+				<p>メニュー</p>
+			</div>
+			
+
+		</form>
+		
+
+	</div><!--menu-->
+	<br>
+	<div id="main">
+				
+		<div id="left_main">
+			<div id="left_main_child">
+				<h2>ユーザ名：<span th:text="${users.name}"></span>
+			
+					
+				</h2>
+				
+				<hr>
+				
+				<!--
+				<p><a href="/anime-web/uploader/login/create">アカウント作成</a>/
+					<a href="/anime-web/uploader/logout/">ログアウト</a>/
+					<a href="/anime-web/uploader/view/">画像</a>
+					<a href="/anime-web/uploader/upload/">画像</a>
+				</p>
+				-->
+				
+				<div id="search_div">
+					
+				</div>
+				
+				
+				
+				<hr>
+				
+
+				
+				<div id="view_div">
+					<div id="view_div_child">
+						<div id="view_div_child2">
+							
+							<!--<th:block th:each="fileInfo : ${fileInfoList}">-->
+
+								<!--横スクロールテンプレ-->
+								<div class="fileElem" style="display: none;">
+									<div class="rank-anime-child">
+										<div class="rank-anime-img-div">
+											<img  class="content_item">
+												
+															
+										</div><!--rank-anime-img-div-->
+										<div class="div-title2">
+											<a>
+												<p></p>
+											</a>
+										</div><!--div-title-->
+										<div class="div-delete">
+											<label class="delLabel">削除：<input type="checkbox" name="del"></label>											
+											
+										</div>
+									</div><!--rank-anime-child-->
+	
+								</div><!--fileElem-->
+								<!--横スクロールテンプレここまで-->
+
+								
+							<!--</th:block>-->
+						</div><!--view_div_child2-->
+						<div id="bottom-div">
+							<div id="page-div">
+														
+								<!--前のページ-->
+								<!--
+								<th:block th:if="${pages.prevUrl !=null}">
+									<div id="previous">
+										<a id="previousButton" th:href="${pages.prevUrl}">
+											<p>前へ</p>
+										</a>
+									</div>
+								</th:block>-->
+								
+								
+								<div id="pegeButtons" >
+							        
+									<!--現在のページはaタグを使わない-->
+							 		<div class="pageButton" style="display: none;">
+										<p></p>
+									</div>     
+								</div><!--pegeButtons-->
+						
+								<!--次のページ
+								<th:block th:if="${pages.nextUrl !=null}">
+									<div id="next">
+										<a id="nextButton" th:href="${pages.nextUrl}">
+											<p>
+												次へ
+											</p>
+										</a>
+									</div>
+								</th:block>-->
+								
+							</div><!--page-div-->
+						</div><!--bottom-div-->
+						
+					</div>
+					
+				</div>
+				
+			</div><!--left_main_child-->
+			
+		</div><!--left_main-->
+				
+	</div><!--main-->
+			
+
+
+
+
+</body>
+</html>

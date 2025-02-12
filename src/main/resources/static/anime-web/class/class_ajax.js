@@ -1,5 +1,6 @@
 class class_ajax{
             xhr = new XMLHttpRequest();
+			xhr_up = this.xhr.upload;
             post_data = new FormData();
             constructor(path) {
                 this.path = path;//送信先のphpのパス
@@ -16,7 +17,7 @@ class class_ajax{
                 this.xhr.open('POST', this.path, true);
                 
                 //this.post_data.append('mode', 1);
-				console.dir(this.post_data);
+				//console.dir(this.post_data);
                 this.xhr.send(this.post_data);
 
                 //var a =document.getElementById('a');
@@ -29,6 +30,8 @@ class class_ajax{
 
                 });
                 */
+				
             }
+			
         }
         

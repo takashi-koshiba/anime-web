@@ -21,7 +21,8 @@ public class directory {
 		if(user.isAdmin()) {
 			model= new ModelAndView("anime-web/etc/settings/directory/index");
 			model.addObject("path",Setting.getRoot());
-			model.addObject("url",Setting.getUrl());
+		//	model.addObject("url",Setting.getUrl());
+			model.addObject("videoPath",Setting.getVideoPath());
 		}else {
 			 model= new ModelAndView("anime-web/etc/error/admin/index");
 			

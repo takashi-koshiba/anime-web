@@ -5,59 +5,37 @@ document.addEventListener("DOMContentLoaded",function(){
 	let url=document.getElementById("url");
 
 
-	root.addEventListener('input',function(){
-		if(this.value==""){
-			
-		}else{
-			let ajax = new class_ajax('/anime-web/api/directory/root/');
-			ajax.args('path',this.value);
-			ajax.run();
-			
-			//console.dir(originalName[i]);
-			ajax.xhr.onload = function() {
-				console.dir(this.response);
-				
-				if(this.response!="true"){
-					rootResult.innerText="パスが存在しません。"
-				}else{
-					rootResult.innerText="";
-				}
+	root.addEventListener('input',	async function(){
+		rootResult.innerText=await isExistPath(this.value);		
+	})
+	
 
-			}
-		}
+
+	let videoPath=document.getElementById('videoPath');
+	let videoPathResult=document.getElementById('videoPathResult');
+	videoPath.addEventListener('input',async function(){
+
+		
+		videoPathResult.innerText=await isExistPath(this.value);
 		
 	})
-	url.addEventListener('input',function(){
-		if(this.value==""){
-			
-		}else{
-			let ajax2 = new class_ajax('/anime-web/api/directory/url/');
-			ajax2.args('url',this.value);
-			ajax2.run();
-			
-			ajax2.xhr.onload = function() {
-				console.dir(this.response);
-				
-				if(this.response!="true"){
-					urlResult.innerText="urlの形式ではありません。"
-				}else{
-					urlResult.innerText="";
-				}
+	
 
-			}
-		}
-	})
+	
 
+
+	
 	let button =document.getElementById('button');
 	button.addEventListener('click',function(){
 
-		if(root.value==""){
-			
+		if(root.value=="" ||  videoPath.value==""){
+			alert("未入力の欄があります。");
 		}else{
 			let ajax2 = new class_ajax('/anime-web/api/change-directory/');
 
 			ajax2.args('path',root.value);
-			ajax2.args('url',url.value);
+
+			ajax2.args('videoPath',videoPath.value);
 			ajax2.run();
 			
 			//console.dir(originalName[i]);
@@ -77,6 +55,9 @@ document.addEventListener("DOMContentLoaded",function(){
 					case "3":
 						alert("指定された値はurlの形式ではありません。");
 						break;
+					case "4":
+						alert("指定された値は動画のディレクトは見つかりませんでした。");
+						break;
 				    default:
 				        alert("不明");
 				        break;
@@ -86,5 +67,51 @@ document.addEventListener("DOMContentLoaded",function(){
 		
 		
 	})
+	function api(path,txt,param){
+		if (txt == "") {
+		    return "";
+		}
+		return new Promise((resolve, reject) => {
 
+
+	        let ajax = new class_ajax(path);
+	        ajax.args(param, txt);
+	        ajax.run();
+
+	        ajax.xhr.onload = function() {
+	            if (this.response != "true") {
+	                resolve(1);
+	            } else {
+	                resolve(0); 
+	            }
+	        }
+
+	        ajax.xhr.onerror = function() {
+	            reject(-1); 
+	        }
+	    });
+	}
+	
+	async function  isUrl(txt) {
+		result=await api("/anime-web/api/directory/url/",txt,"url");
+		if(result==0){
+			return ""
+		}else if(result==1){
+			return "urlの形式ではありません。"
+		}else{
+			return "エラーが発生しました。"
+		}
+	}
+	
+	async function  isExistPath(txt) {
+		result=await api("/anime-web/api/directory/is-exist/",txt,"path");
+	    if(result==0){
+			return ""
+		}else if(result==1){
+			return "パスが存在しません"
+		}else{
+			return "エラーが発生しました。"
+		}
+		
+	}
 })

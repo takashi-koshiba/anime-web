@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import com.example.web.etc.db.Animetable.Anime;
 import com.example.web.etc.db.Animetable.AnimeService;
+import com.example.web.etc.sta.ExecProcessget;
 import com.example.web.etc.sta.Kakasi;
 import com.example.web.etc.sta.Setting;
 import com.example.web.etc.sta.TextRep;
@@ -46,7 +48,7 @@ public class upload {
 			
 			if(f.exists()) {
 				try{
-					
+				
 					 //Path p=Paths.get("");
 					 //Path p2=p.toAbsolutePath();
 					 //System.out.print(p2);
@@ -55,19 +57,22 @@ public class upload {
 					
 					//画像をアップロード
 					String imgPath=folder+"\\" + originalName+"."+extension;
-			         Path path = Paths.get(imgPath);
-			         byte[] imgBytes=Base64.getDecoder().decode(img);
+				
+					Path path = Paths.get(imgPath);
+				
+					byte[] imgBytes=Base64.getDecoder().decode(img);
 			         Files.write(path, imgBytes);
+			      
+			         foldername=Kakasi.main(TextRep.main(foldername),"-JH -KH");
 			         
-			         foldername=TextRep.main(foldername);
-			         
-			         ffmpeg(originalName,extension);
-			         
+			      
+			         ffmpeg(originalName,path);
+			     
 			         Setting.makeAnimeDirectory(foldername);
 			         
 			         Anime anime =new Anime();
 			         anime.setOriginalName(originalName);
-			         anime.setFoldername(TextRep.main(Kakasi.main(foldername)));
+			         anime.setFoldername(TextRep.main(Kakasi.main(foldername,"-JH -KH")));
 			         animeService.insert(anime);
 			         
 			         
@@ -76,8 +81,14 @@ public class upload {
 			         return "ok";
 			         
 				}catch(IOException e) {
-				     return "アップロードに失敗しました。";
+				     return "アップロード処理に失敗しました。";
+				}catch(MaxUploadSizeExceededException e) {
+					return "ファイルサイズが大きすぎます";
 				}
+				catch(Exception e) {
+					return "未知のエラー";
+				}
+				
 			 }else {
 				return "指定したフォルダが存在しません。";
 			 }
@@ -91,19 +102,26 @@ public class upload {
 	}
 
 	//画像を縮小
-	private void ffmpeg(String fname,String extension) throws IOException {
-		String root = Setting.getRoot();
-		String sourcePath=root+"content\\anime-web\\upload\\img\\temp\\"+fname+"."+extension;
-		String savePath=root+"content\\anime-web\\upload\\img\\thumbnail\\"+fname+".webp";
+	private void ffmpeg(String fname,Path sourcePath) throws IOException {
 		
-		String cmd="echo Y | ffmpeg -i {0}   -vf scale=640:-1 -compression_level 5 -quality 80 {1}" ;
-	
-		String format= MessageFormat.format(cmd,sourcePath,savePath);	
-		 ProcessBuilder processBuilder = new ProcessBuilder("cmd.exe", "/c", format);
-
+		String root = Setting.getRoot();
+		//String sourcePath=root+"content\\anime-web\\upload\\img\\temp\\"+fname+"."+extension;
+		String savePath=root+"content\\anime-web\\upload\\img\\thumbnail\\"+fname+".avif";
+		
+		//String cmd="echo Y | ffmpeg -i \"{0}\"   -vf scale=480:-1 -compression_level 6 -q:v 18 \"{1}\"" ;
+		//cpu
+		String cmd="echo Y | ffmpeg -i \"{0}\"    -vf \"scale=if(gt(iw\\,ih)\\,220\\,-2):if(gt(iw\\,ih)\\,-2\\,220)\"  -compression_level 6 -q:v 50  -pix_fmt yuv420p \"{1}\"" ;
+		
+		String format= MessageFormat.format(cmd,sourcePath.toString(),savePath);	
+		/*
+		System.out.println(format);
+		ProcessBuilder processBuilder = new ProcessBuilder("cmd.exe", "/c", format);
+		 
          // コマンドを実行
          processBuilder.start();
-
+*/
+		ExecProcessget.start(format);
+		
 	}
 
 	

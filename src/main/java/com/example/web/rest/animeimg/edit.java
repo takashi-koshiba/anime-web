@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.web.etc.db.Animetable.AnimeService;
 import com.example.web.etc.sta.Kakasi;
 import com.example.web.etc.sta.RemoveExtension;
+import com.example.web.etc.sta.TextRep;
 @RestController
 
 public class edit {
@@ -18,12 +19,12 @@ public class edit {
 	public editBean start(@RequestPart("filename") String filename)  {
 		
 		String title=RemoveExtension.main(filename);
-		String folder=RemoveExtension.main(Kakasi.main(title));
+		String folder=Kakasi.main(TextRep.main(title),"-JH -KH");
 		
-
 		boolean exist=animeService.IsExistItem(title);
 		
 		editBean result=new editBean(filename,folder,title,exist);
+		System.out.println(Kakasi.main(TextRep.main(title),"-JH -KH"));
 		return result;
 		
 		

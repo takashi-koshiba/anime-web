@@ -56,11 +56,13 @@ public class Setting {
 			fileOut.close();
 		}
 	}
+	
 	public static void setRoot(String path) throws IOException {
 		FileOutputStream fileOut= null;
 		try {
 			fileOut = new FileOutputStream(settingfile);
-			settings.setProperty("fullPath", path);
+			Path p= Paths.get(path).toAbsolutePath().normalize();
+			settings.setProperty("fullPath", p.toString());
 			settings.store(fileOut, "setting");
 		} finally {
 			fileOut.close();
@@ -68,24 +70,27 @@ public class Setting {
 		
 
 	}
-	
-	public static void setUrl(String url) throws IOException {
+	public static String getVideoPath() {
+		return settings.getProperty("videoPath");
+	}
+	public static void setVideoPath(String path) throws IOException {
 		FileOutputStream fileOut= null;
 		try {
 			fileOut = new FileOutputStream(settingfile);
-			settings.setProperty("url", url);
+			Path p= Paths.get(path).normalize();
+			settings.setProperty("videoPath", p.toString());
 			settings.store(fileOut, "setting");
 		} finally {
 			fileOut.close();
 		}
 	}
-	public static String  getUrl() {
-		
-		return settings.getProperty("url");
-	}
+	
+
+	
+
 	public static boolean IsUrl(String url) {
 
-		return url.matches("^https?://[\\w\\/.-]*/");
+		return url.matches("^https?://.+[\\w-]/?$");
 	}
 	
 	public static String getSettingfile() {
@@ -109,8 +114,20 @@ public class Setting {
 	        Files.createDirectories(dir);
 	        dir = Paths.get(fullPath,"content", "anime-web", "anime", "img");     
 	        Files.createDirectories(dir);
-
-	        
+	        dir = Paths.get(fullPath,"content", "anime-web", "upload", "file","image");     
+	        Files.createDirectories(dir);
+	        dir = Paths.get(fullPath,"content", "anime-web", "upload", "file","video");     
+	        Files.createDirectories(dir);
+	        dir = Paths.get(fullPath,"content", "anime-web", "upload", "file","other");     
+	        Files.createDirectories(dir);
+	        dir = Paths.get(fullPath,"content", "anime-web", "upload", "file","hls");     
+	        Files.createDirectories(dir);
+	        dir = Paths.get(fullPath,"content", "anime-web", "upload", "file","thumbnail");     
+	        Files.createDirectories(dir);
+	        dir = Paths.get(fullPath,"content", "anime-web", "upload", "file","thumbnail-big");     
+	        Files.createDirectories(dir);
+	        dir = Paths.get(fullPath,"content", "anime-web", "upload", "file","thumbnail-temp");     
+	        Files.createDirectories(dir);
 	        return true;
 	        
 	    } catch (IOException e) {
@@ -129,7 +146,7 @@ public class Setting {
 	        folder=folder.trim();
 
 	        
-	        Path dir = Paths.get(fullPath, "content","anime-web", "anime", "video",folder);
+	        Path dir = Paths.get(fullPath, "content","anime-web","anime","video",folder);
 	        Files.createDirectories(dir);
 	        
 	       

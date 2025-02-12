@@ -1,0 +1,23 @@
+
+.bar_p{
+	display: inline;
+	margin-left: 10px;
+}
+	
+
+#left_main{
+	float:none !important;
+	
+}
+.p{
+	float:left;
+	margin:0;
+}
+#user_select{
+	width: 300px;
+}
+#error{
+	max-width:600px;
+	width:90%;
+	height:300px;
+}

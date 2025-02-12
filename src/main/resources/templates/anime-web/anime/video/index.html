@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"><html>
 <head th:replace="~{anime-web/common/header/index :: meta(~{::title},~{::link},~{::script})}">
-	<title>あ</title>
+	<title data-th-text="${anime.originalName}"></title>
 
 
 	<link rel="stylesheet" th:href="@{/anime-web/video/index.css}">
+	<link rel="icon" th:href="${animeThumnailPath}">
 	<script th:src="@{/anime-web/common/main/index.js}"></script>
 	<script th:src="@{/anime-web/video/index.js}"></script>
 </head>
@@ -14,10 +15,10 @@
 	<br>
 	<div id="main">
 		<div id="left">
-			<h2 th:text="${anime.originalName}"></h2>
+			<h1 th:text="${anime.originalName}"></h1>
 			<hr>
 			<div id="summary_div">
-				<p >
+				<p class="summary">
 					<span>あらすじ：</span><br>
 					<span id="summary_p" th:text="${animeInfo.txt}"></span>
 				</p>
@@ -25,20 +26,42 @@
 			
 			
 			<p class="_p">エピソード</p>
+			<div class="div_a"><a class="_p _a" id="play_p"  download >プレイリストDL</a></div>
+			<div class="div_a"><a class="_p _a" th:href="@{${anime.id}(sort=${info.nextIndex})}" th:text="'並び替え:' + ${info.sortName}" ></a></div>
+						
 			
-				<th:block th:each="epi:${video}">
-					<div id="videos">
-						<div class="episode">
-							<div class="thumb">
-								<img th:src="${thumnailPath}+${epi.fname}+'/output_0.jpg'">
-							</div>
-							<div class="episodeTitle">
-								<p th:text="${epi.fname}"></p>
-							</div>
+			<th:block th:each="epi:${videoInfo}">
+				<div class="videos">
+					<div class="episode">
+						<div class="thumb">
+							<img th:src="'/anime-web/get-file/anime/image/video-thumbnail/'+${epi.video_id}+'/output_'+${epi.nocmframe}">
 						</div>
-					</div><!--videos-->
-					
-				</th:block>
+						<div class="episodeTitle">
+							<a th:href="'/anime-web/api/db/videoApi/video/'+${epi.video_id}"><p class="title" th:text="${epi.fname}"></p></a>
+						</div>
+						<div class="videoinfo">
+							
+							<div class="videoInfoPropaty">
+								<p>
+								<span class="info_tag">日付</span>
+								:<span class="info_text" th:text="${epi.hiduke}"></span>
+								</p>
+							</div>
+							
+							<div class="videoInfoPropaty">
+								<p class="info_time"><span class="info_tag">再生時間</span>：<span class="info_text" th:text="${epi.video_time}"></span></p><br>
+							
+							</div>
+							
+							<div class="videoInfoPropaty">
+								<p><span  class="info_tag">最大値との差</span>:<span class="info_text" th:text="${epi.score}"></span>％</p>
+							</div>
+							<br>
+						</div>
+					</div>
+				</div><!--videos-->
+				
+			</th:block>
 
 				
 				
@@ -51,11 +74,11 @@
 		<div id="left_main">
 			
 			<div id="left_main_child">
-				<h2>情報</h2>
+				<h1>情報</h1>
 				<hr>
 
 				<div id="poster">
-					<img id="poster_img">
+					<img id="poster_img" th:src="${animeThumnailPath}">
 				</div>
 				
 				<div id="data" class="sub">
@@ -86,6 +109,27 @@
 							<span th:text="${animeInfo.score}"></span>
 
 						</p>
+						<p>
+							<span>フォルダ名</span>
+							<span>:</span>
+							<span th:text="${anime.foldername}"></span>
+
+						</p>
+						<p>
+							<span>タイトル数</span>
+							<span>:</span>
+							<span th:text="${videoRows}"></span>
+
+						</p>
+						<th:block th:if="${user.admin}">
+							<p>
+								<a th:href="'./video-alias/'+${anime.id}" >別名追加</a>	
+														
+							</p>
+							
+
+						</th:block>
+
 						
 					</div><!--info-->
 					

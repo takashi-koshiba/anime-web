@@ -31,11 +31,13 @@ document.addEventListener("DOMContentLoaded",function(){
 	})
 	
 	year.addEventListener('change',function(){
-		let url=new URL(window.location.href);
+		let urlObj=new URL(window.location.href);
 		let result=splitValue(this.value);
-		url=new URL(getPrefixUrl(url,'year',result[0]));
-		
-		url=getPrefixUrl(url,'season',result[1]);
+		//console.dir(addUrl('year',result[0],url))
+		url=addUrl('year',result[0],urlObj);
+		console.dir(url);
+		url=addUrl('season',result[1],url);
+		console.dir(url)
 		document.location= url;
 	});
 	function getParam(){

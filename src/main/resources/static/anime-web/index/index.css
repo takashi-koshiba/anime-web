@@ -1,13 +1,21 @@
 #left{
 	
-	width:400px;
+	width:300px;
 	
 }
 #left_main{
 	width: 70%;
 }body #main,#topImg{
-	min-width: 1200px;
+	
 }
 
 	
 
+@media (max-width: 600px) {
+	#left_main{
+		
+		display: none !important;
+
+
+	}
+}

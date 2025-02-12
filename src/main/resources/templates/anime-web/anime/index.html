@@ -16,136 +16,150 @@
 	<script th:src="@{/anime-web/common/main/index.js}"></script>
 	<script th:src="@{/anime-web/anime/slide.js}"></script>
 	
+	
 	<script th:src="@{/anime-web/class/class_ajax.js}"></script>
 	<script th:src="@{/anime-web/anime/animeAll.js}"></script>
 	<script th:src="@{/anime-web/anime/prefix.js}"></script>
 	<script th:src="@{/anime-web/anime/search.js}"></script>
+	
 </head>
-
+<!--検索したときに画面外選択でキャンセル用-->
+<div id="searchCancel"></div>
+<header th:replace="~{anime-web/common/header/index :: header}"></header>
 <body>
-	<header th:replace="~{anime-web/common/header/index :: header}"></header>
-		<div id="main">
-			<div id="left">
+
+	
+	<div id="main">
+		<div id="left">
+			<div id="left_div">
 				<h2>検索</h2>
-				<hr>
-				<input type="text" id="search" placeholder="漢字NG！" >
-				<div id="searchResult" style="position: absolute;">
-				</div><!--searchResult-->
-				
-				
-				<div id="textcategoryP">
-					<div id="textcategory">
-						<div class="tab"><p>平仮名</p></div>
-						<div class="tab"><p>英字</p></div>
-						<div class="tab" ><p>その他</p></div>
-						<div class="tab" ><p>全部</p></div>
-					</div>
-				</div><!--textcategoryP-->
-				<div id="prefixButtons">
-		
-				</div>
-
-				
-			</div><!--left-->
-			
-			
-			
-			
-			<!--横スクロールテンプレ-->
-			<div id="rank-animeTemplate" style="display: none;">
-				<div class="rank-anime-child">
-					<div class="rank-anime-img-div">
-						<a>
-							<img  src="">
-						</a>
-										
-					</div><!--rank-anime-img-div-->
-					<div class="div-title">
-						<p class="anime-title"></p>
-						<p class="anime-info">
-							<span class="rank-value">1/63</span>
-							<span class="score-txt">偏差値:</span>
-							<span class="anime-score"></span>
-						</p>
-					</div><!--div-title-->
-				
-				</div><!--rank-anime-child-->
-
-			</div><!--rank-animeTemplate-->
-			<!--横スクロールテンプレここまで-->
-			
-			<!--アニメ全部テンプレ-->
-			<div class="allAnimeChild rank-anime" id="animeAllTemplate" style="display:none">
-				<div class="animeAllChild rank-anime-child ">
-					<div class="rank-anime-img-div">
-						<a>
-							<img  src="">
-						</a>
-									
-					</div><!--rank-anime-img-div-->
-					<div class="div-title">
-						<p class="anime-title">テスト</p>
-						<p class="anime-info">
-							<span class="score-txt">偏差値:</span>
-							<span class="anime-score">50.3</span>
-						</p>
-					</div><!--div-title-->
-				
-				</div><!--animeAllChild-->
-
-			</div><!--rank-anime-->
-			<!--アニメ全部テンプレここまで-->
-			
-			<div id="left_main">
-				<div class="left_main_child" >
-					<h2>ランキング</h2>
 					<hr>
+					<input type="text" id="search" placeholder="漢字NG！">
+					<div id="searchResult" style="position: absolute;">
+					</div><!--searchResult-->
 					
-					<div class="rank" id="rank_all">
-						<div class="scrollButton leftButton"></div>
-							<div class="rank-scroll">
-								<div class="rank-div">																										</div><!--rank-anime-->
-								</div><!--rank-div-->
-							<div class="scrollButton rightButton"></di>
-						</div>	<!--rank-scroll-->																																																			<!--kakeeeee-->
-					</div><!--rank-->
-				
-					<div id="seasonTitle_div">
-						<h2 id="season_h2">シーズン別ランキング</h2>
-						<select id="animeyear"></select>
-					</div><!--seasonTitle-->				
-					<hr>
-					<div class="rank">
-						<div class="scrollButton leftButton"></div>
-							<div class="rank-scroll">
-								<div class="rank-div">																										</div><!--rank-anime-->
-								</div><!--rank-div-->
-							<div class="scrollButton rightButton"></di>
-						</div>	<!--rank-scroll-->																																																			<!--kakeeeee-->
-					</div><!--rank-->
-				</div><!--left_main_child-->
-				
-				<div class="left_main_child">
-					<div id="allAnimeTitle">
-
-						<h2>アニメ</h2>
+					
+					<div id="textcategoryP">
+						<div id="textcategory">
+							<div class="tab"><p>平仮名</p></div>
+							<div class="tab"><p>英字</p></div>
+							<div class="tab" ><p>その他</p></div>
+							<div class="tab" ><p>全部</p></div>
+						</div>
+					</div><!--textcategoryP-->
+					<div id="prefixButtons">
+			
 					</div>
-					<hr>
-					<div id="animeAllP">
+				
+			</div>
+			
+
+			
+		</div><!--left-->
+		
+		
+		
+		
+		<!--横スクロールテンプレ-->
+		<div id="rank-animeTemplate" style="display: none;">
+			<div class="rank-anime-child">
+				<div class="rank-anime-img-div">
+					<a class="img_a">
+						<img  src="">
+					</a>
+									
+				</div><!--rank-anime-img-div-->
+				<div class="div-title">
+					<p class="anime-title"></p>
+					<p class="anime-info">
+						<span class="rank-value">1/63</span>
+						<span class="score-txt">偏差値:</span>
+						<span class="anime-score"></span>
+					</p>
+				</div><!--div-title-->
+			
+			</div><!--rank-anime-child-->
+
+		</div><!--rank-animeTemplate-->
+		<!--横スクロールテンプレここまで-->
+		
+		<!--アニメ全部テンプレ-->
+		<div class="allAnimeChild rank-anime" id="animeAllTemplate" style="display:none">
+			<div class="animeAllChild rank-anime-child ">
+				<div class="rank-anime-img-div">
+					<a class="img_a">
+						<img  src="">
+					</a>
+								
+				</div><!--rank-anime-img-div-->
+				<div class="div-title">
+					<p class="anime-title">テスト</p>
+					<p class="anime-info">
+						<span class="score-txt">偏差値:</span>
+						<span class="anime-score">50.3</span>
+					</p>
+				</div><!--div-title-->
+			
+			</div><!--animeAllChild-->
+
+		</div><!--rank-anime-->
+		<!--アニメ全部テンプレここまで-->
+		
+		<div id="left_main">
+			<div class="left_main_child" >
+				<h2>ランキング</h2>
+				<hr>
+				
+				<div class="rank" id="rank_all">
+					<div class="scrollButton leftButton"></div>
+						<div class="rank-scroll">
+							<div class="rank-div">																										</div><!--rank-anime-->
+							</div><!--rank-div-->
+						<div class="scrollButton rightButton"></di>
+					</div>	<!--rank-scroll-->																																																			<!--kakeeeee-->
+				</div><!--rank-->
+			
+				<div id="seasonTitle_div">
+					<h2 id="season_h2">シーズン別ランキング</h2>
+					<select id="animeyear"></select>
+				</div><!--seasonTitle-->				
+				<hr>
+				<div class="rank">
+					<div class="scrollButton leftButton"></div>
+						<div class="rank-scroll">
+							<div class="rank-div">																										</div><!--rank-anime-->
+							</div><!--rank-div-->
+						<div class="scrollButton rightButton"></di>
+					</div>	<!--rank-scroll-->																																																			<!--kakeeeee-->
+				</div><!--rank-->
+			</div><!--left_main_child-->
+			
+			<div class="left_main_child">
+				<div id="allAnimeTitle">
+
+					<h2>アニメ</h2>
+				</div>
+				<hr>
+				<div id="animeAllP">
+					<div id="animeAllPP">
+						
 						<div id="animeAll">
+												
 						</div><!--animeAll-->		
 					</div>
-					<div id="load_div">
-							
+					
+				</div>
+				<div id="load_div">
 						
-					</div>	
-				</div><!--left_main_child-->
+					
+				</div>	
+			</div><!--left_main_child-->
 
-			</div><!--left_main-->
+		</div><!--left_main-->
 
 
-		</div><!--main-->
-
+	</div><!--main-->
+	<script th:src="@{/anime-web/anime/index.js}"></script>
 </body>
 
 </html>

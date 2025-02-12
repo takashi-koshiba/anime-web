@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"><html>
+<head th:replace="~{anime-web/common/header/index :: meta(~{::title},~{::link},~{::script})}">
+	<title>あ</title>
+	<link rel="stylesheet" th:href="@{/anime-web/uploader/index.css}">
+	<link rel="stylesheet" th:href="@{/anime-web/common/main/index.css}">
+	
+	<script th:src="@{/anime-web/class/class_ajax.js}"></script>
+	<script th:src="@{/anime-web/class/class_upload.js}"></script>
+		
+	<script th:src="@{/anime-web/uploader/index.js}"></script>
+</head>
+
+<body>
+	<header th:replace="~{anime-web/common/header/index :: header}"></header>
+	<br>
+	<div id="main">
+				
+		<div id="left_main">
+			<div id="left_main_child">
+				<h2>ユーザ名：<span th:text="${users.name}"></span></h2>
+				<hr>
+		
+				<p><a href="/anime-web/uploader/login/create">アカウント作成</a>/
+					<a href="/anime-web/uploader/logout/">ログアウト</a>/
+					<a href="/anime-web/uploader/view/">表示</a>/
+					<a href="/anime-web/uploader/upload/">アップロード</a>
+				</p>
+			
+				
+			</div><!--left_main_child-->
+		</div><!--left_main-->
+				
+	</div><!--main-->
+			
+
+
+
+
+
+</body>
+</html>

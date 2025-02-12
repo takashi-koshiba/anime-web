@@ -21,10 +21,16 @@
 					<hr>
 					<label><p class="p">ドキュメントルート  :   </p><input type="text" id ="root" placeholder="C:\apache\htdocs\" th:value="${path}">
 					</label><p class="p" id="rootResult"></p><br>
-					<label><p class="p">URL  :   </p><input type="text" id ="url" placeholder="http://localhost/" th:value="${url}">
-					</label><p class="p" id="urlResult"></p><br>
 					
+					
+					
+					<label><p class="p">動画のディレクトリ : </p>
+						<input type="text" id="videoPath" th:value="${videoPath}"></label>
+						<p class="p" id="videoPathResult" ></p>※外部からプレイリストを再生するときはネットワークパスを指定してください。
+					<br>
 					<input id="button" type="button" value="送信">
+					
+					<p style="color:red">設定を反映させるにはサーバーを再起動してください</p>
 				</div><!--left_main_child-->
 			</div><!--left_main-->
 			

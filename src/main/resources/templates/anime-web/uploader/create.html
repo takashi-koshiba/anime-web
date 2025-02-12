@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"><html>
+<head th:replace="~{anime-web/common/header/index :: meta(~{::title},~{::link},~{::script})}">
+	<title>あ</title>
+	<link rel="stylesheet" th:href="@{/anime-web/uploader/index.css}">
+	<link rel="stylesheet" th:href="@{/anime-web/common/main/index.css}">
+	<script th:src="@{/anime-web/class/class_ajax.js}"></script>
+	
+	<script th:src="@{/anime-web/uploader/create.js}"></script>
+</head>
+
+<body>
+	<header th:replace="~{anime-web/common/header/index :: header}"></header>
+	<br>
+	<div id="main">
+				
+		<div id="left_main">
+			<div id="left_main_child">
+				<h2>アカウント作成</h2>
+				<hr>
+				<div  class="label_login">
+					<label>
+						<p class="p">ユーザー名:   </p>
+						<input type="text"  id="name">
+					</label>
+				</div>
+				
+				<br>
+				
+				<div class="label_login">
+					<label>
+						<p class="p">パスワード  :   </p>
+						<input type="text" id="pw">
+					</label>
+				</div>
+				
+				<br>
+				
+				<input id="submit" type="submit"  value="送信">
+				
+				<a href="/anime-web/uploader/login">ログイン</a>
+			
+			</div><!--left_main_child-->
+		</div><!--left_main-->
+				
+	</div><!--main-->
+			
+
+
+
+
+
+</body>
+</html>

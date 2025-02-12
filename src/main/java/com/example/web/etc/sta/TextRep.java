@@ -9,8 +9,8 @@ public class TextRep {
 		text=text.replace("ゎ", "わ");
 		text=text.replace("ヰ", "イ");
 		text=text.replace("ヱ", "エ");
-		
-		
+
+
 		text=text.replace("0", "０");
 		text=text.replace("1", "１");
 		text=text.replace("2", "２");
@@ -76,6 +76,42 @@ public class TextRep {
 		text=text.replace("X", "Ｘ");
 		text=text.replace("Y", "Ｙ");
 		text=text.replace("Z", "Ｚ");
+		text=text.replace("Ⅰ", "I");
+		text=text.replace("Ⅱ", "II");
+		text=text.replace("Ⅲ", "III");
+		text=text.replace("Ⅳ", "IV");
+		text=text.replace("Ⅴ", "V");
+		text=text.replace("Ⅵ", "VI");
+		text=text.replace("Ⅶ", "VII");
+		text=text.replace("Ⅷ", "VII");
+		text=text.replace("Ⅸ", "IX");
+		text=text.replace("Ⅹ", "X");
+
+		
+		text=text.replace("ⅰ", "i");
+		text=text.replace("ⅱ", "ii");
+		text=text.replace("ⅲ", "iii");
+		text=text.replace("ⅳ", "iv");
+		text=text.replace("ⅴ", "v");
+		text=text.replace("ⅵ", "vi");
+		text=text.replace("ⅶ", "vii");
+		text=text.replace("ⅷ", "viii");
+		text=text.replace("ⅸ", "ix");
+		text=text.replace("ⅹ", "x");
+		text=text.replace("ⅺ", "xi");
+		text=text.replace("ⅻ", "xii");
+		text=text.replace("*", "＊");
+		
+		text=text.replace("#", "♯");
+		text=text.replace("?", "？");
+		text=text.replace(" ", "");
+		text=text.replace("　", "");
+
+		//text = text.replaceAll("[^Ａ-Ｚ A-Zａ-ｚ a-z 0-9 ０-９ぁ-ん ー]", "");
+		//text = text.replaceAll("[^Ａ-Ｚ A-Zａ-ｚ a-z 0-9 ０-９ ぁ-ん ァ-ヶ 亜-熙", "");
+		
+		//アニメ検索でヒットしないため一部記号は削除
+		text = text.replaceAll("[^Ａ-Ｚ A-Zａ-ｚ a-z 0-9 ０-９ぁ-ん ー ァ-ヶ 一-龠 !！ ＊ ♭ ♯ ？]", "");
 		return text;
 	}
 }

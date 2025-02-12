@@ -16,6 +16,14 @@ public class AnimeService {
     public AnimeService(AnimeJDBC animeJDBC) {
         this.animeJDBC = animeJDBC;
     }
+    public void insertAlias(Integer id,String alias) {
+    	animeJDBC.insertAlias(id,alias);
+    	
+    	
+    }public void insertAlias(Integer id) {
+    	animeJDBC.delAlias(id);
+
+    }
 
     public boolean IsExistItem(String item) {
         int count = animeJDBC.countRow(item);
@@ -27,7 +35,9 @@ public class AnimeService {
     	
     	return row>0?true:false;
     }
-    
+    public List<Anime> selectGt(Integer length){
+    	return animeJDBC.selectGt(length);
+    }
     public List<Anime> selectAll(){
     	return animeJDBC.selectAll();
     }
@@ -40,6 +50,9 @@ public class AnimeService {
     public List<AnimeSort>selectAllSortByText(Integer charId){
 		return animeJDBC.selectAllSortByText(charId);
     	
+    }
+    public List<Anime> selectAliasOne(Integer id){
+    	return animeJDBC.selectAliasOne(id);
     }
 
 

@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded",function(){
 	let fileEdit=document.getElementById('fileEdit');
 	let inputEdit=document.getElementById('inputEdit');
 	
-	const pattern = /data:(image\/jpeg|image\/png|image\/webp)/;
+	const pattern = /data:(image\/jpeg|image\/png|image\/webp|image\/avif)/;
 	let upload=new class_upload(pattern);
 	
 	//エラーがあれば出力
@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded",function(){
 						let resultGetFile=result;
 						
 						//指定した拡張子か
-						console.dir(resultGetFile);
+						console.dir(json);
 						if(resultGetFile[0] != null && !IsExist){
 							//テンプレからコピーする
 							flag=true;

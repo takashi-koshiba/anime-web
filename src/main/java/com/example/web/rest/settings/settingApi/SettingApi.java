@@ -12,7 +12,7 @@ public class SettingApi{
 	public SettingBean start()  {
 		SettingBean settingBean = new SettingBean();
 		settingBean.setDocumentRoot(com.example.web.etc.sta.Setting.getRoot());
-		settingBean.setUrl(com.example.web.etc.sta.Setting.getUrl());
+		
 		return settingBean;
 		
 		

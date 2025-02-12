@@ -1,55 +1,41 @@
 
 document.addEventListener("DOMContentLoaded",function(){
-	
-	
-	
-	let poster_img = document.getElementById('poster_img');
+	let play_p = document.getElementById('play_p');
+
+	play_p.setAttribute('href','/anime-web/api/db/videoApi/playList/'+getId()+"?sort="+ getParam("sort"));
 
 	
-
-	exec();
-	
-	async function exec(){
-		let settingUrl='/anime-web/api/setting/';
-		let id=getId();
-		//anime-web/api/db/select-one/{id}
-		let urlRank='/anime-web/api/db/select-one/'+id;
-		let animeData=await getData(urlRank);
-		
-		let rootUrl=await getData(settingUrl);
-		
-		await setImg(rootUrl,animeData);
-
-		
-	}
+	//exec();
+	window.addEventListener('resize', function(){
+		setVideosH(20);
+	});
 	
 	
-	async function setImg(rootUrl,animeData){
-		console.dir(animeData)
-		let url=rootUrl['url']+'content/anime-web/upload/img/thumbnail/'+animeData['originalName']+".webp";
-		poster_img.setAttribute('src',url);
-	}
+	
 	
 	function getId(){
 		let index=location.pathname.lastIndexOf('/');
 		let result=location.pathname.substring(index+1);
 		return result;
 	}
+	function getParam(p){
+		let url = new URL(window.location.href);
+		let params = url.searchParams;
+		return params.get(p);
+	}
 	
-	async function  api(url) {
+	
+	function setVideosH(h){
+		
+		let videos=document.getElementsByClassName('videos');
 
-			const response = await fetch(url);
-			const json = await response.json(); 
-			return json;
+		for(let i=0;i<videos.length;i++){
+			let pH=videos[i].children[0].clientHeight+h;
 
+			videos[i].style.height=pH+"px";
+		}
 	}
-	async function getData(url){
-		
-		
-		let setting=await api(url);
-		return setting;
-		
-	}
+	
 	
 
 });
