@@ -19,6 +19,7 @@ DB_CONFIG = {
 }
 
 
+#除外に設定した番組を移動します。
 
 PORT=8082  #実行しているjavaのポート番号
 
@@ -32,7 +33,7 @@ def main():
 
     """
     
-    ♯inputPath = "D:\\TV\\ts\\"          #########いらない動画の移動元#############環境に合わせてください
+    ♯inputPath = "D:\\TV\\ts\\"          ########tsファイルがある場所#############環境に合わせてください
     ♯outputPath="D:\\TV\\ts\\gomi\\"     #########いらない動画の移動先#############環境に合わせてください
     if not os.path.isdir(inputPath):
         print("パスがありません"+inputPath )
