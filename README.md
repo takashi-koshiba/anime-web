@@ -20,6 +20,7 @@
     <li>mysql</li>
 </ul>
 <br>
+kakasiとffmpegはパスを通してください。
 
 リポジトリをクローン
 ```bash
