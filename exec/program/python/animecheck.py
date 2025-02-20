@@ -88,7 +88,7 @@ def isExistDBToFolder(videoPath,animeResult,videoResult):
             
             
 def isExistFolderToDB(videoPath,animeResult):
-    print("--------フォルダがDB登録されているか---------------")
+    print("--------DBに登録されていないフォルダがあるか---------------")
     print("")
     folderName=[row[2] for row in animeResult]
     files = glob.glob(videoPath+"*")
