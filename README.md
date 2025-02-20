@@ -1,5 +1,5 @@
 # anime-web
-<img src="https://github.com/takashi-koshiba/anime-web/blob/main/2.PNG">
+<img src="https://github.com/takashi-koshiba/anime-web/blob/main/2.png">
 録画したテレビ番組を管理するために作成しました。<br>
 アマゾンプライムやネットフリックスのようにテレビ番組を確認できます。<br>
 今期放送中のアニメを表示したり番組の人気度をランキング形式で表示します。<br>
@@ -124,6 +124,7 @@ http://localhost:8082/anime-web/anime<br>
  エンコードしたファイルを移動してDBに書き込みます。<br>
  実行しても動画が移動されない場合は<br>
  個々のアニメの「別名追加」からファイル名を追加してください。<br>
+ 但しlocalhost以外だと表示されません。<br>
  ファイル内のディレクトリを編集してください。<br>
 
  <br>
@@ -236,6 +237,19 @@ else 0 end
 ランキング集計対象にします。<br>
 <br>
 
+<h2>使用方法</h2>
+見たい番組を選んでください。<br>
+番組が決まっている場合は頭文字を選択したり、タイトルを入力して選択してください。<br>
+<img src="https://github.com/takashi-koshiba/anime-web/blob/main/3.PNG">
+<br>
+<br>
+<img src="https://github.com/takashi-koshiba/anime-web/blob/main/2.PNG"><br>
+番組を選択すると画面が変わり、動画が表示されます。<br>
+動画のタイトルを選択するかプレイリストDLボタンを押下すると.m3u8形式のプレイリストがダウンロードされます。<br>
+プレイリストはvlcやmpc-hcなどの再生ソフトで再生できます。<br>
+再生ができない場合は動画のパスが間違っている可能性があります。
+その場合は<a href="http://localhost:8082/anime-web/etc/settings/directory/">設定</a>から「動画のディレクトリ」を動画がある場所に修正してください。
+
 
 
 <h1>アップローダー</h1>
@@ -253,16 +267,21 @@ apiを経由してファイルにアクセスしますが、30分後にセッシ
 
 動画の場合はhlsに変換します。<br>
 
-<img style="width:200px" src="https://github.com/takashi-koshiba/anime-web/blob/main/%E3%82%AD%E3%83%A3%E3%83%97%E3%83%81%E3%83%A3.PNG">
-デフォルト設定では再生する際に画質は帯域によって変化します。<br>
-画質を強制させたい場合はメニューバーから指定してください。<br>
 音声の場合は音量を均一化します。<br>
 
 画像の場合は縮小しサムネイルを生成します。<br>
 
 
+
+
+<h2>使用方法</h2>
+アップロードする場合はログイン後にメニューバーから「アップロード」を選択してアップロードしてください。<br>
+
+<img style="width:200px" src="https://github.com/takashi-koshiba/anime-web/blob/main/%E3%82%AD%E3%83%A3%E3%83%97%E3%83%81%E3%83%A3.PNG">
+デフォルト設定では動画再生する際に画質は帯域によって変化します。<br>
+画質を強制させたい場合はメニューバーから画質を指定してください。<br>
+
 ファイル検索のアルゴリズムは
 <a href="https://github.com/takashi-koshiba/similar-words">similar-words</a>
 を使用しています
 
-  
