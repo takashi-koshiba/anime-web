@@ -140,7 +140,7 @@ http://localhost:8082/anime-web/anime<br>
 編集ができたら下記の順番で実行してください。<br><br>
 DBを更新します。<br>
 実行する順番<br>
-rename.php<br>
+rename_anime.php<br>
 ↓<br>
 animeCheck.py<br>
 ↓<br>
@@ -174,7 +174,7 @@ python exec\program\python\animecheck.py
 <br>
 3.アニメを再度追加<br>
 <br>
-4.rename.phpから順番に実行すれば修正されます。<br>
+4.rename_anime.phpから最後のanimeCheck.pまで順番に実行すれば修正されます。<br>
 <br>
 animeCheck.pyでエラーが表示された場合はフォルダを削除するなどしてDBと一致させてください。<br>
 
@@ -189,12 +189,42 @@ assファイルのサイズを抽出しています。<br>
 条件<br>
 下記をすべて満たしていないとランキングの取得ができません。
 Amatsukazeを使用してmkvファイル内にassファイルが格納されていること<br>
-ファイル名にチャンネル名が記載されていること(例：NHK総合1など)<br>
 ファイル名に下記のいずれかのフォーマットで日付が記載されていること<br>
     YYYYMMDD-hhmm<br>
     YYYY-MM-DD-hhmm<br>
     YYYYMMDDhhmm<br>
     YYMMDD<br>
+<br>
+
+動画のファイル名にチャンネル名の記載があり、下記のチャンネル名に合致すること。<br>
+ローカル局など記載されていないチャンネルがある場合は<br>
+move.pyの下記SQLを修正してください。<br>
+修正箇所は3つほどあります。<br>
+使用する数字は0以外なら問題ないです。<br>
+
+```bash
+
+
+select case 
+                            
+    when video.fname like "%ＴＯＫＹＯ　ＭＸ１%" then 1
+    when video.fname like  "%ＮＨＫ総合１・東京%" then 2
+    when video.fname like  "%フジテレビ%" then 3
+    when video.fname like  "%テレビ東京１%" then 4
+    when video.fname like  "%テレビ朝日%" then 5
+    when video.fname like  "%Ｊ：ＣＯＭテレビ%" then 6
+    when video.fname like  "%ＴＢＳ１%" then 7
+    when video.fname like  "%ｔｖｋ１%" then 8
+    when video.fname like  "%日テレ１%" then 9
+    when video.fname like  "%ＮＨＫＥテレ１東京%" then 10
+    when video.fname like  "%(MX)%" then 1 
+    when video.fname like  "%(tvk)%" then 8
+    when video.fname like  "%(TX)%" then 4
+    when video.fname like  "%(CX)%" then 3
+    when video.fname like  "%ＴＯＫＹＯ　ＭＸ２%" then 1
+                            
+else 0 end
+```
 <br>
 再放送の判定方法<br>
 再放送をランキングの集計に含めると数値が下がるため除外してます。<br>
