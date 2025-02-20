@@ -3,7 +3,7 @@
 
 @media (min-width: 901px) {
 	.fileElem{
-		width: 300px;
+		width: 280px;
 		padding:10px 10px;	
 	}
 	.rank-anime-img-div a img{
@@ -15,7 +15,7 @@
 	}
 }@media (max-width: 900px) {
 	.fileElem{	
-		width: 200px;
+		width: 180px;
 		padding:10px 10px;
 			
 	}
@@ -34,7 +34,7 @@
 	}
 }@media (max-width: 600px) {
 	.fileElem{	
-		width: 120px;
+		width: 100px;
 		padding:10px 10px;
 			
 	}
@@ -75,14 +75,14 @@
 	width: 100%;
 	
 	
-	background-color: red;
+	/*background-color: red;*/
 }#view_div_child2{
 	margin:0 auto;
 	width: 90%;
 	display: flex;
 	justify-content: start;
 	flex-wrap: wrap;
-	background-color: rgb(255, 255, 128);
+	/*background-color: rgb(255, 255, 128);*/
 }
 #left_main_child{
 	padding-right: 50px;
@@ -92,7 +92,7 @@
 .item_div{
 	width: 200px;
 	height: 165px;
-	background-color: red;
+/*	background-color: red;*/
 }
 
 

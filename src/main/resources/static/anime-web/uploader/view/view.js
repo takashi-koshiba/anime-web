@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded",function(){
 		current:0,//現在いるページのインデックス
 		pagemax:1,//ページの上限
 		
-		itemLimit:20,//表示するアイテムの数
+		itemLimit:100,//表示するアイテムの数
 		pageQty:5//表示するページの数
 	}
 	let items=[];
@@ -18,8 +18,7 @@ document.addEventListener("DOMContentLoaded",function(){
 	itemViewBack.addEventListener("click",function(event){
 
 		closeView(event,this);
-		hls.destroy();
-		hls=null;
+
 	});
 	
 	
@@ -86,7 +85,12 @@ document.addEventListener("DOMContentLoaded",function(){
 			elem.play();
 			
 			
-			
+			elem.addEventListener('click', function(e) {
+				//親要素のイベントが伝搬されないようにする
+				e.stopPropagation();
+				})
+				
+			//スマホ用に画面タッチで再生と一時停止できるようにする
 			elem.addEventListener('touchstart', function(e) {
 						    // コントローラー内のボタンがクリックされた場合、クリックを無視する
 						    if (e.target.tagName === 'BUTTON') return;
@@ -160,6 +164,8 @@ document.addEventListener("DOMContentLoaded",function(){
 			}
 		
 		}
+		hls.destroy();
+		hls=null;
 	}	
 	
 	async function fileApi() {
