@@ -9,13 +9,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 
-//パスの末尾に　/をつけると親フォルダは削除されません。
 public class DeleteR {
 	public static void main(Path p,Boolean delParentDir) {
 		Path path= p.toAbsolutePath().normalize();
 		File dir = path.toFile();
 		File[] lists = dir.listFiles();//ディレクトリとファイルを取得
-	    if(lists ==null) return ;
+	    if(lists ==null) {
+	    	delFile(path);
+	    	return;
+	    }
 	    
 	    for(File list :lists) {
 	    	if(list .isFile()) {
@@ -37,7 +39,10 @@ public class DeleteR {
 	}
 	private static void delFile(Path f) {
 		try {
-			Files.deleteIfExists(f);
+			if(Files.deleteIfExists(f)) {
+				System.out.println("ファイルを削除しました:"+f.toString());
+			}
+			
 		} catch (IOException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
@@ -47,7 +52,10 @@ public class DeleteR {
 	}
 	private static void delDir(Path f) {
 		try {
-			Files.deleteIfExists(f);
+			if(Files.deleteIfExists(f)) {
+
+				System.out.println("フォルダを削除しました:"+f.toString());
+			}
 		} catch (IOException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();

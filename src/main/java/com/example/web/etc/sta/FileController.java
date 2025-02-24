@@ -29,7 +29,7 @@ public abstract class FileController {
     public ResponseEntity<Resource> getFile(String filepath,String fname,Boolean canDL) {
     	try {
     		String encodedFname= Paths.get(fname).getFileName().normalize().toString();
-    		System.out.println(encodedFname);
+    		//System.out.println(encodedFname);
     		Path filePath = this.uploadDir.resolve(filepath).normalize();
    
     
@@ -43,8 +43,9 @@ public abstract class FileController {
     		// ファイルのリソース取得
     		Resource resource = new UrlResource(filePath.toUri());
     		if (!resource.exists() || !resource.isReadable()) {
-
-    			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "ファイルが存在しません。");
+    			
+    			throw new ResponseStatusException(HttpStatus.NOT_FOUND, filePath.toString()+"ファイルが存在しません。");
+    			
     		}
 
     		// Content-Typeを取得

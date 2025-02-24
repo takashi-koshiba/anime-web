@@ -157,6 +157,10 @@ document.addEventListener("DOMContentLoaded",function(){
 			elem=document.getElementById("viewVideo");
 			if(elem!=null){
 				elem.pause();
+				if(hls!=='undefined'){
+					hls.destroy();
+					hls=null;
+				}
 			}
 			elem=document.getElementById("viewAudio");
 			if(elem!=null){
@@ -164,8 +168,8 @@ document.addEventListener("DOMContentLoaded",function(){
 			}
 		
 		}
-		hls.destroy();
-		hls=null;
+
+
 	}	
 	
 	async function fileApi() {

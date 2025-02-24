@@ -1,6 +1,7 @@
 package com.example.web.uploader.sendFile;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -23,11 +24,13 @@ import org.springframework.web.server.ResponseStatusException;
 import com.example.web.etc.db.extensionUpload.extensionUpload;
 import com.example.web.etc.db.extensionUpload.extensionUploadService;
 import com.example.web.etc.db.uploadFile.UploadFileService;
+import com.example.web.etc.db.upload_hash.Upload_hashService;
+import com.example.web.etc.sta.GetBytes;
 import com.example.web.etc.sta.GetExtension;
 import com.example.web.etc.sta.Img;
 import com.example.web.etc.sta.RemoveExtension;
-import com.example.web.etc.sta.SaveFile;
 import com.example.web.etc.sta.Setting;
+import com.example.web.etc.sta.ToHash256;
 import com.example.web.etc.sta.que.ArgsData;
 import com.example.web.etc.sta.que.Que;
 import com.example.web.etc.sta.que.cmd.Cmd_Args;
@@ -43,11 +46,14 @@ public class sendFile {
 	UploadFileService uploadFileService;
 	
 	@Autowired
+	Upload_hashService upload_hashService;
+	
+	@Autowired
 	extensionUploadService exService;
 
 	
 	@PostMapping("/anime-web/uploader/sendFile")
-	public Boolean start2(@RequestParam String name, @RequestParam MultipartFile file,HttpSession session) {
+	public Boolean start2(@RequestParam String name, @RequestParam MultipartFile file,@RequestParam Boolean Isduplicate,HttpSession session) {
 		 Integer userId=(Integer) session.getAttribute("id");
 			
 		 if (userId==null) {
@@ -55,7 +61,8 @@ public class sendFile {
 			 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "セッションがありません。");
 			//return false;
 		 }
-		
+		 
+		 
 		
    
         // MIMEタイプを取得
@@ -90,9 +97,28 @@ public class sendFile {
 		 Path inputPath = Paths.get(inputPathStr).normalize();
 
          try {
-        	 SaveFile.main(file,inputPath.toString());
-			//Files.write(inputPath, decodedBytes);
-			
+        	 
+        	 byte[] fBytes =GetBytes.getFileBytes(file);
+        	 String hash=ToHash256.hashByte(fBytes);
+        	 
+        	 if(upload_hashService.count(userId, hash)>0&&Isduplicate) {
+        		 uploadFileService.delete(userId.toString(), alias);
+        		 throw new ResponseStatusException(HttpStatus.CONFLICT, "ファイルが重複しています");
+        	 }
+        	 
+        	//ファイルを保存
+        	 
+        	 
+        	 try (FileOutputStream outputStream = new FileOutputStream(inputPath.toString())) {
+                 outputStream.write(fBytes);
+             }
+        	 
+
+        	 
+        	 upload_hashService.insertHash(alias, hash);
+        	 
+        	 
+
 			//動画はサムネとHLS
 			if(Objects.equals( fileType.VIDEO.ordinal(), uploadFileType.getTypeId()) ) {
 		        Path dir = Paths.get(fullPath,"content", "anime-web", "upload", "file","hls",alias).normalize();     
@@ -142,12 +168,12 @@ public class sendFile {
 		 Path tempPath =  Paths.get(Setting.getRoot()+"content\\anime-web\\upload\\file\\thumbnail-temp\\"+alias+".avif").normalize();
 		 
 		 if(img.getHeight()>1024 || img.getWidth()>1024) {
-			 resize(1024,mimeType,img, tempPath,"thumbnail-big",alias);
+			 resize(1024,mimeType,input, tempPath,"thumbnail-big",alias);
 
 		 }
 		 if(img.getHeight()>192 || img.getWidth()>192) {
 
-			 resize(192,mimeType,img, tempPath,"thumbnail",alias);
+			 resize(192,mimeType,input, tempPath,"thumbnail",alias);
 		
 		 }
 
@@ -155,11 +181,13 @@ public class sendFile {
 		 img=null;
 		// ResizeImg.main(new File(input), output, 200,mimeType);//サイズが大きいとエラーになるため別で処理
 	}
-	private static void resize(Integer imgSize,String mimeType,Img img,Path tempPath,String outputPath,String alias) {
+	private static void resize(Integer imgSize,String mimeType,String input,Path tempPath,String outputPath,String alias) {
 		File temp=new File(tempPath.toAbsolutePath().toString()+imgSize.toString()+".png");
+		//img.Resize(temp.getAbsolutePath(), imgSize, mimeType);
+		Img img=new Img(new File(input));
 		img.Resize(temp.getAbsolutePath(), imgSize, mimeType);
 		
-		String p ="ffmpeg -i \"{0}\"    -vf \"scale=if(gt(iw\\,ih)\\,{2,number,#}\\,-2):if(gt(iw\\,ih)\\,-2\\,{2,number,#})\"  -compression_level 6 -pix_fmt gbrp  -q:v 75 \"{1}\"" ;
+		String p ="ffmpeg -i \"{0}\"    -vf \"scale=if(gt(iw\\,ih)\\,{2,number,#}\\,-2):if(gt(iw\\,ih)\\,-2\\,{2,number,#})\"  -c:v libsvtav1 -preset 8 -crf 30 \"{1}\"" ;
 		Path output =  Paths.get(MessageFormat.format(Setting.getRoot()+"content\\anime-web\\upload\\file\\{0}\\"+alias+".avif",outputPath)).normalize();
 		 
 		String format;
@@ -186,7 +214,7 @@ public class sendFile {
 	}
 	private static void createThumbnailVideo(String input,String fullPath,String alias) {
 		 
-		String p ="ffmpeg -i \"{0}\"  -ss 1  -vframes 1 -vf \"scale=if(gt(iw\\,ih)\\,220\\,-2):if(gt(iw\\,ih)\\,-2\\,220)\"  -compression_level 6 -q:v 50  -pix_fmt yuv420p \"{1}\"" ;
+		String p ="ffmpeg -i \"{0}\"  -ss 1  -vframes 1 -vf \"scale=if(gt(iw\\,ih)\\,220\\,-2):if(gt(iw\\,ih)\\,-2\\,220)\"  -c:v libsvtav1 -preset 8 -crf 30 \"{1}\"" ;
 		 
 		 String output = fullPath+ "content\\anime-web\\upload\\file\\thumbnail\\"+alias+".avif";
 		 String format= MessageFormat.format(p,input,output);	

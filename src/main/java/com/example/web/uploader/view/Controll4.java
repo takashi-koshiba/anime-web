@@ -73,7 +73,7 @@ public class Controll4 {
 		Integer Sort=sort==null?0:sort;
 		Integer Column=column==null?1:column;
 		Integer Page=page==null?0:page;
-		System.out.println(Fname);
+		//System.out.println(Fname);
 		return exec(Ftype,Fname,Sort,Column,session,Page);
 		
 	}

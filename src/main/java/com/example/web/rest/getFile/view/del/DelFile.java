@@ -15,8 +15,11 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.example.web.etc.db.uploadFile.FileInfo;
 import com.example.web.etc.db.uploadFile.UploadFileService;
-import com.example.web.etc.sta.DeleteR;
 import com.example.web.etc.sta.Setting;
+import com.example.web.etc.sta.que.ArgsData;
+import com.example.web.etc.sta.que.Que;
+import com.example.web.etc.sta.que.upFileDel.DelArgs;
+import com.example.web.etc.sta.que.upFileDel.DelFile_Que;
 
 @RestController
 public class DelFile  {
@@ -42,20 +45,26 @@ public class DelFile  {
 		String root=Setting.getRoot()+"content\\anime-web\\upload\\";
 		
 		
-		del(root+"file\\audio\\"+alias,userId,alias);
-		del(root+"file\\audio\\"+alias+".mp3",userId,alias);
-		del(root+"file\\image\\"+alias,userId,alias);
-		del(root+"file\\other\\"+alias,userId,alias);
-		del(root+"file\\thumbnail\\"+alias+".avif",userId,alias);
-		del(root+"file\\thumbnail-big\\"+alias+".avif",userId,alias);
-		del(root+"file\\thumbnail-temp\\"+alias+".avif",userId,alias);
-		del(root+"file\\video\\"+alias,userId,alias);
-		del(root+"file\\hls\\"+alias,userId,alias);
-	}
-	private void del(String p,String userId,String alias) {
-		Path path=filePath(Paths.get(p).toAbsolutePath().normalize());
-		DeleteR.main(path,true);
+		del(root+"file\\audio\\"+alias);
+		del(root+"file\\audio\\"+alias+".mp3");
+		del(root+"file\\image\\"+alias);
+		del(root+"file\\other\\"+alias);
+		del(root+"file\\thumbnail\\"+alias+".avif");
+		del(root+"file\\thumbnail-big\\"+alias+".avif");
+		del(root+"file\\thumbnail-temp\\"+alias+".avif");
+		del(root+"file\\video\\"+alias);
+		del(root+"file\\hls\\"+alias);
 		uploadFileService.delete(userId,alias);
+	}
+	private void del(String p) {
+        //キューに追加
+		DelFile_Que delQue = new DelFile_Que();
+		Path path=filePath(Paths.get(p).toAbsolutePath().normalize());
+        ArgsData delArgs = new DelArgs(path, delQue);
+        Que.addToQueue(delArgs);
+		
+		
+		
 	}
 	private Path filePath(Path p) {
 		String root = Setting.getRoot()+"\\content\\anime-web\\upload";

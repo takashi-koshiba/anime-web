@@ -169,10 +169,10 @@ public class Hls {
 	private static void processEncode(String inputPath,String outputDir,int bitRate,int height,int width) {
 		String format;
 		if(height==-1) {
-			String c ="ffmpeg -i \"{0}\"   -c:v libx264     -filter:a loudnorm=I=-10:LRA=11:TP=-1.5 -f hls -hls_time 5 -force_key_frames expr:gte(t,n_forced*5) -hls_playlist_type vod -hls_segment_filename \"{1}video%3d.ts\" -threads 2  \"{1}video.m3u8\"";
+			String c ="ffmpeg -i \"{0}\"   -c:v libx264 -preset ultrafast      -filter:a loudnorm=I=-10:LRA=11:TP=-1.5 -f hls -hls_time 5 -force_key_frames expr:gte(t,n_forced*5) -hls_playlist_type vod -hls_segment_filename \"{1}video%3d.ts\" -threads 2  \"{1}video.m3u8\"";
 			format= MessageFormat.format(c,inputPath,outputDir);	
 		}else {
-			String c = "ffmpeg -i \"{0}\" -c:v libx264    -vf \"scale={4,number,#}:{3,number,#}\" -b:v {2,number,#} -filter:a loudnorm=I=-10:LRA=11:TP=-1.5 -f hls -hls_time 5 -force_key_frames expr:gte(t,n_forced*5) -hls_playlist_type vod -hls_segment_filename \"{1}video%03d.ts\" -threads 2  \"{1}video.m3u8\"";
+			String c = "ffmpeg -i \"{0}\"  -c:v libx264 -preset ultrafast -crf 30     -vf \"scale={4,number,#}:{3,number,#}\" -b:v {2,number,#} -filter:a loudnorm=I=-10:LRA=11:TP=-1.5 -f hls -hls_time 5 -force_key_frames expr:gte(t,n_forced*5) -hls_playlist_type vod -hls_segment_filename \"{1}video%03d.ts\" -threads 2  \"{1}video.m3u8\"";
 
 			
 			format = MessageFormat.format(c, inputPath, outputDir, bitRate, height,width);
