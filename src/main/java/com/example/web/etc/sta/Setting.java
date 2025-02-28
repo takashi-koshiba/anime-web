@@ -8,6 +8,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
+import com.example.web.rest.settings.directory.Encoders;
+
 
 public class Setting {
 	 private static Properties settings = new Properties();
@@ -70,9 +72,35 @@ public class Setting {
 		
 
 	}
+	public static Encoders getEncoder() {
+		String enc=settings.getProperty("encoder");
+		Encoders[] encoders=Encoders.values();
+		Encoders result = Encoders.CPU;
+		Integer i=0;
+		for(Encoders encoder:encoders) {
+			
+			if(enc!=null && enc.equals(encoder.toString())) {
+				result=encoders[i];
+			}
+			i++;
+		}
+		
+		return result;
+	}
+	public static void setEncoder(Encoders enc) throws IOException {
+		FileOutputStream fileOut= null;
+		try {
+			fileOut = new FileOutputStream(settingfile);
+			settings.setProperty("encoder", enc.toString());
+			settings.store(fileOut, "setting");
+		} finally {
+			fileOut.close();
+		}
+	}
 	public static String getVideoPath() {
 		return settings.getProperty("videoPath");
 	}
+	
 	public static void setVideoPath(String path) throws IOException {
 		FileOutputStream fileOut= null;
 		try {

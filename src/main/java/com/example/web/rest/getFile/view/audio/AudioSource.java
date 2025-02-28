@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,4 +51,24 @@ public class AudioSource extends FileController {
 	
 	    return super.getFile(p.toString(),"",false);
    }
+	protected ResponseEntity.BodyBuilder responseBuilder(){
+		ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.ok()
+	    .header(HttpHeaders.CACHE_CONTROL, "public, max-age=36000") 
+	    .header(HttpHeaders.PRAGMA, "no-cache")
+
+	    .header(HttpHeaders.EXPIRES, String.valueOf(System.currentTimeMillis() + (1000*36000))) ;
+    
+	//	.header(HttpHeaders.CONTENT_TYPE, contentType);
+		return responseBuilder;
+	}
+
+	@Override
+	protected ResponseEntity.BodyBuilder responseBuilder(String contentType) {
+		ResponseEntity.BodyBuilder responseBuilder =responseBuilder()
+				.header(HttpHeaders.CONTENT_TYPE, contentType);
+
+				
+		
+		return responseBuilder;
+	}
 }

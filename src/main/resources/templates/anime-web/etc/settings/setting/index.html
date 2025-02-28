@@ -3,10 +3,10 @@
 <head th:replace="~{anime-web/common/header/index :: meta(~{::title},~{::link},~{::script})}">
 	<title>あ</title>
 	<link rel="stylesheet" th:href="@{/anime-web/common/main/index.css}">
-	<link rel="stylesheet" th:href="@{/anime-web/etc/settings/directory/index.css}">
+	<link rel="stylesheet" th:href="@{/anime-web/etc/settings/setting/index.css}">
 
 	
-	<script th:src="@{/anime-web/etc/settings/directory/index.js}"></script>
+	<script th:src="@{/anime-web/etc/settings/setting/index.js}"></script>
 	<script th:src="@{/anime-web/class/class_ajax.js}"></script>
 </head>
 
@@ -17,7 +17,7 @@
 			
 			<div id="left_main">
 				<div id="left_main_child">
-					<h2>ディレクトリ設定</h2>
+					<h2>設定</h2>
 					<hr>
 					<label><p class="p">ドキュメントルート  :   </p><input type="text" id ="root" placeholder="C:\apache\htdocs\" th:value="${path}">
 					</label><p class="p" id="rootResult"></p><br>
@@ -27,6 +27,18 @@
 					<label><p class="p">動画のディレクトリ : </p>
 						<input type="text" id="videoPath" th:value="${videoPath}"></label>
 						<p class="p" id="videoPathResult" ></p>※外部からプレイリストを再生するときはネットワークパスを指定してください。
+					<br>
+
+					
+					
+					<label>	<p class="p">エンコーダー：</p>			
+						<select name="encoder" id="encoder">
+						    <option value="0" th:selected="${encoder == 0}">CPU</option>
+						    <option value="1" th:selected="${encoder == 1}">NVENC</option>
+						</select>
+		
+
+					</label>
 					<br>
 					<input id="button" type="button" value="送信">
 					

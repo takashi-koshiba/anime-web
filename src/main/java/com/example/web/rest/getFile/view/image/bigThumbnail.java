@@ -8,6 +8,7 @@ import java.util.List;
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
@@ -62,5 +63,24 @@ public class  bigThumbnail  extends ItemData {
 		 }
          return path;
 	}
-	 
+	protected ResponseEntity.BodyBuilder responseBuilder(){
+		ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.ok()
+	    .header(HttpHeaders.CACHE_CONTROL, "public, max-age=10") 
+	    .header(HttpHeaders.PRAGMA, "no-cache")
+
+	    .header(HttpHeaders.EXPIRES, String.valueOf(System.currentTimeMillis() + (1000*10))) ;
+    
+	//	.header(HttpHeaders.CONTENT_TYPE, contentType);
+		return responseBuilder;
+	}
+
+	@Override
+	protected ResponseEntity.BodyBuilder responseBuilder(String contentType) {
+		ResponseEntity.BodyBuilder responseBuilder =responseBuilder()
+				.header(HttpHeaders.CONTENT_TYPE, contentType);
+
+				
+		
+		return responseBuilder;
+	}
 }

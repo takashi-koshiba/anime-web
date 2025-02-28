@@ -35,8 +35,10 @@ public class Folder {
 		
 	}
 	@PostMapping("/anime-web/api/change-directory/")
-	public Integer start2(@RequestPart("path") String path,@RequestPart("videoPath") String videoPath,HttpServletRequest request) throws IOException{
-		
+	public Integer start2(@RequestPart("path") String path,@RequestPart("videoPath") String videoPath,
+			@RequestPart("encoder") String encoderIndex,HttpServletRequest request) throws IOException{
+		Encoders enc=Encoders.values()[Integer.parseInt(encoderIndex)];
+
 		BeanUser user =GetIP.GetNameAndIp(request);
 		Integer result;
 		Path documentRoot=Paths.get(path).toAbsolutePath().normalize();
@@ -67,9 +69,10 @@ public class Folder {
 				
 			}
 		}
-		
+		Setting.setEncoder(enc);
 		
 		System.out.println(Setting.getRoot());
+		System.out.println(Setting.getEncoder());
 		return result;
 		
 		

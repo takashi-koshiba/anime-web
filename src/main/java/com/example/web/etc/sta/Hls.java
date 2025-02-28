@@ -14,6 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.example.web.etc.sta.que.ArgsData;
+import com.example.web.rest.settings.directory.Encoders;
 
 
 
@@ -55,7 +56,7 @@ public class Hls {
 				double ratio = (double)resizeH/(double)height;
 				int resizeW=(int)(width*ratio);
 				resizeW=resizeW%2==0?resizeW:resizeW+1;
-				int bandwidth=100000;
+				int bandwidth=200000;
 				String f=createFolderAndEncode(output,input,resizeH,resizeW,bandwidth);
 				AddM3u8(output,(int)bandwidth*5,f,url+"/"+resizeH);
 			} 
@@ -168,14 +169,105 @@ public class Hls {
 	}
 	private static void processEncode(String inputPath,String outputDir,int bitRate,int height,int width) {
 		String format;
+		String c;
 		if(height==-1) {
-			String c ="ffmpeg -i \"{0}\"   -c:v libx264 -preset ultrafast      -filter:a loudnorm=I=-10:LRA=11:TP=-1.5 -f hls -hls_time 5 -force_key_frames expr:gte(t,n_forced*5) -hls_playlist_type vod -hls_segment_filename \"{1}video%3d.ts\" -threads 2  \"{1}video.m3u8\"";
-			format= MessageFormat.format(c,inputPath,outputDir);	
+			switch (Setting.getEncoder()) {
+				case Encoders.CPU: {
+					c ="ffmpeg -i \"{0}\"   -c:v libx264 -preset ultrafast -crf 28  "
+							+ "   -filter:a loudnorm=I=-10:LRA=11:TP=-1.5 "
+							+ "-f hls -hls_time 2 -force_key_frames expr:gte(t,n_forced*5) "
+							+ "-hls_playlist_type vod -hls_segment_filename \"{1}video%3d.ts\" "
+							+ " \"{1}video.m3u8\"";
+					/*
+					
+						*/	
+					
+					break;
+				}
+				case Encoders.NVENC:{
+					/*
+					c = "ffmpeg -i \"{0}\" "
+						      + "-c:v h264_nvenc -cq 28"
+						      + "-filter:a loudnorm=I=-10:LRA=11:TP=-1.5 "
+						      + "-f hls -hls_time 2 -force_key_frames expr:gte(t,n_forced*5) "
+						      + "-hls_playlist_type vod -hls_segment_filename \"{1}video%03d.ts\" "
+						      + " \"{1}video.m3u8\"";
+						     */
+					c="NVEncC64.exe "
+							+ "-i  \"{0}\"  -o \"{1}video.m3u8\" -f hls "
+							+ "-m hls_segment_filename:\"{1}video%3d.ts\" -m hls_list_size:0  "
+							+ "-c h264 --audio-codec aac   --avcuvid --input-analyze 30 "
+							+ "--lookahead 32 --aq --aq-temporal --aq-strength 0 -m hls_time:2 "
+							+ "--vbrhq 0 --vbr-quality 28 --gop-len 120 --bframes 2  "
+							+ "--cqp 21:23:25   --bref-mode each  ";
+					break;
+				}
+				
+				
+				default:
+					throw new IllegalArgumentException("Unexpected value: " + Setting.getEncoder());
+				
+				
+			}
+			format= MessageFormat.format(c,inputPath,outputDir);
+				
 		}else {
-			String c = "ffmpeg -i \"{0}\"  -c:v libx264 -preset ultrafast -crf 30     -vf \"scale={4,number,#}:{3,number,#}\" -b:v {2,number,#} -filter:a loudnorm=I=-10:LRA=11:TP=-1.5 -f hls -hls_time 5 -force_key_frames expr:gte(t,n_forced*5) -hls_playlist_type vod -hls_segment_filename \"{1}video%03d.ts\" -threads 2  \"{1}video.m3u8\"";
+			switch (Setting.getEncoder()) {
+			case Encoders.CPU: {
+				
+				c = "ffmpeg -i \"{0}\"  -c:v libx264 -preset ultrafast -crf 30 "
+						+ "-vf \"scale={4,number,#}:{3,number,#}\" -b:v {2,number,#} "
+						+"-filter:a loudnorm=I=-10:LRA=11:TP=-1.5 -f hls -hls_time 2 "
+						+"-force_key_frames expr:gte(t,n_forced*5) "
+						+ "-hls_playlist_type vod -hls_segment_filename \"{1}video%03d.ts\" "
+						+ " \"{1}video.m3u8\"";
+				break;
+			}
+			case Encoders.NVENC:{
+				/*
+				c = "ffmpeg -i \"{0}\" "
+					      + "-c:v h264_nvenc -preset p1 -cq 28 "
+					      + "-vf \"scale={4,number,#}:{3,number,#}\" -b:v {2,number,#} "
+					      + "-filter:a loudnorm=I=-10:LRA=11:TP=-1.5 "
+					      + "-f hls -hls_time 2 -force_key_frames expr:gte(t,n_forced*5) "
+					      + "-hls_playlist_type vod -hls_segment_filename \"{1}video%03d.ts\" "
+					      + " \"{1}video.m3u8\"";
+*/	
+				bitRate=bitRate/1000;
+				c="NVEncC64.exe "
+						+ "-i  \"{0}\"  -o \"{1}video.m3u8\" -f hls "
+						+ "-m hls_segment_filename:\"{1}video%3d.ts\" -m hls_list_size:0  "
+						+ "-c h264 --audio-codec aac   --avcuvid --input-analyze 30 "
+						+ "--lookahead 96 --aq --aq-temporal --aq-strength 1 "
+						+ "--vbrhq 1 --vbr-quality 20 --gop-len 120 --bframes 5  "
+						+ "--cqp 40:45:50   --bref-mode each -m hls_time:2 "
+						+ "--output-res {4,number,#}x{3,number,#} "
+						+ "  --max-bitrate {2,number,#} --preset p1  ";
+				if(height>=720) {
+					c="NVEncC64.exe "
+							+ "-i  \"{0}\"  -o \"{1}video.m3u8\" -f hls "
+							+ "-m hls_segment_filename:\"{1}video%3d.ts\" -m hls_list_size:0  "
+							+ "-c h264 --audio-codec aac   --avcuvid --input-analyze 30 "
+							+ "--lookahead 32 --aq --aq-temporal --aq-strength 1 "
+							+ "--vbrhq 1 --vbr-quality 28 --gop-len 96 --bframes 5  "
+							+ "--cqp 24:28:32   --bref-mode each -m hls_time:2 "
+							+ "--output-res {4,number,#}x{3,number,#} "
+							+ "  --max-bitrate {2,number,#} --preset p4  ";
+				}
+				
+				break;
+			}
+			
+			default:
+				throw new IllegalArgumentException("Unexpected value: " + Setting.getEncoder());
+			}
 
 			
 			format = MessageFormat.format(c, inputPath, outputDir, bitRate, height,width);
+			
+
+			
+			
 		}
 
 		//ExecProcess.main(format);

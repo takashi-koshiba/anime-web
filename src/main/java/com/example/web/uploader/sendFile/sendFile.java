@@ -1,13 +1,13 @@
 package com.example.web.uploader.sendFile;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.Objects;
 
@@ -25,10 +25,11 @@ import com.example.web.etc.db.extensionUpload.extensionUpload;
 import com.example.web.etc.db.extensionUpload.extensionUploadService;
 import com.example.web.etc.db.uploadFile.UploadFileService;
 import com.example.web.etc.db.upload_hash.Upload_hashService;
-import com.example.web.etc.sta.GetBytes;
+import com.example.web.etc.sta.DeleteR;
 import com.example.web.etc.sta.GetExtension;
 import com.example.web.etc.sta.Img;
 import com.example.web.etc.sta.RemoveExtension;
+import com.example.web.etc.sta.SaveFile;
 import com.example.web.etc.sta.Setting;
 import com.example.web.etc.sta.ToHash256;
 import com.example.web.etc.sta.que.ArgsData;
@@ -97,22 +98,25 @@ public class sendFile {
 		 Path inputPath = Paths.get(inputPathStr).normalize();
 
          try {
-        	 
-        	 byte[] fBytes =GetBytes.getFileBytes(file);
-        	 String hash=ToHash256.hashByte(fBytes);
+        	//ファイルを保存
+        	 SaveFile.main(file,inputPath.toString());
+        	// byte[] fBytes =GetBytes.getFileBytes(file);
+        	 String hash=ToHash256.hashWithFile(inputPath.toFile());
         	 
         	 if(upload_hashService.count(userId, hash)>0&&Isduplicate) {
         		 uploadFileService.delete(userId.toString(), alias);
+        		 DeleteR.main(inputPath, false);
         		 throw new ResponseStatusException(HttpStatus.CONFLICT, "ファイルが重複しています");
         	 }
         	 
-        	//ファイルを保存
+        	
         	 
         	 
+        	/* 
         	 try (FileOutputStream outputStream = new FileOutputStream(inputPath.toString())) {
                  outputStream.write(fBytes);
              }
-        	 
+        	 */
 
         	 
         	 upload_hashService.insertHash(alias, hash);
@@ -145,7 +149,7 @@ public class sendFile {
 			}
 			return alias==null?false:true;
 			
-		 }catch (IOException | URISyntaxException e) {
+		 }catch (IOException | URISyntaxException | NoSuchAlgorithmException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
 			return false;
@@ -171,9 +175,9 @@ public class sendFile {
 			 resize(1024,mimeType,input, tempPath,"thumbnail-big",alias);
 
 		 }
-		 if(img.getHeight()>192 || img.getWidth()>192) {
+		 if(img.getHeight()>324 || img.getWidth()>324) {
 
-			 resize(192,mimeType,input, tempPath,"thumbnail",alias);
+			 resize(324,mimeType,input, tempPath,"thumbnail",alias);
 		
 		 }
 
@@ -187,7 +191,7 @@ public class sendFile {
 		Img img=new Img(new File(input));
 		img.Resize(temp.getAbsolutePath(), imgSize, mimeType);
 		
-		String p ="ffmpeg -i \"{0}\"    -vf \"scale=if(gt(iw\\,ih)\\,{2,number,#}\\,-2):if(gt(iw\\,ih)\\,-2\\,{2,number,#})\"  -c:v libsvtav1 -preset 8 -crf 30 \"{1}\"" ;
+		String p ="ffmpeg -i \"{0}\"    -vf \"scale=if(gt(iw\\,ih)\\,{2,number,#}\\,-2):if(gt(iw\\,ih)\\,-2\\,{2,number,#})\"  -c:v libsvtav1 -preset 8 -crf 28 \"{1}\"" ;
 		Path output =  Paths.get(MessageFormat.format(Setting.getRoot()+"content\\anime-web\\upload\\file\\{0}\\"+alias+".avif",outputPath)).normalize();
 		 
 		String format;

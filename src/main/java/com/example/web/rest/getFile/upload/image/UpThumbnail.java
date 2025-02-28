@@ -64,5 +64,26 @@ public class UpThumbnail extends FileController {
 		}
 		
 		return super.getFile(path.toString(),"",false);
-   }
+		
+   }	
+		protected ResponseEntity.BodyBuilder responseBuilder(){
+			ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.ok()
+			    .header(HttpHeaders.CACHE_CONTROL, "public, max-age=10") 
+			    .header(HttpHeaders.PRAGMA, "no-cache")
+
+			    .header(HttpHeaders.EXPIRES, String.valueOf(System.currentTimeMillis() + (1000*10))) ;
+		    
+			//	.header(HttpHeaders.CONTENT_TYPE, contentType);
+				return responseBuilder;
+			}
+
+			@Override
+			protected ResponseEntity.BodyBuilder responseBuilder(String contentType) {
+				ResponseEntity.BodyBuilder responseBuilder =responseBuilder()
+						.header(HttpHeaders.CONTENT_TYPE, contentType);
+
+						
+				
+				return responseBuilder;
+			}
 }

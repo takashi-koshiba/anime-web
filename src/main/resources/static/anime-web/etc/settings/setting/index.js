@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded",function(){
 	let documentResult=document.getElementById("rootResult");
 	let urlResult=document.getElementById("urlResult");
 	let url=document.getElementById("url");
-
+	let encoder=document.getElementById("encoder");
 
 	root.addEventListener('input',	async function(){
 		rootResult.innerText=await isExistPath(this.value);		
@@ -21,8 +21,6 @@ document.addEventListener("DOMContentLoaded",function(){
 	})
 	
 
-	
-
 
 	
 	let button =document.getElementById('button');
@@ -36,6 +34,9 @@ document.addEventListener("DOMContentLoaded",function(){
 			ajax2.args('path',root.value);
 
 			ajax2.args('videoPath',videoPath.value);
+			ajax2.args('encoder',encoder.value);
+			
+			console.dir(encoder.value);
 			ajax2.run();
 			
 			//console.dir(originalName[i]);

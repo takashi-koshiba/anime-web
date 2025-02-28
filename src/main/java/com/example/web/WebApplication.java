@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.example.web.etc.sta.PathClass;
 import com.example.web.etc.sta.Setting;
 import com.example.web.etc.sta.uplaodColumn;
+import com.example.web.rest.settings.directory.Encoders;
 
 @SpringBootApplication
 public class WebApplication {
@@ -48,6 +49,8 @@ public class WebApplication {
         	System.out.println(newPath+"を登録しました。");
         }
         
+        selectEncoder();
+        
         Setting.makeDirectory();
 
         System.out.println(Setting.getRoot()+Setting.getSettingfile()
@@ -57,5 +60,14 @@ public class WebApplication {
         //ファイルアップロードのファイルタイプを設定
         uplaodColumn.setColumnList();
         SpringApplication.run(WebApplication.class, args);
+    }
+    private static void selectEncoder() throws IOException {
+        Encoders encoder=Setting.getEncoder();
+       
+        if(encoder==null) {
+        	Setting.setEncoder(Encoders.CPU);
+        }
+        
+        System.out.println("エンコーダーは"+encoder.toString()+"を使用します。");
     }
 }

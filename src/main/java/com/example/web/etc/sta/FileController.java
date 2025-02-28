@@ -58,7 +58,8 @@ public abstract class FileController {
     		}
     		
     		//System.out.println(contentType);
-
+    		ResponseEntity.BodyBuilder  responseBuilder=responseBuilder(contentType);
+/*
     		ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.ok()
     		    .header(HttpHeaders.CACHE_CONTROL, "public, max-age=10") 
     		    .header(HttpHeaders.PRAGMA, "no-cache")
@@ -66,7 +67,7 @@ public abstract class FileController {
     		    .header(HttpHeaders.EXPIRES, String.valueOf(System.currentTimeMillis() + (1000*10))) 
 		    
     			.header(HttpHeaders.CONTENT_TYPE, contentType);
-    		
+ */   		
     		if (canDL) {
     		    
     		    responseBuilder.header(HttpHeaders.CONTENT_DISPOSITION, 
@@ -101,7 +102,8 @@ public abstract class FileController {
             return MediaType.APPLICATION_OCTET_STREAM_VALUE;  
         }
     }
-
+    protected abstract ResponseEntity.BodyBuilder responseBuilder() ;
+    protected abstract ResponseEntity.BodyBuilder responseBuilder(String contentType) ;
 
 }
 

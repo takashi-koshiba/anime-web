@@ -1,4 +1,4 @@
-package com.example.web.etc.settings.directory;
+package com.example.web.etc.settings.setting;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -11,18 +11,20 @@ import com.example.web.index.BeanUser;
 import com.example.web.index.GetIP;
 
 @Controller
-public class directory {
-	@GetMapping("/anime-web/etc/settings/directory/")
+public class SettingAdmin {
+	@GetMapping("/anime-web/etc/settings/setting/")
 	public ModelAndView  start(HttpServletRequest request) {
 		
 		ModelAndView model;
 		BeanUser user =GetIP.GetNameAndIp(request);
 
 		if(user.isAdmin()) {
-			model= new ModelAndView("anime-web/etc/settings/directory/index");
+			model= new ModelAndView("anime-web/etc/settings/setting/index");
 			model.addObject("path",Setting.getRoot());
-		//	model.addObject("url",Setting.getUrl());
+
 			model.addObject("videoPath",Setting.getVideoPath());
+			model.addObject("encoder",Setting.getEncoder().ordinal());
+			
 		}else {
 			 model= new ModelAndView("anime-web/etc/error/admin/index");
 			
@@ -32,9 +34,9 @@ public class directory {
 		
 	}
 	
-	@GetMapping("/anime-web/etc/settings/directory")
+	@GetMapping("/anime-web/etc/settings/setting")
 	public String start2() {
-		return "redirect:/anime-web/etc/settings/directory/";
+		return "redirect:/anime-web/etc/settings/setting/";
 	}
 /*
 	@PostMapping("/etc/animeimg/")
