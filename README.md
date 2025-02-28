@@ -271,7 +271,10 @@ apiを経由してファイルにアクセスしますが、30分後にセッシ
 
 画像の場合は縮小しサムネイルを生成します。<br>
 
-
+> [!IMPORTANT]
+> <a href="http://localhost:8082/anime-web/etc/settings/directory/">設定</a>のエンコーダーでNVENCを選択した場合は
+> rigaya氏制作の<a href="https://github.com/rigaya/NVEnc">NVEnc</a>が使用可能です。<br>
+使用する場合はダウンロードし、「NVEncC64.exe」のパスを通してください。
 
 
 <h2>使用方法</h2>
