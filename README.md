@@ -14,6 +14,9 @@
   
 </ul>
 
+<h1>デモ</h1>
+<a href="https://youtu.be/Hc1_0fOKe4M">youtubeをご覧ください。</a>
+
 <h1>準備</h1>
 下記をインストールしてください
 <ul>
@@ -26,7 +29,12 @@
     <li>mysql</li>
 </ul>
 <br>
-kakasiとffmpegはパスを通してください。
+
+
+> [!IMPORTANT]
+> kakasiとffmpegはパスを通してください。<br>
+> アップローダーでNVENCを選択する場合は<a href="#アップロード後の処理">設定</a>が必要です
+<br>
 
 リポジトリをクローン
 ```bash
@@ -66,7 +74,7 @@ java -jar build\libs\web-0.0.1-SNAPSHOT.jar --server.port=8082
 
 <br> <br>
 ディレクトリの設定<br>
-<a href="http://localhost:8082/anime-web/etc/settings/directory/">http://localhost:8082/anime-web/etc/settings/directory/</a> <br>
+<a href="http://localhost:8082/anime-web/etc/settings/directory/">http://localhost:8082/anime-web/etc/settings/setting/</a> <br>
 ドキュメントルートは変更しなくても問題ありませんが、 <br>
 容量が大きいドライブを指定することをお勧めします。 <br>
 
@@ -248,7 +256,7 @@ else 0 end
 動画のタイトルを選択するかプレイリストDLボタンを押下すると.m3u8形式のプレイリストがダウンロードされます。<br>
 プレイリストはvlcやmpc-hcなどの再生ソフトで再生できます。<br>
 再生ができない場合は動画のパスが間違っている可能性があります。
-その場合は<a href="http://localhost:8082/anime-web/etc/settings/directory/">設定</a>から「動画のディレクトリ」を動画がある場所に修正してください。
+その場合は<a href="http://localhost:8082/anime-web/etc/settings/setting/">設定</a>から「動画のディレクトリ」を動画がある場所に修正してください。
 
 
 
@@ -263,7 +271,7 @@ apiを経由してファイルにアクセスしますが、30分後にセッシ
 ファイルが表示されなくなったらブラウザをリロードしてください。<br>
 
 
-<h2>アップロード後の処理</h2>
+<h2 id="up_after">アップロード後の処理</h2>
 
 動画の場合はhlsに変換します。<br>
 
@@ -272,7 +280,7 @@ apiを経由してファイルにアクセスしますが、30分後にセッシ
 画像の場合は縮小しサムネイルを生成します。<br>
 
 > [!IMPORTANT]
-> <a href="http://localhost:8082/anime-web/etc/settings/directory/">設定</a>のエンコーダーでNVENCを選択した場合は
+> <a href="http://localhost:8082/anime-web/etc/settings/setting/">設定</a>のエンコーダーでNVENCを選択した場合は
 > rigaya氏制作の<a href="https://github.com/rigaya/NVEnc">NVEnc</a>が使用可能です。<br>
 使用する場合はダウンロードし、「NVEncC64.exe」のパスを通してください。
 
@@ -287,4 +295,19 @@ apiを経由してファイルにアクセスしますが、30分後にセッシ
 ファイル検索のアルゴリズムは
 <a href="https://github.com/takashi-koshiba/similar-words">similar-words</a>
 を使用しています
+
+<h2>サムネイルが表示されないとき</h2>
+動画や画像のファイルのサムネイルが表示されないときは<br>
+uploadfileテーブルで該当のファイルの{extension}の列を確認してください<br>
+extensionテーブルにないmimeの場合は追加を行ってください。<br>
+<br>
+例：mkvファイルでmimeが{video/x-matroska}の場合
+
+```bash
+insert into exteinsion (ex,type) values("x-matroska",1);
+```
+typeは0なら画像<br>
+1なら動画
+2なら音声ファイルです。
+
 
