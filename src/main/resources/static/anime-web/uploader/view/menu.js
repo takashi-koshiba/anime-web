@@ -102,6 +102,7 @@ document.addEventListener("DOMContentLoaded",function(){
 					qltSelect[0].classList.remove("selectedButton");
 					qltSelect[1].classList.remove("selectedButton");
 					qltSelect[2].classList.remove("selectedButton");
+					qltSelect[3].classList.remove("selectedButton");
 					this.classList.add("selectedButton");
 				})
 			}

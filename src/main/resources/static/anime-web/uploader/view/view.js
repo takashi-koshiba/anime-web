@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded",function(){
 
 	});
 	
-	
+	let qtyValueTemp=getQtyValueOfbutton();
 
 
 	window.addEventListener("resize",function(){
@@ -31,19 +31,20 @@ document.addEventListener("DOMContentLoaded",function(){
 		let type = obj.getAttribute("itemtype");
 		let alias=obj.getAttribute("title");
 		let elem;
-		let idName="";
-		console.dir(type);
+		let originalType=obj.getAttribute("originalType");
+		//console.dir(originalType);
 		let path="/anime-web/get-file/upload/data/view/";
 		if(type=="IMAGE"){
 			elem=document.createElement("img");
 			elem.setAttribute("src",path+alias);
 
-			idName="viewImg"
-		}else if(type=="VIDEO"){
+		
+			setTypeElem(elem,originalType,type,alias);
+		}else if(type=="VIDEO" &&getQtyValueOfbutton()!=-2){
 			elem=document.createElement("video");
 			elem.setAttribute("controls", "");
 			
-			idName="viewVideo"
+		
 			
 			if (Hls.isSupported()) {
 				  hls = new Hls({
@@ -103,25 +104,31 @@ document.addEventListener("DOMContentLoaded",function(){
 						    }
 						});
 
-			
-		}else if(type=="AUDIO"){
+			setTypeElem(elem,originalType,type,alias);
+		}else if(type=="AUDIO" ||getQtyValueOfbutton()==-2){
+
 			elem=document.createElement("audio");
-			idName="viewAudio"
-			elem.setAttribute("src",path+alias);
+			//originalType=elem.;
+			elem.setAttribute("src",path+alias+"?onlyAudio=true");
 			elem.setAttribute("controls", "");
 			elem.play();
+			setTypeElem(elem,originalType,"AUDIO",alias);
+			addSwitchQltEventButton();
 		}else{
 			return;
 			
 		}
 		
-		
-		elem.setAttribute("id",idName);
+		//setTypeElem(elem,idName,type,alias);
+
 		//elem.setAttribute("src","/anime-web/get-file/upload/image/view/data/"+alias);
 		 
 		
 		let itemView=document.getElementById("itemView");
-		itemView.removeChild(itemView.firstChild);
+		
+	//	console.dir(itemView.children.length);
+		if (itemView.children.length>0)itemView.removeChild(itemView.firstChild);
+		
 		itemView.appendChild(elem); 
 		
 		
@@ -132,6 +139,12 @@ document.addEventListener("DOMContentLoaded",function(){
 
 	}
 
+	function setTypeElem(elem,originalType,type,alias){
+		elem.setAttribute("originaltype",originalType);
+
+		elem.setAttribute("itemtype",type);
+		elem.setAttribute("title",alias);
+	}
 	
 	function changeViewDivSize(){
 		let view_div_child = document.getElementById('view_div_child');
@@ -154,23 +167,35 @@ document.addEventListener("DOMContentLoaded",function(){
 			let itemView = document.getElementById("itemViewBack");	
 			itemView.style.display="none";
 		
-			elem=document.getElementById("viewVideo");
-			if(elem!=null){
-				elem.pause();
-				if(hls!=='undefined'){
-					hls.destroy();
-					hls=null;
-				}
-			}
-			elem=document.getElementById("viewAudio");
-			if(elem!=null){
+			
+			
+			
+			elem=document.getElementById("itemView").children[0];
+			let type=elem.getAttribute("itemtype");
+			if(type=="AUDIO"){
 				elem.pause();
 			}
-		
+			disposeHls(elem);
+			elem.remove();
 		}
 
 
 	}	
+	function disposeHls(elem){
+		
+		if(elem.getAttribute("itemtype")!="VIDEO") return;
+		if(hls==='undefined' && hls==null) return; 
+		
+		hls.destroy();
+		hls=null;
+		
+		if(elem!=null){
+			elem.pause();
+			
+			
+			
+		}
+	}
 	
 	async function fileApi() {
 	  const paramArr=getParam();
@@ -178,7 +203,7 @@ document.addEventListener("DOMContentLoaded",function(){
 	  	  
 	  //const res = await fetch(`http://localhost:8080/anime-web/getFile/view/api/file?inputStr=&column=1&ftype=-1&sort=0);
 	  const items = await res.json();
-	  console.log(items)
+	 // console.log(items)
 	  
 	  return items;
 	  
@@ -196,13 +221,16 @@ document.addEventListener("DOMContentLoaded",function(){
 			}
 		}
 		switch(qltIndex){
-			case 0://最低画質
+			case 0://音声のみ
+				result=-2;
+				break;
+			case 1://最低画質
 				result=0;
 				break;
-			case 1://最高画質
+			case 2://最高画質
 				result=1;
 				break;
-			case 2://自動
+			case 3://自動
 				result=-1;
 				break
 		}
@@ -238,6 +266,7 @@ document.addEventListener("DOMContentLoaded",function(){
 		    img.setAttribute("title", items[i]["alias"]);
 		    img.setAttribute("src", thumbnail+items[i]["alias"]);
 		    img.setAttribute("itemtype", items[i]["type"]);
+			img.setAttribute("originaltype", items[i]["type"]);
 		    img.addEventListener("click",function(){
 		  	    itemAdd(this);
 		  		
@@ -323,25 +352,81 @@ document.addEventListener("DOMContentLoaded",function(){
 		
 		
 		let qltSelect = document.getElementsByClassName("qltSelect");
-		let highestQuality = hls.levels.length - 1; // 最高画質のインデックス
+		
+		if(hls!=null) highestQuality = hls.levels.length - 1; // 最高画質のインデックス
+		
 		for(let i =0;i<qltSelect.length;i++){
 			qltSelect[i].addEventListener('click',function(){
 				
+				
+				let itemView= document.getElementById("itemView");
+				elem=itemView.children[0];
+
+				
+				const originalType = elem?.getAttribute("originaltype");
+				if(elem?.getAttribute("originaltype")=== "undefined" || !elem
+			       ||elem==null || originalType!="VIDEO") {
+					qtyValueTemp=getQtyValueOfbutton();
+					return;
+				   }
+				
+				reloadFile();
+
+				qtyValueTemp=getQtyValueOfbutton();
 				if(hls==null) return;
+				
+				//disposeHls()
 				hls.currentLevel = getQtyValueOfbutton()==1?highestQuality:getQtyValueOfbutton();
 				
 			})
 		}
 		
 	}
+	function reloadFile(){
+		
+		
+		
+		if(isSwitchAudio()){
+			
+
+					
+			
+
+			let type=elem.getAttribute("itemType");
+			
+			if(type!="AUDIO" &&type!="VIDEO") return;
+			//削除
+			disposeHls(elem);
+			elem.remove();
+			//新しく追加
+			
+			elem.setAttribute("itemType",getQtyValueOfbutton()==-2?"AUDIO":"VIDEO");
+		//	elem.setAttribute("originalType",getQtyValueOfbutton()==-2?"AUDIO":"VIDEO");
+			itemAdd(elem);
+			qtyValueTemp=getQtyValueOfbutton();
+			//return;
+			
+			//let itemViewBack = document.getElementById("itemViewBack");	
+			//itemViewBack.style.display="none";
+		}
+	}
 	
-	
+	function isSwitchAudio(){
+		
+		
+		
+		if((qtyValueTemp==-2&&qtyValueTemp!=getQtyValueOfbutton())
+		    ||(qtyValueTemp!=-2&&-2==getQtyValueOfbutton())){
+			return true
+		}
+		return false;
+	}
 	function addPageButton(){
 		
 		let pegeButtons = document.getElementById('pegeButtons');
 		let pageButton = document.getElementsByClassName('pageButton')[0];
 		delPageButton();
-		console.dir(pageObj);
+	//	console.dir(pageObj);
 		//ページが個数の半分以下の時
 		if(pageObj.current<Math.ceil(pageObj.pageQty/2) ||pageObj.pageQty>pageObj.pagemax){
 			let max =pageObj.pageQty>pageObj.max?pageObj.max:pageObj.pageQty;

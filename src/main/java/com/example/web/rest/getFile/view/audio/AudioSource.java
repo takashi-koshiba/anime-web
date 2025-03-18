@@ -47,7 +47,7 @@ public class AudioSource extends FileController {
 		}
 		
 		
-	    Path p = Paths.get(alias+".mp3").normalize();
+	    Path p = Paths.get(alias+".flac").normalize();
 	
 	    return super.getFile(p.toString(),"",false);
    }

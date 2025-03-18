@@ -136,6 +136,7 @@ public class sendFile {
 		        ArgsData hlsArgs = new HlsArgs(inputPathStr,dir,m3u8Url.toString(), hlsQue);
 		        Que.addToQueue(hlsArgs);
 		        
+		        createEncodeAudio(inputPath.toString(),fullPath,alias);
 				createThumbnailVideo(inputPath.toString(),fullPath,alias);
 				
 				//画像はサムネ
@@ -233,9 +234,10 @@ public class sendFile {
 	}
 	private static void createEncodeAudio(String input,String fullPath,String alias) {
 		 
-		String p ="ffmpeg -i \"{0}\" -filter:a loudnorm=I=-24:LRA=11:TP=-1.5  \"{1}\"" ;
-		 
-		 String output = fullPath+ "content\\anime-web\\upload\\file\\audio\\"+alias+".mp3";
+		String p ="ffmpeg -i \"{0}\" -filter:a loudnorm=I=-24:LRA=11:TP=-1.5 -c:a flac  \"{1}\"" ;
+
+
+		 String output = fullPath+ "content\\anime-web\\upload\\file\\audio\\"+alias+".flac";
 		 String format= MessageFormat.format(p,input,output);	
 		 
 		 Cmd_que cmdQue = new Cmd_que();

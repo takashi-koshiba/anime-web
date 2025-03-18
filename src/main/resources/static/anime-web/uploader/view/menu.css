@@ -110,7 +110,7 @@ left:-310px;
 	margin: 0 auto;
 	padding-top: 4px;
 	
-	font-size: 14px;
+	font-size: 12px;
 }
 .linkElem{
 	margin: 0 auto;
@@ -129,7 +129,7 @@ link_div:active{
 	background-color:  rgba(252, 118, 245,0.2);
 }
 .linkElem{
-	width:98px;
+	width:74px;
 	height: 30px;
 	
 	

@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 8.0.26, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.38, for Win64 (x86_64)
 --
 -- Host: localhost    Database: db1
 -- ------------------------------------------------------
--- Server version	9.2.0
+-- Server version	8.0.38
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -14,6 +14,14 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Current Database: `db1`
+--
+
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `db1` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+
+USE `db1`;
 
 --
 -- Table structure for table `alias`
@@ -128,7 +136,7 @@ CREATE TABLE `extension` (
   `ex` varchar(20) DEFAULT NULL,
   `type` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -137,7 +145,7 @@ CREATE TABLE `extension` (
 
 LOCK TABLES `extension` WRITE;
 /*!40000 ALTER TABLE `extension` DISABLE KEYS */;
-INSERT INTO `extension` VALUES (1,'jpg',0),(2,'jpeg',0),(3,'png',0),(4,'gif',0),(5,'tiff',0),(6,'webp',0),(7,'avif',0),(8,'bmp',0),(9,'mp4',1),(10,'mkv',1),(11,'ts',1),(12,'flv',1),(13,'mp3',2),(14,'wav',2),(15,'wave',2),(16,'ogg',2),(17,'midi',2),(18,'x-aiff',2),(19,'basic',2),(20,'echospeech',2),(21,'midi',2),(22,'mpeg',2),(23,'x-wav',2),(24,'x-ms-wax',2),(25,'x-ms-wma',2),(26,'ac3',2),(27,'mp4',2),(28,'mpeg4-generic',2),(29,'ogg',2),(30,'H263',1),(31,'H264',1),(32,'H265',1),(33,'MP4V-ES',1),(34,'VP8',1),(35,'mpeg',1),(36,'webm',1),(37,'x-flv',1),(38,'x-ms-wm',1),(39,'x-ms-wmv',1),(40,'x-msvideo',1);
+INSERT INTO `extension` VALUES (1,'jpg',0),(2,'jpeg',0),(3,'png',0),(4,'gif',0),(5,'tiff',0),(6,'webp',0),(7,'avif',0),(8,'bmp',0),(9,'mp4',1),(10,'mkv',1),(11,'ts',1),(12,'flv',1),(13,'mp3',2),(14,'wav',2),(15,'wave',2),(16,'ogg',2),(17,'midi',2),(18,'x-aiff',2),(19,'basic',2),(20,'echospeech',2),(21,'midi',2),(22,'mpeg',2),(23,'x-wav',2),(24,'x-ms-wax',2),(25,'x-ms-wma',2),(26,'ac3',2),(27,'mp4',2),(28,'mpeg4-generic',2),(29,'ogg',2),(30,'H263',1),(31,'H264',1),(32,'H265',1),(33,'MP4V-ES',1),(34,'VP8',1),(35,'mpeg',1),(36,'webm',1),(37,'x-flv',1),(38,'x-ms-wm',1),(39,'x-ms-wmv',1),(40,'x-msvideo',1),(41,'x-matroska',1);
 /*!40000 ALTER TABLE `extension` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -577,4 +585,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-02-24 10:02:24
+-- Dump completed on 2025-03-18 16:09:24
