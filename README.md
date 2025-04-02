@@ -304,7 +304,7 @@ extensionテーブルにないmimeの場合は追加を行ってください。<
 例：mkvファイルでmimeが{video/x-matroska}の場合
 
 ```bash
-insert into exteinsion (ex,type) values("x-matroska",1);
+insert into extension (ex,type) values("x-matroska",1);
 ```
 typeは0なら画像<br>
 1なら動画
