@@ -9,11 +9,13 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.example.web.etc.db.uploadFile.FileInfo;
 import com.example.web.etc.db.uploadFile.UploadFileService;
@@ -37,6 +39,7 @@ public class DataDL extends FileController {
 	@GetMapping("/anime-web/get-file/anime/data/data-dl/{alias}")
    public ResponseEntity<Resource> getFile(@PathVariable String alias,HttpSession session) {
 		
+
 		if(session.getAttribute("id")==null) {
 			
 			return ResponseEntity.badRequest().build();
@@ -45,7 +48,7 @@ public class DataDL extends FileController {
 		List<FileInfo> upfile= uploadFileService.selectFileOne(session.getAttribute("id").toString(), alias);
 		
 		if(upfile.size()==0) {
-			return ResponseEntity.badRequest().build();
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ファイルのアクセス権がありません。");
 		}
 		fileType  fType = upfile.getFirst().getType();
 

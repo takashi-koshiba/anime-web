@@ -8,6 +8,7 @@ import java.awt.image.ColorConvertOp;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.logging.Level;
 
 import javax.imageio.ImageIO;
 
@@ -22,6 +23,7 @@ public class Img {
 
 	        // ファイルの存在確認
 	        if (!this.file.exists()) {
+	        	Log.log(Level.WARNING, "ファイルが見つかりません。： " + this.file.getAbsolutePath());
 	            throw new IllegalArgumentException("File does not exist: " + this.file.getAbsolutePath());
 	        }
 
@@ -29,6 +31,7 @@ public class Img {
 	            // WebP を含む画像の読み込み
 	            imageFile = ImageIO.read(this.file);
 	            if (imageFile == null) {
+	            	Log.log(Level.WARNING, "サポートしていないファイルです。" + this.file.getAbsolutePath());
 	                throw new IOException("Unsupported image format for file: " + this.file.getAbsolutePath());
 	            }
 
@@ -37,6 +40,7 @@ public class Img {
 	            this.height = imageFile.getHeight();
 	        } catch (IOException e) {
 	            e.printStackTrace();
+	            Log.detail(Level.WARNING,"画像の読み込みに失敗しました。"+this.file.getName(),e);
 	            throw new RuntimeException("Error reading the image file: " + e.getMessage());
 	        }
 	    }
@@ -101,6 +105,7 @@ public class Img {
 
 		} catch (IOException e) {
 			// TODO 自動生成された catch ブロック
+			Log.detail(Level.WARNING,"不明なエラー",e);
 			e.printStackTrace();
 		}
 

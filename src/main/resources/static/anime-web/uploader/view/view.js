@@ -22,10 +22,16 @@ document.addEventListener("DOMContentLoaded",function(){
 	});
 	
 	let qtyValueTemp=getQtyValueOfbutton();
-
-
+	
+	let canSeekFlag=true;
+	let prevSeekIndex=null;
+	
 	window.addEventListener("resize",function(){
 		changeViewDivSize();
+		
+		let canvas =  document.getElementById('canvasSeek');
+		
+		canvas.setAttribute('width',(document.body.clientWidth*0.8)-32 );
 	})
 	function itemAdd(obj){
 		let type = obj.getAttribute("itemtype");
@@ -34,6 +40,13 @@ document.addEventListener("DOMContentLoaded",function(){
 		let originalType=obj.getAttribute("originalType");
 		//console.dir(originalType);
 		let path="/anime-web/get-file/upload/data/view/";
+		
+		
+		let itemView=document.getElementById("itemView");
+		
+		
+		
+		
 		if(type=="IMAGE"){
 			elem=document.createElement("img");
 			elem.setAttribute("src",path+alias);
@@ -50,9 +63,10 @@ document.addEventListener("DOMContentLoaded",function(){
 				  hls = new Hls({
 					    capLevelToPlayerSize: true, 
 						maxBufferLength: 30, // バッファ
-						maxBufferSize: 60 * 1000 * 1000, // バッファサイズの上限 
-						maxMaxBufferLength: 40, // 最大バッファ長
-						
+						maxBufferSize: 30 * 1000 * 1000, // バッファサイズの上限 
+						maxMaxBufferLength: 60, // 最大バッファ長
+						nudgeMaxRetry: 15, 
+						nudgeOffset: 0.2,    
 					});
 
 				hls.loadSource(path + alias);
@@ -105,6 +119,16 @@ document.addEventListener("DOMContentLoaded",function(){
 						});
 
 			setTypeElem(elem,originalType,type,alias);
+			
+			let canvas = document.createElement("canvas");
+			canvas.setAttribute('id','canvasSeek');
+					
+			console.dir(elem.clientWidth);
+			canvas.setAttribute('width',(document.body.clientWidth*0.8)-32 );
+			itemView.appendChild(canvas); 
+			addSeekEvent(canvas,elem,alias);
+
+			
 		}else if(type=="AUDIO" ||getQtyValueOfbutton()==-2){
 
 			elem=document.createElement("audio");
@@ -124,18 +148,15 @@ document.addEventListener("DOMContentLoaded",function(){
 		//elem.setAttribute("src","/anime-web/get-file/upload/image/view/data/"+alias);
 		 
 		
-		let itemView=document.getElementById("itemView");
+		
 		
 	//	console.dir(itemView.children.length);
-		if (itemView.children.length>0)itemView.removeChild(itemView.firstChild);
 		
 		itemView.appendChild(elem); 
 		
 		
 		itemViewBack.style.display="block";
 		//console.dir(imgPath+this.getAttribute("title"));
-		
-		
 
 	}
 
@@ -167,15 +188,19 @@ document.addEventListener("DOMContentLoaded",function(){
 			let itemView = document.getElementById("itemViewBack");	
 			itemView.style.display="none";
 		
-			
-			
+		
+			//メディアファイル
+			elem=document.getElementById("itemView").children[1];
+			if(elem){
+				let type=elem.getAttribute("itemtype");
+				if(type=="AUDIO"){
+					elem.pause();
+				}
+				disposeHls(elem);
+				elem.remove();
+			}
 			
 			elem=document.getElementById("itemView").children[0];
-			let type=elem.getAttribute("itemtype");
-			if(type=="AUDIO"){
-				elem.pause();
-			}
-			disposeHls(elem);
 			elem.remove();
 		}
 
@@ -420,6 +445,190 @@ document.addEventListener("DOMContentLoaded",function(){
 			return true
 		}
 		return false;
+	}
+	class Pos {
+	    constructor(marginX, marginY, videoWidth, videoHeight) {
+	        this.marginX = marginX;
+	        this.minPosX = this.marginX;
+	        this.maxPosX = videoWidth - this.marginX;
+	        this.minPosY = videoHeight - marginY;
+	        this.maxPosY = videoHeight;
+	    }
+		
+		
+	    getMarginX() {
+	        return this.marginX;
+	    }
+
+	    getMinPosX() {
+	        return this.minPosX;
+	    }
+
+	    getMaxPosX() {
+	        return this.maxPosX;
+	    }
+		getMinPosY() {
+	        return this.minPosY;
+	    }
+		getMaxPosY() {
+		    return this.maxPosY;
+		}
+	}
+	
+	function addSeekEvent(elem, video, alias) {
+	    const scrollbarWidth = window.innerWidth - document.body.clientWidth;
+	    const canvas = document.getElementById("canvasSeek");
+	    const cvs = canvas.getContext("2d");
+	    itemView.appendChild(canvas);
+
+		//canvasをクリックでシークする
+	    canvas.addEventListener("click", (event) => {
+			const getCanvasWidth = () => {
+			    const itemV = canvas;
+			    const style = window.getComputedStyle(canvas);
+			    const marginLeft = parseFloat(style.marginLeft) || 0;
+			    const marginRight = parseFloat(style.marginRight) || 0;
+				
+				const margin=marginLeft + marginRight;
+				const w=(itemV.offsetWidth) - margin;
+				
+			    return [w,margin];
+			};
+
+			const canvasW = getCanvasWidth();
+			    
+
+
+
+			const videoMarginX = (window.innerWidth - canvasW[0] ) / 2;
+
+			const currentSeekPosX = event.x - videoMarginX+canvasW[1];
+			const seekMaxX = canvasW[0]+canvasW[1];
+
+			//console.dir(currentSeekPosX+"/"+seekMaxX+"l"+(currentSeekPosX/seekMaxX) );
+			
+	        video.currentTime = (Math.round((currentSeekPosX / seekMaxX) * 100000) / 100000) * video.duration;
+			
+	    });
+
+		//サムネを表示
+	    canvas.addEventListener("mousemove", async (event) => {
+			
+			const getCanvasWidth = () => {
+			    const itemV = canvas;
+			    const style = window.getComputedStyle(canvas);
+			    const marginLeft = parseFloat(style.marginLeft) || 0;
+			    const marginRight = parseFloat(style.marginRight) || 0;
+				
+				const margin=marginLeft + marginRight;
+				const w=(itemV.offsetWidth) - margin;
+				
+			    return [w,margin];
+			};
+
+			const canvasW = getCanvasWidth();
+			    
+
+
+			
+			const canvasH = document.getElementById("itemView").children[1].offsetHeight;
+			
+	        const videoMarginX = (window.innerWidth - canvasW[0] ) / 2;
+
+	        const currentSeekPosX = event.x - videoMarginX+canvasW[1];
+	        const seekMaxX = canvasW[0]+canvasW[1];
+	        const mousePosY = event.y;
+	        const seekBarPos = new Pos(0, 25, seekMaxX, canvasH);
+						
+	        if (
+	            currentSeekPosX >= seekBarPos.getMinPosX() &&
+	            currentSeekPosX <= seekBarPos.getMaxPosX() &&
+	            mousePosY > seekBarPos.getMinPosY()
+	        ) {
+	            const currentSeekFrame = Math.floor((currentSeekPosX / seekBarPos.getMaxPosX()) * video.duration)-1 ;
+	            if (currentSeekFrame === prevSeekIndex) return;
+	            prevSeekIndex = currentSeekFrame;
+
+	            try {
+	                const result = await getSeekImage(alias, currentSeekFrame);
+	                renderSeekThumbnail(cvs, result, currentSeekPosX, seekMaxX, canvasW[0]);
+	            } catch (error) {
+	                console.error("Failed to get seek image:", error);
+	            }
+	        }
+	    });
+		
+		
+		function renderSeekThumbnail(cvs, result, currentSeekPosX, seekMaxX, elemWidth) {
+			    const h = 90;
+			    const imgRatio = result.height / h;
+			    const w = result.width / imgRatio;
+			    const imgMargin = 5;
+			    const canvasPosY = 150 - h - imgMargin * 2 - 30;
+			    let seekImgPosX = (currentSeekPosX / seekMaxX) * elemWidth - (w + imgMargin * 2) / 2;
+			
+				
+				//画像をサムネイルが範囲外にならないように調整
+				if(seekImgPosX+(w + imgMargin * 2) / 2<(w/2))seekImgPosX=0;
+				else if(seekMaxX-(w + imgMargin * 2)<seekImgPosX)seekImgPosX=seekMaxX-(w + imgMargin * 2);
+								
+			    const image = new Image();
+			    image.src = result.imgPath;
+			    image.onload = () => {
+			        cvs.clearRect(0, 0, canvas.width, canvas.height);
+			        cvs.save();
+
+			        drawRoundedRect(cvs, seekImgPosX, canvasPosY, w + imgMargin * 2, h + imgMargin * 2, 5);
+			        cvs.fillStyle = "rgb(255, 255, 255)";
+			        cvs.fill();
+
+			        drawRoundedRect(cvs, seekImgPosX + imgMargin / 2, canvasPosY + imgMargin / 2, w + imgMargin, h + imgMargin, 5);
+			        cvs.clip();
+			        cvs.drawImage(image, seekImgPosX + imgMargin / 2, canvasPosY + imgMargin / 2, w + imgMargin, h + imgMargin);
+			        cvs.restore();
+
+			        URL.revokeObjectURL(image.src);
+			    };
+			}
+	}
+
+	
+
+	function drawRoundedRect(context, x, y, width, height, radius) {
+	    // 角丸のパスを作成
+	    context.beginPath();
+	    context.moveTo(x + radius, y);
+	    context.lineTo(x + width - radius, y);
+	    context.arcTo(x + width, y, x + width, y + radius, radius);
+	    context.lineTo(x + width, y + height - radius);
+	    context.arcTo(x + width, y + height, x + width - radius, y + height, radius);
+	    context.lineTo(x + radius, y + height);
+	    context.arcTo(x, y + height, x, y + height - radius, radius);
+	    context.lineTo(x, y + radius);
+	    context.arcTo(x, y, x + radius, y, radius);
+	    context.closePath();
+	
+		return context;
+	 
+	    
+	}
+
+	async function  api(url) {
+		const response = await fetch(url);
+		const json = await response.json(); 
+		return json;
+
+	}
+	async function getData(url){
+		let data=await api(url);
+		return data;
+		
+	}
+	
+	async function getSeekImage(alias,frame) {
+		let url=location.protocol+"/anime-web/get-file/anime/image/seek/"+alias+"/"+frame;
+		let data = await getData(url);
+		return data;
 	}
 	function addPageButton(){
 		

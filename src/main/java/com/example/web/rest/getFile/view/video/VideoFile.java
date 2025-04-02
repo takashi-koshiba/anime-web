@@ -40,7 +40,7 @@ public class VideoFile extends FileController {
 		List<FileInfo> upfile= this.uploadFileService.selectFileOne(session.getAttribute("id").toString(), alias);
 		
 		if(upfile.size()==0) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "ファイルが存在しません。");
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ファイルのアクセス権がありません。");
 		}
 		
 		Path path=Paths.get(Setting.getRoot()+"content/anime-web/upload/file/hls/"+alias+"/"+width+"/video.m3u8").normalize();

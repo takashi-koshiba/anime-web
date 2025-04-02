@@ -9,9 +9,11 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.example.web.etc.db.Animetable.AnimeService;
 import com.example.web.etc.db.uploadFile.FileInfo;
@@ -40,8 +42,8 @@ public class M3u8 extends FileController {
 		}
 		
 		List<FileInfo> upfile= uploadFileService.selectFileOne(session.getAttribute("id").toString(), alias);
-		if(upfile.size()==0 ) {
-			return ResponseEntity.badRequest().build();
+		if(upfile.size()==0) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ファイルのアクセス権がありません。");
 		}
 		
 		

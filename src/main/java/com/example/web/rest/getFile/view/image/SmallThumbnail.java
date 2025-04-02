@@ -47,7 +47,7 @@ public class SmallThumbnail extends FileController {
 
 		List<FileInfo> upfile= uploadFileService.selectFileOne(session.getAttribute("id").toString(), alias);
 		if(upfile.size()==0) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "ファイルが存在しません。");
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ファイルのアクセス権がありません。");
 		}
 
 		Path root=Paths.get( "content/anime-web/upload/file/thumbnail/");

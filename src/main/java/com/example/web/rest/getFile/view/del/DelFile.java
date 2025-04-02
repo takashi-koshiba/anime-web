@@ -29,7 +29,6 @@ public class DelFile  {
 	UploadFileService uploadFileService;
 
 	
-	//検索にヒットするファイルを取得
 	@PostMapping("/anime-web/getFile/view/del/elem")
 	public void file(@RequestParam String alias,HttpSession session) {
 		if(session.getAttribute("id")==null) {
@@ -54,6 +53,7 @@ public class DelFile  {
 		del(root+"file\\thumbnail-temp\\"+alias+".avif");
 		del(root+"file\\video\\"+alias);
 		del(root+"file\\hls\\"+alias);
+		del(root+"file\\seek-image\\"+alias);
 		uploadFileService.delete(userId,alias);
 	}
 	private void del(String p) {

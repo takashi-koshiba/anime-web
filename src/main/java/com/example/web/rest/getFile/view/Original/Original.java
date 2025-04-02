@@ -50,7 +50,7 @@ public class  Original  extends FileController {
 		
 		System.out.println(alias);
 		if( fileInfoList.size()<1) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "ファイルが存在しません。");
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ファイルのアクセス権がありません。");
 		}
 	  
 		FileInfo f=fileInfoList.get(0);

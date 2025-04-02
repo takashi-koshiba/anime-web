@@ -11,10 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.example.web.etc.db.uploadFile.FileInfo;
 import com.example.web.etc.db.uploadFile.UploadFileService;
@@ -45,7 +47,7 @@ public class UpThumbnail extends FileController {
 
 		List<FileInfo> upfile= uploadFileService.selectFileOne(session.getAttribute("id").toString(), alias);
 		if(upfile.size()==0) {
-			return ResponseEntity.badRequest().build();
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ファイルのアクセス権がありません。");
 		}
 
 		Path root=Paths.get( "content/anime-web/upload/file/thumbnail/");

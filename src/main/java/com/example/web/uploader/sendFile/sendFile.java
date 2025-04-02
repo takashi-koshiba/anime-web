@@ -136,6 +136,7 @@ public class sendFile {
 		        ArgsData hlsArgs = new HlsArgs(inputPathStr,dir,m3u8Url.toString(), hlsQue);
 		        Que.addToQueue(hlsArgs);
 		        
+		        createSeekImage(inputPath.toString(),fullPath,alias);
 		        createEncodeAudio(inputPath.toString(),fullPath,alias);
 				createThumbnailVideo(inputPath.toString(),fullPath,alias);
 				
@@ -222,6 +223,29 @@ public class sendFile {
 		String p ="ffmpeg -i \"{0}\"  -ss 1  -vframes 1 -vf \"scale=if(gt(iw\\,ih)\\,220\\,-2):if(gt(iw\\,ih)\\,-2\\,220)\"  -c:v libsvtav1 -preset 8 -crf 30 \"{1}\"" ;
 		 
 		 String output = fullPath+ "content\\anime-web\\upload\\file\\thumbnail\\"+alias+".avif";
+		 String format= MessageFormat.format(p,input,output);	
+		 
+		 
+		 Cmd_que cmdQue = new Cmd_que();
+	     ArgsData cmdArgs = new Cmd_Args(format, cmdQue);
+	     Que.addToQueue(cmdArgs);
+		 
+		 
+		 
+	}
+	private static void createSeekImage(String input,String fullPath,String alias) {
+		 
+		String p ="ffmpeg -i \"{0}\"  -r 1 -vf \"scale=-1:90\"  -f image2  \"{1}\"" ;
+        Path dir = Paths.get(fullPath,"content", "anime-web", "upload", "file", "seek-image",alias).normalize();
+        try {
+			Files.createDirectories(dir);
+		} catch (IOException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		} 
+		
+		
+		 String output = fullPath+ "content\\anime-web\\upload\\file\\seek-image\\"+alias+"\\"+"%08d.jpg";
 		 String format= MessageFormat.format(p,input,output);	
 		 
 		 

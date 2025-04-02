@@ -156,6 +156,8 @@ public class Setting {
 	        Files.createDirectories(dir);
 	        dir = Paths.get(fullPath,"content", "anime-web", "upload", "file","thumbnail-temp");     
 	        Files.createDirectories(dir);
+	        dir = Paths.get(fullPath,"content", "anime-web", "logs");     
+	        Files.createDirectories(dir);
 	        return true;
 	        
 	    } catch (IOException e) {

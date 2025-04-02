@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.logging.Level;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -40,12 +41,14 @@ public class DeleteR {
 	private static void delFile(Path f) {
 		try {
 			if(Files.deleteIfExists(f)) {
-				System.out.println("ファイルを削除しました:"+f.toString());
+				//System.out.println("ファイルを削除しました:"+f.toString());
+				Log.log(Level.INFO, "ファイルを削除しました:"+f.toString());
 			}
 			
 		} catch (IOException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
+			Log.detail(Level.WARNING, "ファイルの削除に失敗しました。", e);
 			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "ファイルの削除に失敗しました。");
 		}
 		
@@ -54,11 +57,13 @@ public class DeleteR {
 		try {
 			if(Files.deleteIfExists(f)) {
 
-				System.out.println("フォルダを削除しました:"+f.toString());
+				//System.out.println("フォルダを削除しました:"+f.toString());
+				Log.log(Level.INFO, "フォルダを削除しました:"+f.toString());
 			}
 		} catch (IOException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
+			Log.detail(Level.WARNING, "フォルダの削除に失敗しました。", e);
 			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "フォルダの削除に失敗しました。");
 		}
 	}

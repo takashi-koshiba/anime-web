@@ -170,4 +170,11 @@
 	font-family: mainFontRegular, "MS Pゴシック";
 	font-weight: bold;
 }
+#canvasSeek{
+	position: absolute;
+	z-index:100;
+	bottom:0%;
+	margin-left:16px;
+	
+}
 

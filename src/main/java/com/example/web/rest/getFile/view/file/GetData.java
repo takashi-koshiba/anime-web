@@ -6,11 +6,13 @@ import jakarta.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.example.web.etc.db.uploadFile.FileInfo;
 import com.example.web.etc.db.uploadFile.UploadFileService;
@@ -33,6 +35,7 @@ public class GetData {
 	public ResponseEntity<Resource> getFile(@PathVariable String alias, 
 			@RequestParam(defaultValue = "false")Boolean onlyAudio, 
 	                                         HttpSession session) {
+		//System.out.println(session.getAttribute("id"));
 
 	    if (session.getAttribute("id") == null) {
 	        return ResponseEntity.badRequest().build();
@@ -40,9 +43,9 @@ public class GetData {
 
 	    List<FileInfo> upfile = uploadFileService.selectFileOne(session.getAttribute("id").toString(), alias);
 
-	    if (upfile.isEmpty()) {
-	        return ResponseEntity.badRequest().build();
-	    }
+		if(upfile.size()==0) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ファイルのアクセス権がありません。");
+		}
 
 	    fileType type = upfile.get(0).getType();
 	    

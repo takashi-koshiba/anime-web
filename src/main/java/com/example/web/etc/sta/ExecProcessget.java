@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.logging.Level;
 
 public class ExecProcessget {
     public static String start(String cmd) {
@@ -32,18 +33,25 @@ public class ExecProcessget {
             errorReader.join();
             System.out.println("=== cmd ===");
             System.out.println(cmd);
+            Log.log(Level.INFO, "コマンド実行 : "+cmd);
             System.out.println("=== OUTPUT ===");
             System.out.println(outputLog.toString());
-
-            System.out.println("=== LOG ===");
-            System.out.println(errorLog.toString());
-
+            Log.log(Level.INFO, "実行結果 : "+outputLog.toString());
+            
+            if(errorLog.toString().length()>0) {
+            	System.out.println("=== LOG ===");
+            	 System.out.println(errorLog.toString());
+                 Log.log(Level.WARNING, "エラーログ : "+errorLog.toString());
+            }
+           
+            
             System.out.println("Process exited with code: " + exitCode);
-
+            Log.log(exitCode==0?Level.INFO:Level.WARNING, "エラーコード : "+outputLog.toString());
             // 標準出力の内容を返す
             return outputLog.toString();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
+            Log.detail(Level.WARNING, "不明なエラー", e);
         }
         return null;
     }
@@ -53,10 +61,12 @@ public class ExecProcessget {
             String line;
             while ((line = reader.readLine()) != null) {
                 logStorage.append(line).append("\n"); 
-                System.out.println(streamType + ": " + line); 
+                System.out.println(streamType + ": " + line);
+                Log.log(Level.INFO, streamType + ": " + line);
             }
         } catch (IOException e) {
             e.printStackTrace();
+            Log.detail(Level.WARNING, "不明なエラー", e);
         }
     }
 }
