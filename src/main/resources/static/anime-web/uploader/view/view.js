@@ -56,7 +56,8 @@ document.addEventListener("DOMContentLoaded",function(){
 		}else if(type=="VIDEO" &&getQtyValueOfbutton()!=-2){
 			elem=document.createElement("video");
 			elem.setAttribute("controls", "");
-			
+			elem.controls = true; // 常に表示
+
 		
 			
 			if (Hls.isSupported()) {
@@ -474,6 +475,8 @@ document.addEventListener("DOMContentLoaded",function(){
 		    return this.maxPosY;
 		}
 	}
+
+
 	
 	function addSeekEvent(elem, video, alias) {
 	    const scrollbarWidth = window.innerWidth - document.body.clientWidth;
@@ -510,7 +513,11 @@ document.addEventListener("DOMContentLoaded",function(){
 	        video.currentTime = (Math.round((currentSeekPosX / seekMaxX) * 100000) / 100000) * video.duration;
 			
 	    });
-
+		
+		canvas.addEventListener("mouseleave", (event) => {
+			cvs.clearRect(0, 0, canvas.width, canvas.height);
+		})
+		
 		//サムネを表示
 	    canvas.addEventListener("mousemove", async (event) => {
 			
@@ -556,6 +563,27 @@ document.addEventListener("DOMContentLoaded",function(){
 	                console.error("Failed to get seek image:", error);
 	            }
 	        }
+			
+		
+			
+			// video へイベントを転送
+			const newEvent = new MouseEvent("mousemove", {
+
+			    bubbles: true,
+			    cancelable: true,
+			    view: window,
+			    clientX: event.clientX,
+			    clientY: event.clientY
+			});
+
+			// シークバーを強制的に表示
+			video.focus();
+			video.controls = true;  
+
+			video.dispatchEvent(newEvent);
+
+
+			
 	    });
 		
 		
