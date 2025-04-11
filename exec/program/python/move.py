@@ -153,17 +153,16 @@ def insertJk_rownumber(video, video_id):
     for value in streams_info:
         tags = value.get('tags', {})
         title = tags.get('title', '')
-        #print(tags)
-        video_time = getVideoTime(tags)
+        
+        video_time = tags.get('DURATION-eng')
         date=os.path.splitext(os.path.basename(video))[0]
         
         strDate=StrToDate(date)
         if strDate!=None and  len(strDate)==6:
             strDate=str(20)+strDate
         
-        
         if 'NicoJK' in title:
-            come_byte = getcome_byte(tags)
+            come_byte = tags.get('NUMBER_OF_BYTES-eng')
             break
 
     formatted_date = None
@@ -187,27 +186,11 @@ def insertJk_rownumber(video, video_id):
         formatted_date
     )    
     err = insert_query(query,value)
-    print("jk_rownumber"+str(value))
     return err 
         
     
     
-def getcome_byte(tags):
-    print(tags)
-    result=tags.get('NUMBER_OF_BYTES-eng')
-    if result==None:
-        result=tags.get('NUMBER_OF_BYTES')
-    return result
-    
-def  getVideoTime(tags):
-    result=tags.get('DURATION-eng')
-    if result==None:
-        result=tags.get('DURATION')
-        
-    
-    return  result 
 
-    
 def move_files_to_folder(files, destination_folder,videoid=0):
 
     try:
