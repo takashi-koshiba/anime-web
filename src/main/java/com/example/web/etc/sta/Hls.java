@@ -197,8 +197,8 @@ public class Hls {
 							+ "-i  \"{0}\"  -o \"{1}video.m3u8\" -f hls "
 							+ "-m hls_segment_filename:\"{1}video%3d.ts\" -m hls_list_size:0  "
 							+ "-c h264 --audio-codec aac --audio-bitrate 256    --input-analyze 30 "
-							+ "--lookahead 32 --aq --aq-temporal --aq-strength 1 "
-							+ "--vbrhq 1 --vbr-quality 28 --gop-len 32 --bframes 2  "
+							+ "--lookahead 32  "
+							+ " --gop-len 32 --bframes 2  "
 							+ "--cqp 24:26:28   --bref-mode each -m hls_time:10 "
 							+ " --preset p1  ";
 					break;
@@ -239,8 +239,8 @@ public class Hls {
 						+ "-i  \"{0}\"  -o \"{1}video.m3u8\" -f hls "
 						+ "-m hls_segment_filename:\"{1}video%3d.ts\" -m hls_list_size:0  "
 						+ "-c h264 --audio-codec aac --audio-bitrate 256    --input-analyze 30 "
-						+ "--lookahead 32 --aq --aq-temporal --aq-strength 1 "
-						+ "--vbrhq 1 --vbr-quality 50 --gop-len 32 --bframes 2  "
+						+ "--lookahead 32 "
+						+ " --gop-len 32 --bframes 2  "
 						+ "--cqp 40:45:50   --bref-mode each -m hls_time:10 "
 						+ "--output-res {4,number,#}x{3,number,#} "
 						+ "  --max-bitrate {2,number,#} --preset p1  ";
@@ -249,8 +249,8 @@ public class Hls {
 							+ "-i  \"{0}\"  -o \"{1}video.m3u8\" -f hls "
 							+ "-m hls_segment_filename:\"{1}video%3d.ts\" -m hls_list_size:0  "
 							+ "-c h264 --audio-codec aac --audio-bitrate 256    --input-analyze 30 "
-							+ "--lookahead 32 --aq --aq-temporal --aq-strength 1 "
-							+ "--vbrhq 1 --vbr-quality 32 --gop-len 32 --bframes 2  "
+							+ "--lookahead 32 "
+							+ "--gop-len 32 --bframes 2  "
 							+ "--cqp 28:32:35   --bref-mode each -m hls_time:10 "
 							+ "--output-res {4,number,#}x{3,number,#} "
 							+ "  --max-bitrate {2,number,#} --preset p1  ";
