@@ -31,7 +31,10 @@ document.addEventListener("DOMContentLoaded",function(){
 		
 		let canvas =  document.getElementById('canvasSeek');
 		
-		canvas.setAttribute('width',(document.body.clientWidth*0.8)-32 );
+		if(canvas!=null){
+			canvas.setAttribute('width',(document.body.clientWidth*0.8)-32 );
+		}
+		
 	})
 	function itemAdd(obj){
 		let type = obj.getAttribute("itemtype");

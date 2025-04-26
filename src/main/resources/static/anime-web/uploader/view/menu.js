@@ -5,6 +5,21 @@ document.addEventListener("DOMContentLoaded",function(){
 	let menu=document.getElementById('menu');
 	let delButton=document.getElementById('delButton');
 	
+	let itemCheck = document.getElementById('itemCheck');
+	let itemCheckedClear = document.getElementById('itemCheckedClear');
+
+	function setAllCheckboxes(checked) {
+	    const fileElems = document.getElementsByClassName('fileElem');
+	    Array.from(fileElems).forEach(child => {
+	        const checkBox = child.querySelector('div > div:nth-child(3) input[type="checkbox"]');
+	        if (checkBox) checkBox.checked = checked;
+	    });
+	}
+
+	//チェックボックスのチェックとクリア
+	itemCheck.addEventListener('click', () => setAllCheckboxes(true));
+	itemCheckedClear.addEventListener('click', () => setAllCheckboxes(false));
+
 	
 	delButton.addEventListener('click',function(){
 		if(!window.confirm("ファイルを削除しますか?")){return}

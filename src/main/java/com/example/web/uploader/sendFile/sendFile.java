@@ -34,10 +34,13 @@ import com.example.web.etc.sta.Setting;
 import com.example.web.etc.sta.ToHash256;
 import com.example.web.etc.sta.que.ArgsData;
 import com.example.web.etc.sta.que.Que;
+import com.example.web.etc.sta.que.SecondQue;
 import com.example.web.etc.sta.que.cmd.Cmd_Args;
 import com.example.web.etc.sta.que.cmd.Cmd_que;
 import com.example.web.etc.sta.que.hls.HlsArgs;
 import com.example.web.etc.sta.que.hls.Hls_Que;
+import com.example.web.etc.sta.que.resize.Resize_Args;
+import com.example.web.etc.sta.que.resize.Resize_que;
 @RestController
 
 
@@ -173,14 +176,22 @@ public class sendFile {
 		 Img img=new Img(new File(input));
 		 Path tempPath =  Paths.get(Setting.getRoot()+"content\\anime-web\\upload\\file\\thumbnail-temp\\"+alias+".avif").normalize();
 		 
+		 //1024以上の画像を1024にリサイズ
 		 if(img.getHeight()>1024 || img.getWidth()>1024) {
 			 resize(1024,mimeType,input, tempPath,"thumbnail-big",alias);
 
 		 }
+		 //324以上は324にリサイズし、これをサムネイルにする
 		 if(img.getHeight()>324 || img.getWidth()>324) {
 
 			 resize(324,mimeType,input, tempPath,"thumbnail",alias);
 		
+		 }else {//小さい画像はリサイズせずに圧縮してサムネイルにする
+
+			 Integer biggestSize =img.getHeight()>img.getWidth()?img.getHeight():img.getWidth();
+			 
+			//avifで圧縮
+			compressImg(new File(input),"thumbnail",biggestSize,alias);
 		 }
 
 		
@@ -189,34 +200,26 @@ public class sendFile {
 	}
 	private static void resize(Integer imgSize,String mimeType,String input,Path tempPath,String outputPath,String alias) {
 		File temp=new File(tempPath.toAbsolutePath().toString()+imgSize.toString()+".png");
-		//img.Resize(temp.getAbsolutePath(), imgSize, mimeType);
-		Img img=new Img(new File(input));
-		img.Resize(temp.getAbsolutePath(), imgSize, mimeType);
-		
+		//リサイズしてPNG形式に変換
+		Resize_que resizeQue= new Resize_que();
+		ArgsData resizeArgs = new Resize_Args(input,temp.getAbsolutePath(), imgSize, mimeType, resizeQue);
+		Que.addToQueue(resizeArgs);
+			 
+		//avifで圧縮
+		compressImg(temp,outputPath,imgSize,alias);
+		return;
+ 
+	}
+	private static void compressImg(File inputPath,String outputPath,Integer imgSize,String alias) {
+		//avifに変換
 		String p ="ffmpeg -i \"{0}\"    -vf \"scale=if(gt(iw\\,ih)\\,{2,number,#}\\,-2):if(gt(iw\\,ih)\\,-2\\,{2,number,#})\"  -c:v libsvtav1 -preset 8 -crf 28 \"{1}\"" ;
 		Path output =  Paths.get(MessageFormat.format(Setting.getRoot()+"content\\anime-web\\upload\\file\\{0}\\"+alias+".avif",outputPath)).normalize();
-		 
 		String format;
-		if (temp.exists()) {
-			format= MessageFormat.format(p,temp.getAbsolutePath().toString(),output.toString(),imgSize);
-			//ExecProcess.main(format);
-			
-			
-			 Cmd_que cmdQue = new Cmd_que();
-		     ArgsData cmdArgs = new Cmd_Args(format, cmdQue);
-		     Que.addToQueue(cmdArgs);
-			
-			return;
-		}
-		format= MessageFormat.format(p,tempPath.toString(),output.toString(),imgSize);	
-		//ExecProcess.main(format);
-		
-		 Cmd_que cmdQue = new Cmd_que();
-	     ArgsData cmdArgs = new Cmd_Args(format, cmdQue);
-	     Que.addToQueue(cmdArgs);
+		format= MessageFormat.format(p,inputPath.getAbsolutePath().toString(),output.toString(),imgSize);
 	
-		 
-		 
+		Cmd_que cmdQue = new Cmd_que();
+		ArgsData cmdArgs = new Cmd_Args(format, cmdQue);
+		Que.addToQueue(cmdArgs);
 	}
 	private static void createThumbnailVideo(String input,String fullPath,String alias) {
 		 
@@ -251,7 +254,7 @@ public class sendFile {
 		 
 		 Cmd_que cmdQue = new Cmd_que();
 	     ArgsData cmdArgs = new Cmd_Args(format, cmdQue);
-	     Que.addToQueue(cmdArgs);
+	     SecondQue.addToQueue(cmdArgs);//エンコードとは別のスレッドで実行
 		 
 		 
 		 
