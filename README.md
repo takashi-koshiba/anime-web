@@ -111,13 +111,14 @@ http://localhost:8082/anime-web/anime<br>
 <ul>
   <li>rename_anime.php<br></li>
   動画のファイル名を統一します。
-  リネームするディレクトリを指定してください。<br>
+  ファイル中のリネームするディレクトリを編集してください。<br>
 
 <br>
-   <li>animecheck.py DBとファイルの整合性を確認します。<br></li>
+   <li>animecheck.py </li>
+   DBとファイルの整合性を確認します。<br>
  DBには存在しているがファイルがない場合はDBを削除<br>
- ファイルはあってDBにない場合はエラーを出力します。<br>
- このファイルの編集は不要です。 <br>
+ 動画ファイルは存在しているが、DBにない場合はエラーを出力します。<br>
+ このファイルの編集は不要です。<br>
        <br>
        <li>gomi.py<br></li>
        http://localhost:8082/anime-web/etc/settings/exclude/
@@ -132,14 +133,14 @@ http://localhost:8082/anime-web/anime<br>
  エンコードしたファイルを移動してDBに書き込みます。<br>
  実行しても動画が移動されない場合は<br>
  個々のアニメの「別名追加」からファイル名を追加してください。<br>
- 但しlocalhost以外だと表示されません。<br>
+ 但しlocalhost以外だと表示されません。<br><br>
  ファイル内のディレクトリを編集してください。<br>
 
  <br>
  <li>program.py</li>
   ts.program.txtから番組の説明を抽出します。<br>
- 計算済みのテーブルを作成します。<br>
-  ts.program.txtがあるディレクトリを指定してください。<br>
+ 計算済みのテーブルを作成します。<br><br>
+  ファイル中のts.program.txtがあるディレクトリを編集してください。<br>
 </ul>
 
 <br>
@@ -165,7 +166,7 @@ animeCheck.py<br>
 ```bash
 php.exe  exec\program\php\rename_anime.php
 python exec\program\python\animecheck.py
-python exec\program\python\move.p
+python exec\program\python\move.py
 python exec\program\python\program.py
 python exec\program\python\gomi.py
 python exec\program\python\animecheck.py
@@ -183,7 +184,8 @@ python exec\program\python\animecheck.py
 <br>
 3.アニメを再度追加<br>
 <br>
-4.rename_anime.phpから最後のanimeCheck.pまで順番に実行すれば修正されます。<br>
+4.<a href="#動画の登録">動画の登録</a>内のツールのrename_anime.phpから
+<br>最後のanimeCheck.pyまで順番に実行すれば修正されます。<br>
 <br>
 animeCheck.pyでエラーが表示された場合はフォルダを削除するなどしてDBと一致させてください。<br>
 
@@ -196,9 +198,9 @@ assファイルのサイズを抽出しています。<br>
 番組のタイトルごとに集計しており、中央値でランキングにしています。<br>
 <br>
 条件<br>
-下記をすべて満たしていないとランキングの取得ができません。
-Amatsukazeを使用してmkvファイル内にassファイルが格納されていること<br>
-ファイル名に下記のいずれかのフォーマットで日付が記載されていること<br>
+下記をすべて満たしていないとランキングの取得ができません。<br>
+・Amatsukazeを使用してmkvファイル内にassファイルが格納されていること<br>
+・ファイル名に下記のいずれかのフォーマットで日付が記載されていること<br>
     YYYYMMDD-hhmm<br>
     YYYY-MM-DD-hhmm<br>
     YYYYMMDDhhmm<br>
@@ -309,5 +311,10 @@ insert into extension (ex,type) values("x-matroska",1);
 typeは0なら画像<br>
 1なら動画
 2なら音声ファイルです。
-
+<br><br>
+<span >他に考えられる原因としてffmpegの終了を待たずに処理が進み、処理が異常終了することで<br>サムネイルが生成されない場合があります。<br>
+現在修正中です。</span>
+<h2>アップロード後の処理のトラブルシューティング</h2>
+動画のエンコードが失敗しているときなどは<br>
+/anime-web/logs/内のログでコマンド実行が失敗していないかを確認してください。
 
