@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.example.web.etc.db.uploadFile.FileInfo;
+import com.example.web.etc.db.uploadFile.UploadFileService;
 import com.example.web.etc.sta.FileController;
 import com.example.web.etc.sta.GetExtension;
 import com.example.web.etc.sta.Setting;
@@ -27,11 +29,13 @@ import com.example.web.etc.sta.Setting;
 public class SeekResource extends FileController {
 
     private final ResourceLoader resourceLoader;
-  
-    public SeekResource(ResourceLoader resourceLoader) {
+    private final UploadFileService uploadFileService;
+	
+	
+    public SeekResource(ResourceLoader resourceLoader, UploadFileService uploadFileService) {
         super("");
         this.resourceLoader = resourceLoader;
-
+        this.uploadFileService = uploadFileService;
     }
 
 	@GetMapping("/anime-web/get-file/anime/image/seek-image/{alias}/{frame}")
@@ -39,9 +43,12 @@ public class SeekResource extends FileController {
 		if(session.getAttribute("id")==null) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "セッションがありません。");
 		}
-
-	
-
+		
+		List<FileInfo> upfile= uploadFileService.selectFileOne(session.getAttribute("id").toString(), alias);
+		if(upfile.size()==0) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ファイルのアクセス権がありません。");
+		}
+		
 		Path root=Paths.get( "content/anime-web/upload/file/seek-image/");
 		Path path=Paths.get(Setting.getRoot()+root+"/"+alias).normalize();
 		File[] fileList = path.toFile().listFiles();

@@ -141,7 +141,7 @@ public class sendFile {
 		        
 		        createSeekImage(inputPath.toString(),fullPath,alias);
 		        createEncodeAudio(inputPath.toString(),fullPath,alias);
-				createThumbnailVideo(inputPath.toString(),fullPath,alias);
+				//createThumbnailVideo(inputPath.toString(),fullPath,alias);
 				
 				//画像はサムネ
 			}else if(Objects.equals(fileType.IMAGE.ordinal(),  uploadFileType.getTypeId()) ) {
@@ -223,7 +223,7 @@ public class sendFile {
 	}
 	private static void createThumbnailVideo(String input,String fullPath,String alias) {
 		 
-		String p ="ffmpeg -i \"{0}\"  -ss 1  -vframes 1 -vf \"scale=if(gt(iw\\,ih)\\,220\\,-2):if(gt(iw\\,ih)\\,-2\\,220)\"  -c:v libsvtav1 -preset 8 -crf 30 \"{1}\"" ;
+		String p ="ffmpeg -i \"{0}\"  -ss 1  -vframes 1 -vf \"scale=if(gt(iw\\,ih)\\,440\\,-2):if(gt(iw\\,ih)\\,-2\\,440)\"  -c:v libsvtav1 -preset 8 -crf 30 \"{1}\"" ;
 		 
 		 String output = fullPath+ "content\\anime-web\\upload\\file\\thumbnail\\"+alias+".avif";
 		 String format= MessageFormat.format(p,input,output);	
@@ -238,7 +238,7 @@ public class sendFile {
 	}
 	private static void createSeekImage(String input,String fullPath,String alias) {
 		 
-		String p ="ffmpeg -i \"{0}\"  -r 1 -vf \"scale=-1:90\"  -f image2  \"{1}\"" ;
+		String p ="ffmpeg -i \"{0}\"  -r 1 -vf \"scale=-1:128\"  -f image2  \"{1}\"" ;
         Path dir = Paths.get(fullPath,"content", "anime-web", "upload", "file", "seek-image",alias).normalize();
         try {
 			Files.createDirectories(dir);

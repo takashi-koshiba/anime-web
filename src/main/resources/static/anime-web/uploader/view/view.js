@@ -670,7 +670,7 @@ document.addEventListener("DOMContentLoaded",function(){
 	    let view_div_child2 = document.getElementById('view_div_child2');
 	    let fileElem = document.getElementsByClassName('fileElem')[0];
 	  
-	    const thumbnail="/anime-web/get-file/anime/image/small/";
+	    //const thumbnail="/anime-web/get-file/anime/image/small/";
 		let max=f+l>items.length?items.length:f+l;
 		let min=f>max?max:f;
 	    for(let i=min;i<max;i++){
@@ -679,7 +679,7 @@ document.addEventListener("DOMContentLoaded",function(){
 		  
 		    let img=clonefileElem.children[0].children[0].children[0];
 		    img.setAttribute("title", items[i]["alias"]);
-		    img.setAttribute("src", thumbnail+items[i]["alias"]);
+			img.setAttribute("src", "/anime-web/get-file/anime/image/seek/"+items[i]["alias"]+"/")
 		    img.setAttribute("itemtype", items[i]["type"]);
 			img.setAttribute("originaltype", items[i]["type"]);
 		    img.addEventListener("click",function(){
@@ -706,7 +706,7 @@ document.addEventListener("DOMContentLoaded",function(){
 			 delCheckBox.setAttribute("alias",items[i]["alias"]);
 	     }
 	  }
-	
+
 	async function exec(){
 		const items = await fileApi(); 
 		pageObj.pagemax=Math.ceil(items.length/pageObj.itemLimit);
