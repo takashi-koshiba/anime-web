@@ -27,29 +27,57 @@ document.addEventListener("DOMContentLoaded",function(){
 	let prevSeekIndex=null;
 	
 	window.addEventListener("resize",function(){
-		changeViewDivSize();
-		
-		let canvas =  document.getElementById('canvasSeek');
-		
-		if(canvas!=null){
-			canvas.setAttribute('width',(document.body.clientWidth*0.8)-32 );
-		}
+		resizeScreen();
+
 		
 	})
-	function itemAdd(obj){
-		let type = obj.getAttribute("itemtype");
-		let alias=obj.getAttribute("title");
-		let elem;
-		let originalType=obj.getAttribute("originalType");
+	
+	function resizeScreen(){
+		changeViewDivSize();
+
+
+		let canvas =  document.getElementById('canvasSeek');
+		let margin = parseFloat(window.getComputedStyle(canvas).marginLeft);
+		let width=document.body.clientWidth;
+		
+		if (document.fullscreenElement) {
+			return;
+		}
+		if(canvas!=null){
+			canvas.setAttribute('width',(document.body.clientWidth*0.8)-margin*2 );
+		}
+
+		let pauseDiv = document.getElementById("pauseDiv");
+		if(pauseDiv!=null){
+			pauseDiv.style.width = document.body.clientWidth * 0.8 + "px";
+		}
+
+		let progress = document.getElementById("progress");
+		if(progress!=null){
+			progress.style.width=(width*0.8)-margin*2+"px";
+		}
+		let videoContorols = document.getElementById("videoContorols");
+		if(videoContorols!=null){
+			videoContorols.style.width=(width*0.8)-margin*2+"px";
+		}
+	}
+	
+	function itemAdd(type,originalType,alias){
+		//let type = obj.getAttribute("itemtype");
+		//let alias=obj.getAttribute("title");
+		
+		//let originalType=obj.getAttribute("originalType");
 		//console.dir(originalType);
 		let path="/anime-web/get-file/upload/data/view/";
 		
 		
-		let itemView=document.getElementById("itemView");
-		
-		
-		
-		
+		let itemView = document.getElementById("itemView");
+
+		while (itemView.children.length > 0) {
+		  itemView.children[0].remove();
+		}
+
+		let elem;
 		if(type=="IMAGE"){
 			elem=document.createElement("img");
 			elem.setAttribute("src",path+alias);
@@ -58,11 +86,10 @@ document.addEventListener("DOMContentLoaded",function(){
 			setTypeElem(elem,originalType,type,alias);
 		}else if(type=="VIDEO" &&getQtyValueOfbutton()!=-2){
 			elem=document.createElement("video");
-			elem.setAttribute("controls", "");
-			elem.controls = true; // 常に表示
-
-		
-			
+			elem.setAttribute('id','playable');
+			//elem.setAttribute("controls", "");
+			//elem.controls = true; // 常に表示
+	
 			if (Hls.isSupported()) {
 				  hls = new Hls({
 					    capLevelToPlayerSize: true, 
@@ -109,39 +136,147 @@ document.addEventListener("DOMContentLoaded",function(){
 				e.stopPropagation();
 				})
 				
-			//スマホ用に画面タッチで再生と一時停止できるようにする
-			elem.addEventListener('touchstart', function(e) {
-						    // コントローラー内のボタンがクリックされた場合、クリックを無視する
-						    if (e.target.tagName === 'BUTTON') return;
-
-						    // コントローラーが非表示ではない場合
-						    if (elem.paused) {
-						        elem.play(); // 再生
-						    } else {
-						        elem.pause(); // 一時停止
-						    }
-						});
-
+			
 			setTypeElem(elem,originalType,type,alias);
 			
 			let canvas = document.createElement("canvas");
 			canvas.setAttribute('id','canvasSeek');
 					
-			console.dir(elem.clientWidth);
-			canvas.setAttribute('width',(document.body.clientWidth*0.8)-32 );
+		
 			itemView.appendChild(canvas); 
-			addSeekEvent(canvas,elem,alias);
+			//addSeekEvent(canvas,elem,alias);
 
+			//'動画の一時停止用に見えないdivを追加'
+			itemView.appendChild(addPauseDiv()); 
+			
+			//プログレスバーを表示
+			let progress = document.createElement("progress");
+			progress.value=0;
+			progress.setAttribute('id','progress');
+			addProgressEvents(progress,elem,canvas,alias);
+			itemView.appendChild(progress); 
+			
+			
+			let videoContorols = document.createElement("div");
+			videoContorols.setAttribute('id','videoContorols');
+			itemView.appendChild(videoContorols); 
+			
+			let playIcon = document.createElement("div");
+			playIcon.setAttribute('id','playIcon');
+
+			playIcon.style.backgroundSize = "contain"; 
+			playIcon.addEventListener('click',function(){
+				if (elem.paused) {
+				    elem.play(); // 再生
+
+				} else {
+				    elem.pause(); // 一時停止
+				}
+			})
+			
+			
+			videoContorols.appendChild(playIcon); 
+			
+			
+			
+			let videoTime_p = document.createElement("p");
+			let videoTime_div = document.createElement("div");
+			videoTime_p.setAttribute('id','videoTime_p');
+			videoTime_div.setAttribute('id','videoTime_div');
+			videoContorols.appendChild(videoTime_div); 
+			videoTime_div.appendChild(videoTime_p); 
+
+			
+			let valumeIcon = document.createElement("div");
+			valumeIcon.setAttribute('id','valumeIcon');
+			valumeIcon.style.backgroundImage = 'url("/anime-web/uploader/view/icons/volume1.avif")';
+			valumeIcon.addEventListener('click', function(e) {
+				if(elem.volume>0){
+					elem.volume = 0;
+					valumeLevel_prg.value=0;
+				}else{
+					
+					elem.volume=volumeLevel/100;
+					valumeLevel_prg.value=volumeLevel;
+				}
+			});
+			
+			
+			videoContorols.appendChild(valumeIcon); 
+			
+			let valumeLevel_div = document.createElement("div");	
+			valumeLevel_div.setAttribute('id','valumeLevel_div');
+			videoContorols.appendChild(valumeLevel_div); 
+			
+			//音量
+			let volumeLevel=100;
+			let valumeLevel_prg = document.createElement("progress");	
+			valumeLevel_prg.setAttribute('id','valumeLevel_prg');
+			valumeLevel_prg.max=100;
+			valumeLevel_prg.value=volumeLevel;
+			valumeLevel_prg.addEventListener('click', function(e) {
+			    const rect = valumeLevel_prg.getBoundingClientRect();
+			    const x = e.clientX - rect.left;
+			    const ratio = x / rect.width;
+
+			    // 10段階に切り上げ（1〜10）
+			    let  step = Math.ceil(ratio * 10); 
+			    if (ratio<0.1) step=0;    //0.1以下は０にする。  
+
+			    valumeLevel_prg.value = step * 10;
+
+			    // 動画の音量を変更
+			    elem.volume = step/10;
+
+			    volumeLevel=step * 10;
+			});
+			valumeLevel_div.appendChild(valumeLevel_prg); 
+			resizeScreen();
+			
+			
+			
+			//動画の再生時間を反映
+			elem.addEventListener('timeupdate', function() {
+				let videoDuration=elem.duration;
+				if(!isNaN(videoDuration))  {
+					progress.value= ((elem.currentTime/videoDuration));
+					videoTime_p.innerText=formatTime(elem.currentTime)+"/"+formatTime(videoDuration);
+				}
+				
+				
+			});
+			elem.addEventListener('volumechange',function(){
+				if(elem.volume>0){
+					valumeIcon.style.backgroundImage = 'url("/anime-web/uploader/view/icons/volume1.avif")';
+				}
+				else if(elem.volume<=0){
+					valumeIcon.style.backgroundImage = 'url("/anime-web/uploader/view/icons/volume2.avif")';
+				}
+			});
+			
+			elem.addEventListener('play', () => {
+			  playIcon.style.backgroundImage = 'url("/anime-web/uploader/view/icons/stop.avif")';
+			});
+
+			// 一時停止時
+			elem.addEventListener('pause', () => {
+			  playIcon.style.backgroundImage = 'url("/anime-web/uploader/view/icons/play.avif")';
+			});
 			
 		}else if(type=="AUDIO" ||getQtyValueOfbutton()==-2){
 
 			elem=document.createElement("audio");
+			elem.setAttribute('id','playable');
 			//originalType=elem.;
 			elem.setAttribute("src",path+alias+"?onlyAudio=true");
 			elem.setAttribute("controls", "");
 			elem.play();
 			setTypeElem(elem,originalType,"AUDIO",alias);
 			addSwitchQltEventButton();
+			
+			'動画の一時停止用に見えないdivを追加'
+			//itemView.appendChild(addPauseDiv()); 
+			
 		}else{
 			return;
 			
@@ -161,7 +296,254 @@ document.addEventListener("DOMContentLoaded",function(){
 		
 		itemViewBack.style.display="block";
 		//console.dir(imgPath+this.getAttribute("title"));
+		
+		//動画と音声の一時停止のイベントを追加
+		addEventPauseDiv();
+	}
+	  function  addProgressEvents(progress,video,canvas,alias){
+		
+		canvas.addEventListener('mousemove',async function(e){
+			const canvas = document.getElementById("canvasSeek");
+			const cvs = canvas.getContext("2d");
+			cvs.clearRect(0, 0, canvas.width, canvas.height);
 
+		});
+	
+		let prevFrame=-1;
+		progress.addEventListener('mousemove',async function(e){
+			let percent=prgPos(e,this)
+
+			const canvas = document.getElementById("canvasSeek");
+			const cvs = canvas.getContext("2d");
+			//itemView.appendChild(canvas);
+			const getCanvasWidth = () => {
+			    const itemV = canvas;
+			    const style = window.getComputedStyle(canvas);
+			    const marginLeft = parseFloat(style.marginLeft) || 0;
+			    const marginRight = parseFloat(style.marginRight) || 0;
+				
+				const margin=marginLeft + marginRight;
+				const w=(itemV.offsetWidth) - margin;
+				
+			    return [w,margin];
+			};
+			const canvasW = getCanvasWidth();
+
+			const currentSeekFrame = Math.ceil(percent*Math.ceil(video.duration)) ;
+
+            try {
+				if(prevFrame!=currentSeekFrame){
+					const result = await getSeekImage(alias, currentSeekFrame);
+					renderSeekThumbnail(cvs, result, percent, 200, canvasW,currentSeekFrame);
+					prevFrame=currentSeekFrame;
+				}
+
+            } catch (error) {
+                console.error("Failed to get seek image:", error);
+            }
+		});
+		
+		//クリックした位置で再生
+		progress.addEventListener('click',function(e){
+			let percent=prgPos(e,this);
+			video.currentTime = Math.floor(percent*Math.floor(video.duration)) ;
+			
+		})
+	
+		function prgPos(e, progress) {
+		    const rect = progress.getBoundingClientRect();
+		    const x = e.clientX - rect.left;
+		    let percent = (x / rect.width);
+		    // 0〜1の範囲に制限
+		    percent = Math.max(0, Math.min(1, percent));
+		    return percent;
+		}
+
+		
+		function renderSeekThumbnail(cvs, result, percent, seekMaxX, canvasW,currentSeekFrame) {
+		    //高さを90pxでリサイズ
+			const h = 90;
+		    const imgRatio = result.height / h;
+		    const w = result.width / imgRatio;
+			const imgMargin=5;//サムネの背景の余白
+			const margin = parseFloat(window.getComputedStyle(canvas).marginLeft);
+		    const canvasPosY = 150 - h - margin * 2 - 30;
+			const elemWidth=canvasW[0];
+			
+		    //let seekImgPosX = (currentSeekPosX / seekMaxX) * elemWidth - (w + imgMargin * 2) / 2;
+			let seekImgPosX = (elemWidth+margin)*percent-(w/2)-imgMargin;
+			
+
+
+			//画像のサムネイルが範囲外にならないように調整
+			if(seekImgPosX<0)seekImgPosX=0;
+			else if(seekImgPosX+w+imgMargin*2>canvas.width)seekImgPosX=canvas.width-(w+imgMargin*2);
+			
+		    const image = new Image();
+		    image.src = result.imgPath;
+		    image.onload = () => {
+		        cvs.clearRect(0, 0, canvas.width, canvas.height);
+		        cvs.save();
+		
+		        drawRoundedRect(cvs, seekImgPosX, canvasPosY, w + imgMargin * 2, h + imgMargin * 2, 5);
+		        cvs.fillStyle = "rgb(255, 255, 255)";
+		        cvs.fill();
+				
+				//再生時間を描画
+				cvs.textAlign = 'center';
+				cvs.font = '24px Arial';  
+				cvs.fillStyle = '#FFB6C1'; 
+				cvs.fillText(formatTime(currentSeekFrame) , seekImgPosX + (w / 2)+margin/2, 130);
+				
+		        drawRoundedRect(cvs, seekImgPosX + imgMargin / 2, canvasPosY + imgMargin / 2, w + imgMargin, h + imgMargin, 5);
+		        cvs.clip();
+		        cvs.drawImage(image, seekImgPosX + imgMargin / 2, canvasPosY + imgMargin / 2, w + imgMargin, h + imgMargin);
+		        cvs.restore();
+		
+		        URL.revokeObjectURL(image.src);
+		    };
+					}
+					
+
+
+		
+	}
+	function formatTime(seconds) {
+	  seconds = Math.floor(seconds); 
+	  const hrs = Math.floor(seconds / 3600);
+	  const mins = Math.floor((seconds % 3600) / 60);
+	  const secs = seconds % 60;
+
+	  // ゼロ埋め関数
+	  const pad = n => n.toString().padStart(2, '0');
+
+	  if (hrs > 0) {
+	    return `${hrs}:${pad(mins)}:${pad(secs)}`;
+	  } else {
+	    return `${pad(mins)}:${pad(secs)}`;
+	  }
+	}
+	
+	function addEventPauseDiv(){
+		let pauseDiv = document.getElementById("pauseDiv");
+		let media= document.getElementById("playable");
+
+		
+		if(pauseDiv==null) return;
+		pauseDiv.addEventListener('click',function(){
+			if (media.paused) {
+			    media.play(); // 再生
+
+			} else {
+			    media.pause(); // 一時停止
+			}
+		});
+		//ダブルクリックでフルスクリーンにする
+		pauseDiv.addEventListener('dblclick', function(){
+			let overlay=document.getElementById("itemView");
+			
+			if (!document.fullscreenElement) {
+			    try {
+			      const promise = overlay.requestFullscreen();
+				  fullScreen(true);
+				  
+				  
+			      if (promise) {
+			        promise.catch(err => {
+			          console.error("Fullscreen request failed:", err);
+			        });
+			      }
+			    } catch (err) {
+			      console.error("Fullscreen request failed:", err);
+			    }
+			  } else {
+				fullScreen(false);
+			    document.exitFullscreen().catch(err => {
+			      console.error("Exit fullscreen failed:", err);
+			    });
+			  }
+			});
+			
+			//動画下部のアイテムの表示非表示を切り替える
+			let moveTimeout;
+			let isVisible=true;
+			pauseDiv.addEventListener('mousemove', function() {
+			  // すでにタイマーがあればキャンセル
+			  clearTimeout(moveTimeout);
+				
+			  //消えてたら表示
+				isVisible=true;
+				visibleItems(isVisible);
+			  
+			  // 1300ms後に非表示
+			  moveTimeout = setTimeout(function() {
+				isVisible=false;
+			    visibleItems(isVisible);
+				
+			  }, 1300);
+			});
+			
+			//表示をキャンセル
+			let itemViewBack =document.getElementById("itemViewBack");
+			itemViewBack.addEventListener("mousemove",function(e){
+				if (e.target !== this) return;
+				isVisible=false;
+				visibleItems(isVisible);
+
+			});
+			function visibleItems(isVisible) {
+			  const canvas = document.getElementById('canvasSeek');
+			  const progress = document.getElementById('progress');
+			  const videoContorols=document.getElementById('videoContorols');
+			  
+			  [canvas, progress,videoContorols].forEach(el => {
+			    if (!el) return; // 要素が存在しないときにスキップ
+
+			    if (isVisible) {
+			      el.classList.remove('hidden');
+			    } else {
+			      el.classList.add('hidden');
+			    }
+			  });
+			}
+	}
+	function fullScreen(isFullScreen){
+		let canvas =  document.getElementById('canvasSeek');
+		let pauseDiv = document.getElementById('pauseDiv');
+		let progress=document.getElementById('progress');
+		let videoContorols=document.getElementById('videoContorols');
+		
+		let width=document.body.clientWidth;
+		const scrollbarWidth = window.innerWidth - document.body.clientWidth;
+		if(isFullScreen){
+			
+			
+			let margin = parseFloat(window.getComputedStyle(canvas).marginLeft);
+
+			canvas.width=width-margin;
+
+			pauseDiv.style.width = width+margin*2+ "px";
+			
+			progress.style.width=width-margin+ "px";
+
+		}else{
+			resizeScreen()
+		}
+		
+	}
+	
+	
+	function addPauseDiv(){
+		let pauseDiv = document.createElement("div");
+		pauseDiv.setAttribute("id", "pauseDiv");
+		pauseDiv.style.width = document.body.clientWidth * 0.8 + "px";
+		pauseDiv.style.height = "100%";
+		pauseDiv.style.zIndex = "20"; 
+		pauseDiv.style.objectFit = "contain";  
+		pauseDiv.style.position="absolute";
+		
+		pauseDiv.style.opacity=0.3
+		return pauseDiv;
 	}
 
 	function setTypeElem(elem,originalType,type,alias){
@@ -189,23 +571,27 @@ document.addEventListener("DOMContentLoaded",function(){
 	}
 	function closeView(event,obj){
 		if(event.target.id==obj.id){
-			let itemView = document.getElementById("itemViewBack");	
-			itemView.style.display="none";
+			let itemViewBack = document.getElementById("itemViewBack");	
+			itemViewBack.style.display="none";
 		
 		
 			//メディアファイル
-			elem=document.getElementById("itemView").children[1];
-			if(elem){
-				let type=elem.getAttribute("itemtype");
+			let media= document.getElementById("playable");
+			if(media){
+				let type=media.getAttribute("itemtype");
 				if(type=="AUDIO"){
-					elem.pause();
+					media.pause();
 				}
-				disposeHls(elem);
-				elem.remove();
+				disposeHls(media);
+				media.remove();
 			}
 			
-			elem=document.getElementById("itemView").children[0];
-			elem.remove();
+			
+			let itemView = document.getElementById("itemView");
+
+			while (itemView.children.length > 0) {
+			  itemView.children[0].remove();
+			}
 		}
 
 
@@ -297,7 +683,11 @@ document.addEventListener("DOMContentLoaded",function(){
 		    img.setAttribute("itemtype", items[i]["type"]);
 			img.setAttribute("originaltype", items[i]["type"]);
 		    img.addEventListener("click",function(){
-		  	    itemAdd(this);
+				let type = this.getAttribute("itemtype");
+				let originalType=this.getAttribute("originalType");
+				let alias=this.getAttribute("title");
+				
+		  	    itemAdd(type,originalType,alias);
 		  		
 		     });
 		  
@@ -387,18 +777,13 @@ document.addEventListener("DOMContentLoaded",function(){
 		for(let i =0;i<qltSelect.length;i++){
 			qltSelect[i].addEventListener('click',function(){
 				
-				
-				let itemView= document.getElementById("itemView");
-				elem=itemView.children[0];
-
-				
-				const originalType = elem?.getAttribute("originaltype");
-				if(elem?.getAttribute("originaltype")=== "undefined" || !elem
-			       ||elem==null || originalType!="VIDEO") {
+				let media= document.getElementById("playable");
+				const originalType = media?.getAttribute("originaltype");
+				if(media?.getAttribute("originaltype")=== "undefined" || !media
+			       ||media==null || originalType!="VIDEO") {
 					qtyValueTemp=getQtyValueOfbutton();
 					return;
 				   }
-				
 				reloadFile();
 
 				qtyValueTemp=getQtyValueOfbutton();
@@ -412,26 +797,28 @@ document.addEventListener("DOMContentLoaded",function(){
 		
 	}
 	function reloadFile(){
-		
+
 		
 		
 		if(isSwitchAudio()){
+			let media =document.getElementById("playable");
+			let itemType=media.getAttribute("itemType");
 			
-
-					
-			
-
-			let type=elem.getAttribute("itemType");
-			
-			if(type!="AUDIO" &&type!="VIDEO") return;
+			if(itemType!="AUDIO" &&itemType!="VIDEO") return;
 			//削除
-			disposeHls(elem);
-			elem.remove();
-			//新しく追加
-			
-			elem.setAttribute("itemType",getQtyValueOfbutton()==-2?"AUDIO":"VIDEO");
+			disposeHls(media);
+
+
+
+			//タイプの切り替え
+			media.setAttribute("itemType",getQtyValueOfbutton()==-2?"AUDIO":"VIDEO");
 		//	elem.setAttribute("originalType",getQtyValueOfbutton()==-2?"AUDIO":"VIDEO");
-			itemAdd(elem);
+			let type = media.getAttribute("itemtype");
+			let originalType=media.getAttribute("originalType");
+			let alias=media.getAttribute("title");
+
+		  	itemAdd(type,originalType,alias);
+
 			qtyValueTemp=getQtyValueOfbutton();
 			//return;
 			
@@ -485,7 +872,7 @@ document.addEventListener("DOMContentLoaded",function(){
 	    const scrollbarWidth = window.innerWidth - document.body.clientWidth;
 	    const canvas = document.getElementById("canvasSeek");
 	    const cvs = canvas.getContext("2d");
-	    itemView.appendChild(canvas);
+	    //itemView.appendChild(canvas);
 
 		//canvasをクリックでシークする
 	    canvas.addEventListener("click", (event) => {
@@ -517,110 +904,10 @@ document.addEventListener("DOMContentLoaded",function(){
 			
 	    });
 		
-		canvas.addEventListener("mouseleave", (event) => {
-			cvs.clearRect(0, 0, canvas.width, canvas.height);
-		})
-		
-		//サムネを表示
-	    canvas.addEventListener("mousemove", async (event) => {
-			
-			const getCanvasWidth = () => {
-			    const itemV = canvas;
-			    const style = window.getComputedStyle(canvas);
-			    const marginLeft = parseFloat(style.marginLeft) || 0;
-			    const marginRight = parseFloat(style.marginRight) || 0;
-				
-				const margin=marginLeft + marginRight;
-				const w=(itemV.offsetWidth) - margin;
-				
-			    return [w,margin];
-			};
-
-			const canvasW = getCanvasWidth();
-			    
-
-
-			
-			const canvasH = document.getElementById("itemView").children[1].offsetHeight;
-			
-	        const videoMarginX = (window.innerWidth - canvasW[0] ) / 2;
-
-	        const currentSeekPosX = event.x - videoMarginX+canvasW[1];
-	        const seekMaxX = canvasW[0]+canvasW[1];
-	        const mousePosY = event.y;
-	        const seekBarPos = new Pos(0, 25, seekMaxX, canvasH);
-						
-	        if (
-	            currentSeekPosX >= seekBarPos.getMinPosX() &&
-	            currentSeekPosX <= seekBarPos.getMaxPosX() &&
-	            mousePosY > seekBarPos.getMinPosY()
-	        ) {
-	            const currentSeekFrame = Math.floor((currentSeekPosX / seekBarPos.getMaxPosX()) * video.duration)-1 ;
-	            if (currentSeekFrame === prevSeekIndex) return;
-	            prevSeekIndex = currentSeekFrame;
-
-	            try {
-	                const result = await getSeekImage(alias, currentSeekFrame);
-	                renderSeekThumbnail(cvs, result, currentSeekPosX, seekMaxX, canvasW[0]);
-	            } catch (error) {
-	                console.error("Failed to get seek image:", error);
-	            }
-	        }
-			
-		
-			
-			// video へイベントを転送
-			const newEvent = new MouseEvent("mousemove", {
-
-			    bubbles: true,
-			    cancelable: true,
-			    view: window,
-			    clientX: event.clientX,
-			    clientY: event.clientY
-			});
-
-			// シークバーを強制的に表示
-			video.focus();
-			video.controls = true;  
-
-			video.dispatchEvent(newEvent);
-
-
-			
-	    });
 		
 		
-		function renderSeekThumbnail(cvs, result, currentSeekPosX, seekMaxX, elemWidth) {
-			    const h = 90;
-			    const imgRatio = result.height / h;
-			    const w = result.width / imgRatio;
-			    const imgMargin = 5;
-			    const canvasPosY = 150 - h - imgMargin * 2 - 30;
-			    let seekImgPosX = (currentSeekPosX / seekMaxX) * elemWidth - (w + imgMargin * 2) / 2;
-			
-				
-				//画像をサムネイルが範囲外にならないように調整
-				if(seekImgPosX+(w + imgMargin * 2) / 2<(w/2))seekImgPosX=0;
-				else if(seekMaxX-(w + imgMargin * 2)<seekImgPosX)seekImgPosX=seekMaxX-(w + imgMargin * 2);
-								
-			    const image = new Image();
-			    image.src = result.imgPath;
-			    image.onload = () => {
-			        cvs.clearRect(0, 0, canvas.width, canvas.height);
-			        cvs.save();
-
-			        drawRoundedRect(cvs, seekImgPosX, canvasPosY, w + imgMargin * 2, h + imgMargin * 2, 5);
-			        cvs.fillStyle = "rgb(255, 255, 255)";
-			        cvs.fill();
-
-			        drawRoundedRect(cvs, seekImgPosX + imgMargin / 2, canvasPosY + imgMargin / 2, w + imgMargin, h + imgMargin, 5);
-			        cvs.clip();
-			        cvs.drawImage(image, seekImgPosX + imgMargin / 2, canvasPosY + imgMargin / 2, w + imgMargin, h + imgMargin);
-			        cvs.restore();
-
-			        URL.revokeObjectURL(image.src);
-			    };
-			}
+		
+		
 	}
 
 	

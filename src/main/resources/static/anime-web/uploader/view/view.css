@@ -173,9 +173,102 @@
 #canvasSeek{
 	position: absolute;
 	z-index:100;
-	bottom:0%;
+	bottom:40px;
 	margin-left:16px;
 	
 }
+#progress{
+	position: absolute;
+	z-index:300;
+	margin-left: 16px;
+	bottom:40px;
+}#progress:hover{
+	cursor: pointer;
+}
+#canvasSeek,#progress,#videoContorols {
+  transition: opacity 1s ease, transform 1s ease;
+  opacity: 1;
+  transform: scale(1);
+}
 
+#canvasSeek.hidden,#progress.hidden,#videoContorols.hidden {
+  opacity: 0;
+  transform: scale(0.95);
+  pointer-events: none;  
+}
+#videoContorols{
+	position: absolute;
+	display: flex;
+	margin-left:16px;
+	bottom:10px;
+	height:30px;
+
+	z-index: 200;
+
+}
+#playIcon{
+	position: relative;
+	top: 0;
+
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	width: 30px;
+	height:30px;
+	z-index:430;
+	margin:0;
+	
+
+}
+#playIcon:hover{
+	cursor: pointer;
+}
+
+#videoTime_div{
+	position: relative;
+	top:0;
+	width: 120px;
+	height:30px;
+	z-index:430;
+	margin:0;
+	padding:0 auto;
+	left:10px;
+	
+}
+#videoTime_p {
+  display: block;        
+  width: fit-content;    
+  margin: auto ; 
+  margin-top:3px;       
+  height: 30px;
+  z-index: 430;
+  text-align: center;    
+}
+
+#valumeIcon{
+	position: relative;
+	top: 0;
+	left:35px;
+
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	width: 30px;
+	height:30px;
+	z-index:430;
+	margin:0;
+}#valumeIcon:hover{
+	cursor: pointer;
+}
+#valumeLevel_div{
+	position: relative;
+	top: 0;
+	left:35px;
+}#valumeLevel_prg{
+	width:80px;
+	cursor: pointer;
+}
+#valumeLevel_prg:hover{
+	cursor: pointer;
+}
 
