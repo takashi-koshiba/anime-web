@@ -37,7 +37,11 @@ document.addEventListener("DOMContentLoaded",function(){
 
 
 		let canvas =  document.getElementById('canvasSeek');
-		let margin = parseFloat(window.getComputedStyle(canvas).marginLeft);
+		margin=0;
+		if (canvas !=null){
+			margin = parseFloat(window.getComputedStyle(canvas).marginLeft);
+		}
+		
 		let width=document.body.clientWidth;
 		
 		if (document.fullscreenElement) {
@@ -679,7 +683,11 @@ document.addEventListener("DOMContentLoaded",function(){
 		  
 		    let img=clonefileElem.children[0].children[0].children[0];
 		    img.setAttribute("title", items[i]["alias"]);
-			img.setAttribute("src", "/anime-web/get-file/anime/image/seek/"+items[i]["alias"]+"/")
+			if(items[i]["type"]=="VIDEO"){
+				img.setAttribute("src", "/anime-web/get-file/anime/image/seek/"+items[i]["alias"]+"/")
+			}else{
+				img.setAttribute("src", "/anime-web/get-file/anime/image/small/"+items[i]["alias"])
+			}			
 		    img.setAttribute("itemtype", items[i]["type"]);
 			img.setAttribute("originaltype", items[i]["type"]);
 		    img.addEventListener("click",function(){
