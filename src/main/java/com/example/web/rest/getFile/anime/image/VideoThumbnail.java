@@ -3,6 +3,8 @@ package com.example.web.rest.getFile.anime.image;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -44,9 +46,9 @@ public class VideoThumbnail extends FileController {
 		   
 		
 		    ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.ok()
-		            .header(HttpHeaders.CACHE_CONTROL, "public, max-age=604800") 
-		            .header(HttpHeaders.EXPIRES, String.valueOf(System.currentTimeMillis() + 604800000L)); //7日間
-
+		    		.header(HttpHeaders.CACHE_CONTROL, "public, max-age=31536000")
+		    		.header(HttpHeaders.EXPIRES, ZonedDateTime.now().plusYears(1)
+		    		    .format(DateTimeFormatter.RFC_1123_DATE_TIME));
 		    return responseBuilder.body(resource);
 		}
 		

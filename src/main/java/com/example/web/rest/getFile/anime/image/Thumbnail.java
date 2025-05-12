@@ -2,6 +2,9 @@ package com.example.web.rest.getFile.anime.image;
 
 
 
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -31,7 +34,9 @@ public class Thumbnail extends FileController {
    }
 	protected ResponseEntity.BodyBuilder responseBuilder(){
 		ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.ok()
-	    .header(HttpHeaders.CACHE_CONTROL, "public, max-age=5184000") ;
+				.header(HttpHeaders.CACHE_CONTROL, "public, max-age=31536000")
+				.header(HttpHeaders.EXPIRES, ZonedDateTime.now().plusYears(1)
+				    .format(DateTimeFormatter.RFC_1123_DATE_TIME));
 	//    .header(HttpHeaders.PRAGMA, "no-cache")
 
 	//    .header(HttpHeaders.EXPIRES, String.valueOf(System.currentTimeMillis() + (1000*86400))) ;

@@ -1,4 +1,4 @@
-class class_ajax{
+class class_ajaxGet{
             xhr = new XMLHttpRequest();
 			xhr_up = this.xhr.upload;
             post_data = new FormData();
@@ -14,7 +14,7 @@ class class_ajax{
 		
 
             run(){
-                this.xhr.open('POST', this.path, true);
+                this.xhr.open('Get', this.path, true);
                 
                 //this.post_data.append('mode', 1);
 				//console.dir(this.post_data);

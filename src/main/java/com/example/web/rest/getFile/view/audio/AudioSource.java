@@ -2,6 +2,8 @@ package com.example.web.rest.getFile.view.audio;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import jakarta.servlet.http.HttpSession;
@@ -55,10 +57,9 @@ public class AudioSource extends FileController {
    }
 	protected ResponseEntity.BodyBuilder responseBuilder(){
 		ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.ok()
-	    .header(HttpHeaders.CACHE_CONTROL, "public, max-age=36000") 
-	    .header(HttpHeaders.PRAGMA, "no-cache")
-
-	    .header(HttpHeaders.EXPIRES, String.valueOf(System.currentTimeMillis() + (1000*36000))) ;
+				.header(HttpHeaders.CACHE_CONTROL, "public, max-age=31536000")
+				.header(HttpHeaders.EXPIRES, ZonedDateTime.now().plusYears(1)
+				    .format(DateTimeFormatter.RFC_1123_DATE_TIME));
     
 	//	.header(HttpHeaders.CONTENT_TYPE, contentType);
 		return responseBuilder;

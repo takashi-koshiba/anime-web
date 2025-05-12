@@ -118,6 +118,7 @@ document.addEventListener("DOMContentLoaded",function(){
 			    });
 			    hls.on(Hls.Events.ERROR, function (event, data) {
 			      console.error('HLS error occurred: ', data);
+				  hls.recoverMediaError();
 			    });
 				hls.on(Hls.Events.LEVEL_SWITCHED, function (event, data) {
 				       let newQuality = data.level; // 新しい画質のレベル
@@ -214,30 +215,38 @@ document.addEventListener("DOMContentLoaded",function(){
 			
 			//音量
 			let volumeLevel=100;
-			let valumeLevel_prg = document.createElement("progress");	
+			let valumeLevel_prg = document.createElement("input");
+			valumeLevel_prg.setAttribute('type','range');	
 			valumeLevel_prg.setAttribute('id','valumeLevel_prg');
 			valumeLevel_prg.max=100;
 			valumeLevel_prg.value=volumeLevel;
-			valumeLevel_prg.addEventListener('click', function(e) {
-			    const rect = valumeLevel_prg.getBoundingClientRect();
-			    const x = e.clientX - rect.left;
-			    const ratio = x / rect.width;
+	
+			
+			
+			valumeLevel_prg.addEventListener('input', function(e) {
+				
+				moveBar(e);
+				
 
-			    // 10段階に切り上げ（1〜10）
-			    let  step = Math.ceil(ratio * 10); 
-			    if (ratio<0.1) step=0;    //0.1以下は０にする。  
-
-			    valumeLevel_prg.value = step * 10;
-
-			    // 動画の音量を変更
-			    elem.volume = step/10;
-
-			    volumeLevel=step * 10;
 			});
+			
+			valumeLevel_prg.addEventListener('change', function(e) {
+				moveBar(e);
+			});
+			
+			
+			
+			
 			valumeLevel_div.appendChild(valumeLevel_prg); 
 			resizeScreen();
 			
-			
+			function moveBar(e){
+
+				
+				elem.volume = e.target.value/100;
+
+
+			}
 			
 			//動画の再生時間を反映
 			elem.addEventListener('timeupdate', function() {
@@ -487,6 +496,8 @@ document.addEventListener("DOMContentLoaded",function(){
 			  }, 1300);
 			});
 			
+			
+			
 			//表示をキャンセル
 			let itemViewBack =document.getElementById("itemViewBack");
 			itemViewBack.addEventListener("mousemove",function(e){
@@ -670,53 +681,61 @@ document.addEventListener("DOMContentLoaded",function(){
 		
 	}
 	
-	async function insertElem(items,f,l){
-	    let view_div_child2 = document.getElementById('view_div_child2');
-	    let fileElem = document.getElementsByClassName('fileElem')[0];
-	  
-	    //const thumbnail="/anime-web/get-file/anime/image/small/";
-		let max=f+l>items.length?items.length:f+l;
-		let min=f>max?max:f;
-	    for(let i=min;i<max;i++){
-	        let clonefileElem=fileElem.cloneNode(true);
-		    clonefileElem.style.display="block";
-		  
-		    let img=clonefileElem.children[0].children[0].children[0];
-		    img.setAttribute("title", items[i]["alias"]);
-			if(items[i]["type"]=="VIDEO"){
-				img.setAttribute("src", "/anime-web/get-file/anime/image/seek/"+items[i]["alias"]+"/")
-			}else{
-				img.setAttribute("src", "/anime-web/get-file/anime/image/small/"+items[i]["alias"])
-			}			
-		    img.setAttribute("itemtype", items[i]["type"]);
+	async function insertElem(items, f, l) {
+		let view_div_child2 = document.getElementById('view_div_child2');
+		let fileElem = document.getElementsByClassName('fileElem')[0];
+		let max = f + l > items.length ? items.length : f + l;
+		let min = f > max ? max : f;
+
+		async function loadOne(i) {
+			if (i >= max) return;
+
+			let clonefileElem = fileElem.cloneNode(true);
+			clonefileElem.style.display = "block";
+
+			let img = clonefileElem.children[0].children[0].children[0];
+			img.setAttribute("title", items[i]["alias"]);
+
+			let imgUrl=items[i]["url"];
+
+			img.setAttribute("src", imgUrl);
+
+			img.setAttribute("itemtype", items[i]["type"]);
 			img.setAttribute("originaltype", items[i]["type"]);
-		    img.addEventListener("click",function(){
-				let type = this.getAttribute("itemtype");
-				let originalType=this.getAttribute("originalType");
-				let alias=this.getAttribute("title");
-				
-		  	    itemAdd(type,originalType,alias);
-		  		
-		     });
-		  
-		     let title=clonefileElem.children[0].children[1].children[0].children[0];
-		     title.innerText=items[i]["fname"]+items[i]["lname"];
-		  
-			 let href=clonefileElem.children[0].children[1].children[0];
-			 href.setAttribute("href", "/anime-web/get-file/upload/data-original/view/"+items[i]["alias"]);
-		     
-			 href.setAttribute("download",items[i]["fname"]+items[i]["lname"]);
-			 
-			 view_div_child2.appendChild(clonefileElem);
-			 
-			 
-			 let delCheckBox=clonefileElem.children[0].children[2].children[0].children[0];
-			 delCheckBox.setAttribute("alias",items[i]["alias"]);
-	     }
-	  }
+			img.setAttribute("loading", "lazy");
+			img.addEventListener("click", function () {
+				itemAdd(this.getAttribute("itemtype"), this.getAttribute("originalType"), this.getAttribute("title"));
+			});
+			
+
+			let title = clonefileElem.children[0].children[1].children[0].children[0];
+			title.innerText = items[i]["fname"] + items[i]["lname"];
+
+			let href = clonefileElem.children[0].children[1].children[0];
+			href.setAttribute("href", "/anime-web/get-file/upload/data-original/view/" + items[i]["alias"]);
+			href.setAttribute("download", items[i]["fname"] + items[i]["lname"]);
+
+			let delCheckBox = clonefileElem.children[0].children[2].children[0].children[0];
+			delCheckBox.setAttribute("alias", items[i]["alias"]);
+
+			view_div_child2.appendChild(clonefileElem);
+			
+			img.onload = () => {
+			    
+				// 次の画像を読み込む
+				loadOne(i + 1);
+			};
+
+			
+			
+		}
+
+		loadOne(min);
+	}
 
 	async function exec(){
 		const items = await fileApi(); 
+		console.dir(items);
 		pageObj.pagemax=Math.ceil(items.length/pageObj.itemLimit);
 		let offset =pageObj.current*pageObj.itemLimit;
 		await insertElem(items,offset,pageObj.itemLimit); 

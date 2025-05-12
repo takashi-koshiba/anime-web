@@ -1,8 +1,9 @@
 package com.example.web.rest.getFile.view.image;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import jakarta.servlet.http.HttpSession;
@@ -53,28 +54,21 @@ public class SmallThumbnail extends FileController {
 		Path root=Paths.get( "content/anime-web/upload/file/thumbnail/");
 		Path path=Paths.get(Setting.getRoot()+root+"/"+upfile.getFirst().getAlias()+".avif").normalize();
 
-		if(!Files.exists(path)) {
-			
-		    Resource resource = resourceLoader.getResource("classpath:/static/anime-web/uploader/view/noImage.webp");
-		   
 		
-		    ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.ok();
-		         //   .header(HttpHeaders.CACHE_CONTROL, "public, max-age=604800") 
-		         //   .header(HttpHeaders.EXPIRES, String.valueOf(System.currentTimeMillis() + 604800000L)); //7日間
-
-		    return responseBuilder.body(resource);
-		}
 		
 		String fname=upfile.get(0).getFname()+upfile.get(0).getLname();
-		return super.getFile(path.toString(),fname,false);
+       
+		 
+		return super.getFile(path.toString(), fname, false);
 		
    }
+	
+	
 	protected ResponseEntity.BodyBuilder responseBuilder(){
 			ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.ok()
-			    .header(HttpHeaders.CACHE_CONTROL, "public, max-age=10") 
-			    .header(HttpHeaders.PRAGMA, "no-cache")
-
-			    .header(HttpHeaders.EXPIRES, String.valueOf(System.currentTimeMillis() + (1000*10))) ;
+					.header(HttpHeaders.CACHE_CONTROL, "public, max-age=31536000")
+					.header(HttpHeaders.EXPIRES, ZonedDateTime.now().plusYears(1)
+					    .format(DateTimeFormatter.RFC_1123_DATE_TIME));
 		    
 			//	.header(HttpHeaders.CONTENT_TYPE, contentType);
 				return responseBuilder;
@@ -83,8 +77,10 @@ public class SmallThumbnail extends FileController {
 			@Override
 			protected ResponseEntity.BodyBuilder responseBuilder(String contentType) {
 				ResponseEntity.BodyBuilder responseBuilder =responseBuilder()
-						.header(HttpHeaders.CONTENT_TYPE, contentType);
-
+						.header(HttpHeaders.CONTENT_TYPE, contentType)
+				.header(HttpHeaders.CACHE_CONTROL, "public, max-age=31536000")
+				.header(HttpHeaders.EXPIRES, ZonedDateTime.now().plusYears(1)
+				    .format(DateTimeFormatter.RFC_1123_DATE_TIME));
 						
 				
 				return responseBuilder;

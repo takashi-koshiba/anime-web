@@ -18,7 +18,7 @@ public abstract class Que {
     }
 
     // キューの処理
-    private static synchronized void processQueue() {
+    protected static synchronized void processQueue() {
         if (isRunning || encodingQueue.isEmpty()) {
             return; 
         }

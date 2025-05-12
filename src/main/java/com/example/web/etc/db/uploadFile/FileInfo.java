@@ -19,6 +19,7 @@ public class FileInfo  {
 	Double matchRate;
     Integer fileId;
     Double rate;
+    String url;
     fileType type;
     
 }

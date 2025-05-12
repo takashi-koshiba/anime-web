@@ -37,6 +37,8 @@ import com.example.web.etc.sta.que.Que;
 import com.example.web.etc.sta.que.SecondQue;
 import com.example.web.etc.sta.que.cmd.Cmd_Args;
 import com.example.web.etc.sta.que.cmd.Cmd_que;
+import com.example.web.etc.sta.que.createMaxThumbnail.Thumbnail_Args;
+import com.example.web.etc.sta.que.createMaxThumbnail.Thumbnail_que;
 import com.example.web.etc.sta.que.hls.HlsArgs;
 import com.example.web.etc.sta.que.hls.Hls_Que;
 import com.example.web.etc.sta.que.resize.Resize_Args;
@@ -256,6 +258,11 @@ public class sendFile {
 	     ArgsData cmdArgs = new Cmd_Args(format, cmdQue);
 	     SecondQue.addToQueue(cmdArgs);//エンコードとは別のスレッドで実行
 		 
+	     
+	     Thumbnail_que que = new Thumbnail_que();
+	     ArgsData args = new Thumbnail_Args(alias,"max.jpg",que);
+	     SecondQue.addToQueue(args);
+
 		 
 		 
 	}

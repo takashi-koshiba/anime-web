@@ -1,5 +1,4 @@
 package com.example.web.etc.sta;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -33,11 +32,8 @@ public abstract class FileController {
     		Path filePath = this.uploadDir.resolve(filepath).normalize();
    
     
-    		// セキュリティチェック
-    		if (!filePath.startsWith(filePath)) {
-    			
-    			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "");
-    			
+    		if (!filePath.startsWith(this.uploadDir)) {
+    		    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid file path");
     		}
 
     		// ファイルのリソース取得
@@ -50,12 +46,12 @@ public abstract class FileController {
 
     		// Content-Typeを取得
  
-    		String contentType = Files.probeContentType(filePath);
+    		//String contentType = Files.probeContentType(filePath);
     		
-    		if (contentType == null) {
+    		
 
-    			contentType =getContentType(encodedFname);  
-    		}
+    		String contentType =getContentType(encodedFname);  
+    		
     		
     		//System.out.println(contentType);
     		ResponseEntity.BodyBuilder  responseBuilder=responseBuilder(contentType);
@@ -98,7 +94,12 @@ public abstract class FileController {
         } else if (fileName.endsWith(".avif")) {
             return "image/avif";
         }
+        else if (fileName.endsWith(".webp")) {
+            return "image/webp";
+        }
         else {
+        	
+        	
             return MediaType.APPLICATION_OCTET_STREAM_VALUE;  
         }
     }

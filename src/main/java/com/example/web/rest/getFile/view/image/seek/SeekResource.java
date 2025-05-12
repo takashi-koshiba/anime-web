@@ -1,16 +1,20 @@
 package com.example.web.rest.getFile.view.image.seek;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,13 +32,13 @@ import com.example.web.etc.sta.Setting;
 @RestController
 public class SeekResource extends FileController {
 
-    private final ResourceLoader resourceLoader;
+
     private final UploadFileService uploadFileService;
 	
 	
-    public SeekResource(ResourceLoader resourceLoader, UploadFileService uploadFileService) {
+    public SeekResource(UploadFileService uploadFileService) {
         super("");
-        this.resourceLoader = resourceLoader;
+
         this.uploadFileService = uploadFileService;
     }
 
@@ -51,44 +55,29 @@ public class SeekResource extends FileController {
 		
 		Path root=Paths.get( "content/anime-web/upload/file/seek-image/");
 		Path path=Paths.get(Setting.getRoot()+root+"/"+alias).normalize();
-		File[] fileList = path.toFile().listFiles();
-		if (fileList == null) {
-			 return noImageResource() ;
-		    //throw new ResponseStatusException(HttpStatus.NOT_FOUND, "ディレクトリが存在しないか、アクセスできません。");
-		}
-		List<File> images=seekImageInfo(fileList).getImages();
-		if( !Files.exists(path)|| images.size()<1) {
-			 return noImageResource() ;
-			//throw new ResponseStatusException(HttpStatus.NOT_FOUND, "ファイルが存在しません。");
-		}
-		
-		
-		Integer fr=frame;
-		
-		fr=Math.max(1, fr);
-		fr=Math.min(fr, images.size()-1);
-		
-		
-		String imagePath=images.get(fr).getAbsolutePath();
-		String fname=images.get(fr).toPath().getFileName().toString();
-		if(!Files.exists(Paths.get(imagePath))) {
-			return  noImageResource() ;
-		    
+
+
+		Path selectedFile = null;
+
+		try (Stream<Path> paths = Files.list(path)) {
+		    Optional<Path> target = paths.skip(frame).findFirst();
+		    if (target.isPresent()) {
+		        selectedFile = target.get();  // ← 変数に代入
+		    } else {
+		    	
+		    }
+		} catch (IOException e) {
+		    e.printStackTrace();
 		}
 		
 		
-		return super.getFile(imagePath,fname,false);
+		
+		
+		return super.getFile(selectedFile.toString() ,selectedFile.getFileName().toString(),false);
 		
    }
 
-	public ResponseEntity<Resource>  noImageResource() {
-		Resource resource = resourceLoader.getResource("classpath:/static/anime-web/uploader/view/noImage.webp");
-	    ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.ok();
-	         //   .header(HttpHeaders.CACHE_CONTROL, "public, max-age=604800") 
-	         //   .header(HttpHeaders.EXPIRES, String.valueOf(System.currentTimeMillis() + 604800000L)); //7日間
 
-	    return responseBuilder.body(resource);
-	}
 
 	private ImageInfo seekImageInfo(File[] files) {
 		
@@ -128,11 +117,9 @@ public class SeekResource extends FileController {
 	}
 	protected ResponseEntity.BodyBuilder responseBuilder(){
 			ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.ok()
-			    .header(HttpHeaders.CACHE_CONTROL, "public, max-age=604800") 
-			    .header(HttpHeaders.PRAGMA, "cache")
-
-			    .header(HttpHeaders.EXPIRES, String.valueOf(System.currentTimeMillis() + (1000*604800))) ;
-		    
+					.header(HttpHeaders.CACHE_CONTROL, "public, max-age=31536000")
+					.header(HttpHeaders.EXPIRES, ZonedDateTime.now().plusYears(1)
+					    .format(DateTimeFormatter.RFC_1123_DATE_TIME));
 			//	.header(HttpHeaders.CONTENT_TYPE, contentType);
 				return responseBuilder;
 			}
