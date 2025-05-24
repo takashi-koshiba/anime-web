@@ -45,6 +45,9 @@ public class Log {
 		try {
 			Logger logger=write();
 			logger.log(lev,txt);
+			System.out.println(lev.toString()+":"+txt);
+			
+			
 		} catch (IOException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();

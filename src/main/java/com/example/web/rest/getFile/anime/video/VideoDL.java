@@ -1,11 +1,12 @@
-package com.example.web.rest.getFile.anime.image;
+package com.example.web.rest.getFile.anime.video;
 
-
-
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -14,25 +15,46 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.web.etc.db.Animetable.Anime;
-import com.example.web.etc.db.Animetable.AnimeService;
+import com.example.web.etc.db.rankedAnime.RankedAnime;
+import com.example.web.etc.db.rankedAnime.RankedAnimeService;
+import com.example.web.etc.db.video.Video;
+import com.example.web.etc.db.video.VideoService;
 import com.example.web.etc.sta.FileController;
 import com.example.web.etc.sta.Setting;
 
 @RestController
-public class Thumbnail extends FileController {
-	@Autowired
-	AnimeService animeService;
+public class VideoDL extends FileController {
+
 	
-	public Thumbnail() {
-		super(Setting.getRoot()+"content/anime-web/upload/img/thumbnail/");
-	}
+	 private final RankedAnimeService rankedAnimeService;
+	    private final VideoService videoService;
+
+
+	    public VideoDL(RankedAnimeService rankedAnimeService, VideoService videoService) {
+	    	
+	        super(Setting.getVideoPath()+"\\");
+
+	        this.rankedAnimeService = rankedAnimeService;
+	        this.videoService = videoService;
+	    }
 	
-	@GetMapping("/anime-web/get-file/anime/image/thumbnail/{animeid}")
-   public ResponseEntity<Resource> getFile(@PathVariable Integer animeid) {
-		Anime anime = animeService.selectOne(animeid).getFirst();
-	   return super.getFile(anime.getOriginalName()+".avif",anime.getOriginalName()+".avif",false);
+	
+	@GetMapping("/anime-web/get-file/anime/video/{anime_id}/{video_id}")
+   public ResponseEntity<Resource> getFile(@PathVariable Integer anime_id,@PathVariable Integer video_id,HttpSession session) {
+		
+
+		RankedAnime animeInfo =rankedAnimeService.selectOne(anime_id);
+		Video videoInfo=videoService.selectOneVideoInfo(video_id);
+		
+
+		
+		Path p = Paths.get(animeInfo.getFoldername(),videoInfo.getFname()).normalize();
+	
+		
+		return super.getFile(p.toString(),videoInfo.getFname(),true);
    }
+	
+	
 	protected ResponseEntity.BodyBuilder responseBuilder(){
 		ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.ok()
 				.header(HttpHeaders.CACHE_CONTROL, "public, max-age=31536000")
@@ -55,6 +77,4 @@ public class Thumbnail extends FileController {
 		
 		return responseBuilder;
 	}
-
-	
 }

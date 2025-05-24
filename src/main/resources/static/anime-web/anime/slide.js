@@ -26,13 +26,13 @@ document.addEventListener("DOMContentLoaded",function(){
 
 	processData(root,url);
 	async function processData(root,url){
-		let seasonData= await awaitgetSeasonRank(root);
+		let seasonData= await getSeasonRank(root)
 		let result=await getRankAllData(root,url);
-		
+		let noRanked= await getNoRanked(root);
 		
 		imgRootUrl= result[1];
 		imgDatas=[];
-		imgDatas=[result[0],seasonData];
+		imgDatas=[result[0],seasonData,noRanked];
 		console.dir(imgDatas);
 		
 		
@@ -441,11 +441,22 @@ document.addEventListener("DOMContentLoaded",function(){
 	    return result;
 
 	}
+	async function getNoRanked(root) {
 
-	async function awaitgetSeasonRank(root) {
-	    let data = await getSeasonRank(root);
-	    return data
+		let url=new URL(window.location.href);
+		let year=url.searchParams.get('year');
+		let season=url.searchParams.get('season');
+		
+		let urlApi=root + "api/db/noRanked/";
+		if(year!=null&&season!=null){
+			urlApi=urlApi+"?year="+year+"&season="+season;
+		}
+		let result = await getRankSeasonData(urlApi);
+	    return result;
+
 	}
+
+
 });
 
 

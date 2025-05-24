@@ -16,6 +16,19 @@ public class VideoJDBC implements VideoDao {
     @Autowired
     private JdbcTemplate jdbc;
 
+    
+    @Override
+    public Video selectOneVideoInfo(Integer id) {
+    	String sql = "select video_id,anime_id,concat(fname,ext) as fname from video_info where video_id =? ";
+    	Map<String, Object> result = jdbc.queryForList(sql,id).get(0);
+    	Video anime = new Video();	
+		anime.setVideo_id((Integer)result.get("video_id"));
+		anime.setFname((String)result.get("fname"));
+
+    	
+		return anime;
+    }
+    
     @Override
 	public List<Video> selectOne(Integer id,Integer sortId) {
 		try {
@@ -34,7 +47,7 @@ public class VideoJDBC implements VideoDao {
 				anime.setFname((String)map.get("fname"));
 				anime.setScore((BigDecimal) map.get("score"));
 				anime.setNocmframe((long)map.get("nocmframe"));
-				anime.setVideo_id((Integer)map.get("video_id"));
+
 				try {
 					SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 					anime.setHiduke(dateFormat.format(map.get("hiduke")));

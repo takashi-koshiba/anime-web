@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.example.web.etc.db.uploadFile.FileInfo;
 import com.example.web.etc.db.uploadFile.UploadFileService;
 import com.example.web.etc.sta.FileController;
+import com.example.web.etc.sta.Setting;
 
 @Controller
 public abstract class  ItemData extends FileController {
@@ -23,7 +24,7 @@ public abstract class  ItemData extends FileController {
 
 	public ItemData(UploadFileService uploadFileService) {
 		
-		super("");
+		super(Setting.getRoot());
 		this.uploadFileService = uploadFileService;
 	}
 	

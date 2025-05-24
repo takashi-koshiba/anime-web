@@ -34,7 +34,7 @@ public class  Original  extends FileController {
 
 	public Original() {
 		
-		super("");
+		super(Setting.getRoot()+"content/anime-web/upload/file/");
 		
 	}
 	

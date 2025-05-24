@@ -36,7 +36,7 @@ public class UpThumbnail extends FileController {
 
 	public UpThumbnail() {
 		
-		super("");
+		super(Setting.getRoot()+"content/anime-web/upload/file/thumbnail/");
 		
 	}
 	

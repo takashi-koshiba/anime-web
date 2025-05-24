@@ -4,6 +4,7 @@ import java.util.List;
 
 public interface VideoDao {
 	public List<Video> selectOne(Integer id,Integer sortId);
+	public Video selectOneVideoInfo(Integer id);
 	public List<PlayList>videoPlayList(Integer id,Integer sortId);
 	public List<PlayList> animeM3u8(Integer animeId);
 	public List<VideoThumbnailInfo> videoThumbnail(Integer videoId);

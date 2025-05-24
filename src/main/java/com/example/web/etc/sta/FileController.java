@@ -1,6 +1,10 @@
 package com.example.web.etc.sta;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.logging.Level;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -19,34 +23,37 @@ public abstract class FileController {
 
     // ディレクトリを設定
     public FileController(String dir) {
-        String root = Setting.getRoot();
-        this.uploadDir = Paths.get(root).resolve(dir).toAbsolutePath().normalize();
+        this.uploadDir = Paths.get(dir).toAbsolutePath().normalize();
         
     }
 
 
     public ResponseEntity<Resource> getFile(String filepath,String fname,Boolean canDL) {
     	try {
-    		String encodedFname= Paths.get(fname).getFileName().normalize().toString();
+    		String encodedFname = URLEncoder.encode(fname, StandardCharsets.UTF_8).replace("+", "%20");
+    		
     		//System.out.println(encodedFname);
     		Path filePath = this.uploadDir.resolve(filepath).normalize();
    
-    
+    		System.out.println(this.uploadDir);
     		if (!filePath.startsWith(this.uploadDir)) {
+    			Log.log(Level.WARNING, "Invalid file path:"+filePath);
     		    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid file path");
     		}
 
     		// ファイルのリソース取得
     		Resource resource = new UrlResource(filePath.toUri());
     		if (!resource.exists() || !resource.isReadable()) {
-    			
+    			Log.log(Level.WARNING, "File not found: " +filePath);
     			throw new ResponseStatusException(HttpStatus.NOT_FOUND, filePath.toString()+"ファイルが存在しません。");
     			
     		}
+    		Log.log(Level.INFO, "File loaaded: " + filePath);
 
     		// Content-Typeを取得
  
     		//String contentType = Files.probeContentType(filePath);
+    		
     		
     		
 
@@ -65,9 +72,8 @@ public abstract class FileController {
     			.header(HttpHeaders.CONTENT_TYPE, contentType);
  */   		
     		if (canDL) {
-    		    
-    		    responseBuilder.header(HttpHeaders.CONTENT_DISPOSITION, 
-    		    		"attachment; filename*=UTF-8''" +encodedFname);
+    			String contentDisposition = "attachment; filename*=UTF-8''" + encodedFname;
+    		    responseBuilder.header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition);
 
     		}
 

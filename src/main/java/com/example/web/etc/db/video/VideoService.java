@@ -22,6 +22,9 @@ public class VideoService {
     	return videoJDBC.selectOne(id,sortId);
     }
 
+    public Video selectOneVideoInfo(Integer id){
+    	return videoJDBC.selectOneVideoInfo(id); 
+    }
     public List<PlayList>videoPlayList(Integer id,Integer sortId){
     	return videoJDBC.videoPlayList(id,sortId);
     }
@@ -31,4 +34,5 @@ public class VideoService {
     public List<VideoThumbnailInfo> videoThumbnail(Integer videoId){
     	return videoJDBC.videoThumbnail(videoId);
     }
+    
 }

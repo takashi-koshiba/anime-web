@@ -28,7 +28,7 @@ public class VideoThumbnail extends FileController {
 	@Autowired
 	private ResourceLoader resourceLoader;
 	public VideoThumbnail() {
-		super("");
+		super(Setting.getRoot()+"content/anime-web/anime/img/");
 	}
 	
 	@GetMapping("/anime-web/get-file/anime/image/video-thumbnail/{videoid}/{filename}")

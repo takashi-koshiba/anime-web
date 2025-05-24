@@ -22,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.example.web.etc.db.uploadFile.FileInfo;
 import com.example.web.etc.db.uploadFile.UploadFileService;
 import com.example.web.etc.sta.FileController;
+import com.example.web.etc.sta.Setting;
 import com.example.web.uploader.sendFile.fileType;
 
 @RestController
@@ -33,7 +34,7 @@ public class DataDL extends FileController {
 
 	public DataDL () {
 		
-		super("");
+		super(Setting.getRoot()+"content/anime-web/upload/");
 		
 	}
 	

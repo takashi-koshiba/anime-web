@@ -38,7 +38,11 @@ public class Thumbnail_que extends Que  {
 		}
 
 		File getMaxImage = MaxImage(alias);
+		if (getMaxImage ==null){
+			return;
+		}
 		try {
+			
 		    Files.copy(getMaxImage.toPath(), root.resolve(fname), StandardCopyOption.REPLACE_EXISTING);
 		} catch (IOException e) {
 		    Log.log(Level.WARNING, "failed to copy file from: " + getMaxImage.toPath() + " to " + root.toString());
@@ -60,7 +64,10 @@ public class Thumbnail_que extends Que  {
 
         long maxSize = -1;
 
-        if (files==null) return null;
+        if (files==null) {
+
+        	return null;
+        }
         
         long count  =0;
         long index = 0;

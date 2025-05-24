@@ -29,7 +29,7 @@ public class VideoFile extends FileController {
 	@Autowired
 	UploadFileService uploadFileService;
 	public VideoFile() {
-		super("");
+		super(Setting.getRoot()+"content/anime-web/upload/file/hls/");
 	}
 	
 	@GetMapping("/anime-web/getFile/view/video/hls/{alias}/{width}/video.m3u8")

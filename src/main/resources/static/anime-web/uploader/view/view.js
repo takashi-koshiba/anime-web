@@ -97,11 +97,12 @@ document.addEventListener("DOMContentLoaded",function(){
 			if (Hls.isSupported()) {
 				  hls = new Hls({
 					    capLevelToPlayerSize: true, 
-						maxBufferLength: 30, // バッファ
-						maxBufferSize: 30 * 1000 * 1000, // バッファサイズの上限 
+						maxBufferLength: 60, // バッファ
+						maxBufferSize: 300 * 1000 * 1000, // バッファサイズの上限 
 						maxMaxBufferLength: 60, // 最大バッファ長
 						nudgeMaxRetry: 15, 
-						nudgeOffset: 0.2,    
+						nudgeOffset: 0.2,   
+						backBufferLength: 10, 
 					});
 
 				hls.loadSource(path + alias);
@@ -488,12 +489,12 @@ document.addEventListener("DOMContentLoaded",function(){
 				isVisible=true;
 				visibleItems(isVisible);
 			  
-			  // 1300ms後に非表示
+			  // 4000ms後に非表示
 			  moveTimeout = setTimeout(function() {
 				isVisible=false;
 			    visibleItems(isVisible);
 				
-			  }, 1300);
+			  }, 3000);
 			});
 			
 			

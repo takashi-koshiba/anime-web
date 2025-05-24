@@ -31,7 +31,7 @@ public class SeekImageMax  extends FileController {
     private final UploadFileService uploadFileService;
 
 	public SeekImageMax(ResourceLoader resourceLoader, UploadFileService uploadFileService) {
-        super("");
+        super(Setting.getRoot()+"content\\anime-web\\upload\\file\\maxSeek\\");
         this.resourceLoader = resourceLoader;
         this.uploadFileService = uploadFileService;
 

@@ -242,7 +242,11 @@
   margin-top:3px;       
   height: 30px;
   z-index: 430;
-  text-align: center;    
+  text-align: center;  
+  color:   rgb(255, 238, 252);
+  font-family: "MS Pゴシック";
+  font-weight: bold;
+  
 }
 
 #valumeIcon{

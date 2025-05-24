@@ -41,12 +41,7 @@
 						</div>
 						<div class="videoinfo">
 							
-							<div class="videoInfoPropaty">
-								<p>
-								<span class="info_tag">日付</span>
-								:<span class="info_text" th:text="${epi.hiduke}"></span>
-								</p>
-							</div>
+							
 							
 							<div class="videoInfoPropaty">
 								<p class="info_time"><span class="info_tag">再生時間</span>：<span class="info_text" th:text="${epi.video_time}"></span></p><br>
@@ -56,6 +51,8 @@
 							<div class="videoInfoPropaty">
 								<p><span  class="info_tag">最大値との差</span>:<span class="info_text" th:text="${epi.score}"></span>％</p>
 							</div>
+							
+							<a th:href="@{/anime-web/get-file/anime/video/{animeId}/{videoId}(animeId=${anime.id}, videoId=${epi.video_id})}" download ><img class="download" th:src="@{/anime-web/video/downloads.png}"></a>
 							<br>
 						</div>
 					</div>

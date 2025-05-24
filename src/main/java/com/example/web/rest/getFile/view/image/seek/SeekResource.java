@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 
 import jakarta.servlet.http.HttpSession;
 
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -37,7 +38,7 @@ public class SeekResource extends FileController {
 	
 	
     public SeekResource(UploadFileService uploadFileService) {
-        super("");
+        super(Setting.getRoot()+"content/anime-web/upload/file/seek-image/");
 
         this.uploadFileService = uploadFileService;
     }
@@ -57,8 +58,15 @@ public class SeekResource extends FileController {
 		Path path=Paths.get(Setting.getRoot()+root+"/"+alias).normalize();
 
 
-		Path selectedFile = null;
-
+		Path selectedFile = null; 
+		if(!Files.exists(path)) {
+			Resource resource = new ClassPathResource("static/anime-web/uploader/view/noImage.webp");
+			return ResponseEntity.ok()
+			    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"noImage.png\"")
+			    .body(resource);
+		}
+		   
+		
 		try (Stream<Path> paths = Files.list(path)) {
 		    Optional<Path> target = paths.skip(frame).findFirst();
 		    if (target.isPresent()) {

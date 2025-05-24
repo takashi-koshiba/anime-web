@@ -35,7 +35,7 @@ public class SmallThumbnail extends FileController {
 
 	public SmallThumbnail() {
 		
-		super("");
+		super(Setting.getRoot()+"content/anime-web/upload/file/thumbnail/");
 		
 	}
 	
