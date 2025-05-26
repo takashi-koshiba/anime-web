@@ -13,14 +13,17 @@ from datetime import datetime
 
 #################################
 #################################
-#引数なしで実行した場合は指定したディレクトリ内の動画を処理します。
+#引数なしの場合は指定したディレクトリ内の動画を処理します。
 #引数に動画のパスがある場合はその動画を移動します。
 
 
 
-############環境に応じて修正してください########################################
+
+
+
 
 sys.stdout.reconfigure(encoding='utf-8', errors='ignore')
+############環境に応じて修正してください########################################
 ♯TS_FILES_DIR = 'D:\\TV\\ts\\'  #移動元のTSファイルのディレクトリ
 ♯ENCODED_VIDEO_PATH = 'D:\\TV\\ts\\encoded\\'  # エンコードした動画があるディレクトリ(mp4 と mkvファイルなど)
 ♯TEMP_DIR = 'D:\\TV\\ts\\encoding\\'  # DBとファイル名が部分一致したtsファイルの移動先
@@ -33,6 +36,7 @@ DB_CONFIG = {
     'database': "db1"
 }
 ############################################################################
+
 
 
 def connect_db():
@@ -475,10 +479,10 @@ def insertRanking():
                                 left join jk_rownumber using(video_id) 
                                 where  (
                                     fname  like  "%マルチ1" or fname  like "%[再]%" or fname  like "%-1" or fname  like "%(2)" or fname  like "%-cm"  or fname  like "%放送記念%" or fname  like "%放送開始記念%" or fname  like "%アンコール放送" or come_byte>0  or hiduke is  null
-                                ) 
+                                ) and come_byte is not null 
                                 group by anime_id  
                             ) as tt using(anime_id)
-                            where original_C=execpt_C
+                            where original_C=execpt_C and come_byte is not null 
                         )
                         or fname not like  "%マルチ1" and fname not like "%[再]%" and fname not like "%-1" and fname not like "%(2)" and fname not like "%-cm"  and fname not like "%放送記念%" and fname not like "%放送開始記念%" and fname not like "%アンコール放送" and come_byte>0  and hiduke is not null
                         group by anime_id,T_year,T_season
@@ -548,7 +552,7 @@ def insertRanking():
                                 where channel !=0
                             ) as minHiduke
                             group by anime_id
-                        )
+                        ) and come_byte is not null
                         group by anime_id
                         -- -----------
                     )
@@ -564,20 +568,20 @@ def insertRanking():
                             left join jk_rownumber using(video_id) 
                             where  (
                                 fname  like  "%マルチ1" or fname  like "%[再]%" or fname  like "%-1" or fname  like "%(2)" or fname  like "%-cm"  or fname  like "%放送記念%" or fname  like "%放送開始記念%" or fname  like "%アンコール放送" or come_byte>0  or hiduke is  null
-                            ) 
+                            )  and come_byte is not null 
                             group by anime_id  
                         ) as tt using(anime_id)
                         where original_C=execpt_C
                     )
                     or fname not like  "%マルチ1" and fname not like "%[再]%" and fname not like "%-1" and fname not like "%(2)" and fname not like "%-cm"  and fname not like "%放送記念%" and fname not like "%放送開始記念%" and fname not like "%アンコール放送" and come_byte>0  and hiduke is not null
                     
-            
+              and  come_byte is not null 
             
                 )as t
                 where year=T_year and season=T_season  
                 -- アニメの最初の動画のチャンネルと同じチャンネルのみを計算する
                 and (min_data_channel=0 or min_data_channel=channel)
-            
+                and come_byte is not null
             )as tt
             where offset = rownumber
             )as ttt
@@ -600,33 +604,79 @@ def insertRanking():
     
     sql="""
                     
-            insert into score (
-            select anime_id,kk.score,year,season from ranking join(
-                select anime_id,
-                (
-                    sum(mediun_come_byte*T_count)/sum(T_count)-
-                
-                    -- 平均
+            INSERT INTO score (anime_id, score, year, season)
+                SELECT 
+                    r.anime_id,
                     (
-                         select avg(come_byte) from (
-                             select anime_id,sum(mediun_come_byte*T_count)/sum(T_count) as come_byte from ranking group by anime_id
-                         )as avg_come_byte
-                     ) 
-            
-                 )/(select STDDEV(come_byte) from (
-                           select anime_id,sum(mediun_come_byte*T_count)/sum(T_count) as come_byte from ranking group by anime_id
-                       )as STDDEV_come_byte
-                    )*10+50 as score
-                          
-            
-            from ranking group by anime_id
-            
-            ) as kk
-            using (anime_id)
-            )
+                        weighted_avg - global_avg
+                    ) / stddev * 10 + 50 AS score,
+                    r.year,
+                    r.season
+                FROM ranking r
+                JOIN (
+                    SELECT 
+                        anime_id,
+                        SUM(mediun_come_byte * T_count) / SUM(T_count) AS weighted_avg
+                    FROM ranking
+                    GROUP BY anime_id
+                ) AS a ON r.anime_id = a.anime_id
+                CROSS JOIN (
+                    SELECT 
+                        AVG(weighted_avg) AS global_avg,
+                        STDDEV(weighted_avg) AS stddev
+                    FROM (
+                        SELECT 
+                            anime_id,
+                            SUM(mediun_come_byte * T_count) / SUM(T_count) AS weighted_avg
+                        FROM ranking
+                        GROUP BY anime_id
+                    ) AS sub
+                ) AS stats;
+
+
         """
     
     insert_query(sql,"")
+    
+    # そのシーズンでランキングの取得ができなかった番組をsocreが0として追加する。
+    sql="""
+   
+    INSERT ignore INTO score(anime_id, score, year, season)
+SELECT * FROM (
+    SELECT 
+        anime_id,
+        0 AS score,
+        YEAR(IF(ISNULL(gt10th_video), hiduke, hiduke - INTERVAL 2 WEEK)) AS year,
+        CASE
+            WHEN MONTH(IF(ISNULL(gt10th_video), hiduke, hiduke - INTERVAL 2 WEEK)) <= 3 THEN 1
+            WHEN MONTH(IF(ISNULL(gt10th_video), hiduke, hiduke - INTERVAL 2 WEEK)) <= 6 THEN 2
+            WHEN MONTH(IF(ISNULL(gt10th_video), hiduke, hiduke - INTERVAL 2 WEEK)) <= 9 THEN 3
+            ELSE 4
+        END AS season
+    FROM jk_rownumber
+    LEFT JOIN (
+        SELECT video_id, '1' AS gt10th_video
+        FROM video
+        WHERE fname LIKE '%\\_%' AND fname NOT LIKE '%\\_0%'
+    ) AS gt10th_videos USING(video_id)
+    JOIN video USING(video_id)
+    GROUP BY anime_id, year, season
+    HAVING COALESCE(SUM(come_byte), 0) = 0
+) AS t
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM score s
+    WHERE s.anime_id = t.anime_id
+      AND s.year = t.year
+      AND s.season = t.season
+);
+
+         
+    
+    """
+    insert_query(sql,"")
+    
+    
     
     if err == 1:
         print("Failed to write score table.")
@@ -689,10 +739,15 @@ def StrToDate(str):
     for p in pattern:
         match = re.search(p, str)
         if match:  
+            if len(match.group()) !=14 :
+                   print("info: 日付の変換に失敗しました。 nullで登録します。")
+                   return
+               
             print(f"Pattern matched: {p}")
             return match.group() 
     
     #print("No pattern matched")
+    
     return
 
 

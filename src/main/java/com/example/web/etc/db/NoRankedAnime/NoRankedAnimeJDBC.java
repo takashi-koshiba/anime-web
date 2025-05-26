@@ -101,7 +101,7 @@ public class NoRankedAnimeJDBC implements NoRankedAnimeDao {
 			String sql = "select *, rank() over (order by score desc) as ranking " +
 	             "from ranked_anime_season " +
 	             "where year = ? and season = ? and (score is null or  score =0 ) " +
-	             "order by ranking";
+	             "order by foldername";
 		
 			List<Map<String, Object>> result = jdbc.queryForList(sql,year,season);
 			return selectAllQuerry(result);
@@ -121,20 +121,17 @@ public class NoRankedAnimeJDBC implements NoRankedAnimeDao {
 			String sql = "select *, \n"
 					+ "       rank() over (order by score desc) as ranking \n"
 					+ "from ranked_anime_season \n"
-					+ "where year = (select year \n"
-					+ "              from (select year, season \n"
-					+ "                    from ranked_anime_season \n"
-					+ "                    group by year, season \n"
-					+ "                    order by year desc, season desc \n"
-					+ "                    limit 1) as y) \n"
-					+ "and season = (select season \n"
-					+ "              from (select year, season \n"
-					+ "                    from ranked_anime_season \n"
-					+ "                    group by year, season \n"
-					+ "                    order by year desc, season desc \n"
-					+ "                    limit 1) as s) \n"
-					+ "and (score is null or  score =0 ) "
-					+ "order by ranking;";
+					
+					+ "where (year,season) =("
+					+ "select year as max_year,season as max_season from(\n"
+					+ "  select max(year) as year,season from ranked_anime_season \n"
+					+ "  where year<=YEAR(now())\n"
+					+ "  group by season\n"
+					+ "  order by max(year) desc ,season desc\n"
+					+ "  limit 1\n"
+					+ ") as maxSeason)"
+					+"and (score is null or  score =0 )" 
+					+ "order by folderName;";
 			
 			List<Map<String, Object>> result = jdbc.queryForList(sql);
 			

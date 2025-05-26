@@ -43,7 +43,12 @@ document.addEventListener("DOMContentLoaded",function(){
 				pos:0,
 				index:0
 			}
-			
+
+			if (!imgDatas[rankIndex] || !imgDatas[rankIndex][0] || imgDatas[rankIndex][0]['originalName'] == null) 
+				{
+	
+									continue;
+			}
 			
 			setElements(imgDatas[rankIndex],initImgCount,imgRootUrl,rankIndex,margin);
 			addScrollEvents(rank[rankIndex].children[1],rankObj[rankIndex],initImgCount,imgRootUrl,imgDatas[rankIndex]);
@@ -182,6 +187,7 @@ document.addEventListener("DOMContentLoaded",function(){
 
 	}
 	function addElement(index,imgData,rank_scroll,imgRootUrl,rank_animeTemplate,imgMargin){
+		if (!imgData || !imgData[0] || imgData[0]['originalName'] == null) return;
 		let animeLen=rank_scroll.children[0].children.length;
 
 		if(index<0){
@@ -402,6 +408,8 @@ document.addEventListener("DOMContentLoaded",function(){
 		
 	}
 	function centering(rank_scroll,rankObj,initImgCount,imgData,imgRootUrl,rank_animeTemplate){
+		if (!imgData || !imgData[0] || imgData[0]['originalName'] == null) return;
+		
 		let pos=rank_scroll.scrollLeft;
 		let imgMargin=parseFloat(rank_scroll.children[0].children[0].style.marginLeft);
 		let imgWidth=imgMargin*2+anime_child.w;

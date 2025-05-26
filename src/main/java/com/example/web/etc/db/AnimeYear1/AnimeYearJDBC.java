@@ -22,7 +22,15 @@ public class AnimeYearJDBC implements AnimeYearDao {
 		try {
 			
 		
-			String sql = "select year,season from ranked_anime_season group by year,season order by year,season";
+			String sql = "select distinct year,season from ranked_anime_season "
+					+ "					   where year <=("
+					+ "					   SELECT"
+					+ "					       YEAR(NOW()) AS currentYear"
+					+ "					    )" 
+					+ "and length(year)=4 and length(season) =1"
+
+					+ "					    order by year  ,season  ";
+;
 			List<Map<String, Object>> result = jdbc.queryForList(sql);
         
 			List<AnimeYear> animeList = new ArrayList<>();

@@ -85,19 +85,11 @@ def main():
         '[新]','[多]','[字]','[再]'
         ]
     
-    #コメントを外して番組内容が記載されている ts.program.txt ファイルがあるパスを書いてください。
+    #コメントアウトして番組内容が記載されている ts.program.txt ファイルがあるパスを書いてください。
     #なおファイル名は動画のファイル名と一致している必要があります。
     #rename_anime.phpを実行する際に下記パスを指定して同じファイル名になるようにしてください。
     
-    ♯root_dir = r'D:\\java-web\\data\\bangumi\\' #環境に合わせて修正してください。
-
-
-
-
-
-
-
-
+    root_dir = r'D:\\java-web\\data\\bangumi\\' #環境に合わせて修正してください。
     if  not os.path.isdir(root_dir):
         print("パスがありません"+root_dir)
         return 
@@ -131,7 +123,8 @@ def insertRanked_anime_season():
     insert_query("delete from ranked_anime_season","")
     sql = """
     
-               insert into ranked_anime_season ( select id,year,season,rank() over (order by score desc ),score,originalName,foldername,txt   from anime
+               insert into ranked_anime_season ( 
+                   select id,year,season,rank() over (order by score desc ),score,originalName,foldername,txt   from anime
                     left join
                     (
                         -- あらすじ
