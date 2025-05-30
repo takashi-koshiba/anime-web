@@ -63,7 +63,7 @@ public class upload {
 					byte[] imgBytes=Base64.getDecoder().decode(img);
 			         Files.write(path, imgBytes);
 			      
-			         foldername=Kakasi.main(TextRep.main(foldername),"-JH -KH");
+			         foldername=Kakasi.main(TextRep.main(foldername,false),"-JH -KH");
 			         
 			      
 			         ffmpeg(originalName,path);
@@ -72,7 +72,7 @@ public class upload {
 			         
 			         Anime anime =new Anime();
 			         anime.setOriginalName(originalName);
-			         anime.setFoldername(TextRep.main(Kakasi.main(foldername,"-JH -KH")));
+			         anime.setFoldername(TextRep.main(Kakasi.main(foldername,"-JH -KH"),false));
 			         animeService.insert(anime);
 			         
 			         

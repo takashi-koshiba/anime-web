@@ -1,7 +1,7 @@
 package com.example.web.etc.sta;
 
 public class TextRep {
-	public static String main(String text2) {
+	public static String main(String text2,Boolean incluedSpace) {
 		String text=(text2.toUpperCase());
 		text=text.trim();
 		text=text.replace("ゐ", "い");
@@ -104,14 +104,19 @@ public class TextRep {
 		
 		text=text.replace("#", "♯");
 		text=text.replace("?", "？");
-		text=text.replace(" ", "");
-		text=text.replace("　", "");
+		
+		
+		if(!incluedSpace) {
+			text=text.replace(" ", "");
+			text=text.replace("　", "");
+		}
 
 		//text = text.replaceAll("[^Ａ-Ｚ A-Zａ-ｚ a-z 0-9 ０-９ぁ-ん ー]", "");
 		//text = text.replaceAll("[^Ａ-Ｚ A-Zａ-ｚ a-z 0-9 ０-９ ぁ-ん ァ-ヶ 亜-熙", "");
 		
 		//アニメ検索でヒットしないため一部記号は削除
-		text = text.replaceAll("[^Ａ-Ｚ A-Zａ-ｚ a-z 0-9 ０-９ぁ-ん ー ァ-ヶ 一-龠 !！ ＊ ♭ ♯ ？]", "");
+		text = text.replaceAll("[^Ａ-ＺA-Zａ-ｚa-z0-9０-９ぁ-んーァ-ヶ一-龠!！＊♭♯？ 　]", "");
+
 		return text;
 	}
 }

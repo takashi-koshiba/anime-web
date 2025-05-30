@@ -18,10 +18,10 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.example.web.etc.db.uploadFile.FileInfo;
 import com.example.web.etc.db.uploadFile.UploadFileService;
-import com.example.web.etc.sta.CalcCost;
 import com.example.web.etc.sta.Columns;
 import com.example.web.etc.sta.Kakasi;
 import com.example.web.etc.sta.Setting;
+import com.example.web.etc.sta.SimilarWards;
 import com.example.web.etc.sta.TextRep;
 import com.example.web.etc.sta.uplaodColumn;
 import com.example.web.etc.sta.uplaodColumn.orderEnum;
@@ -52,13 +52,23 @@ public class files {
 		orderEnum orderText=orderEnum.values()[sort];
 		
 		String  userId=session.getAttribute("id").toString();
-		String inputText=Kakasi.main(TextRep.main(inputStr),"-KH");
+		String inputText=Kakasi.main(TextRep.main(inputStr,true),"-KH");
 		
-		Integer inputLen=inputText.length();
-		Boolean isShort=inputLen<4;
-		Integer maxCost=CalcCost.maxCost(inputLen,isShort);
 		
-		String[] splitStr=CalcCost.splitStr(inputText,maxCost,isShort);
+		
+		String[] inputs = inputText.split(" ");
+		Integer[] inputLen = new Integer[inputs.length];
+		Boolean[] isShort = new Boolean[inputs.length];
+		Integer[] maxCost = new Integer[inputs.length];
+		String[][] splitStr = new String[inputs.length][]; // 内側の長さは後で設定
+
+		for (int i = 0; i < inputs.length; i++) {
+		    inputLen[i] = inputs[i].length();
+		    isShort[i] = inputLen[i] < 4;
+		    maxCost[i] = SimilarWards.maxLength(inputLen[i], isShort[i]);
+		    splitStr[i] = SimilarWards.splitStr(inputs[i], maxCost[i], isShort[i]);
+		}
+		
 		
 		if(inputStr.equals("")||inputStr.isEmpty()||inputStr.isBlank()) {
 			
@@ -77,22 +87,29 @@ public class files {
 		
 		
 		//一致率を計算
+
+		
 		List<FileInfo> calcDistanceList=new ArrayList<FileInfo>();
 		for(Integer i=0;i<fileInfoList.size();i++) {
 			FileInfo fileInfo=fileInfoList.get(i);
 			String searchTxt=fileInfo.getSearchTxt();
-			Double rate =CalcCost.getMaxCost(searchTxt,maxCost,splitStr,isShort);
+			
+			Double dist=0d;
+			
 
-		
+			
+			for(Integer j=0;j<inputs.length;j++) {
+				dist+=SimilarWards.exec(searchTxt,maxCost[j],splitStr[j],isShort[j])*((double)1/(double)inputs.length);
+			}
+			dist=dist/(double) inputs.length;
 
-				
-			if(rate>0) {
+			if(dist>0) {
 				FileInfo f=new FileInfo();
 				f.setId(fileInfo.getId());
 				f.setFname(fileInfo.getFname());
 				f.setLname(fileInfo.getLname());
 				f.setAlias(fileInfo.getAlias());
-				f.setRate(rate);
+				f.setRate(dist);
 				f.setType(fileInfo.getType());
 				f.setUrl(getUrl(fileInfo));
 				

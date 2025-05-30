@@ -136,10 +136,12 @@ def process_outputImg(root_dir,  foldername,video_file):
             #cmd = f"ffmpeg  -i \"{video_file}\"  -vf scale=-1:480 -q:v 3 \"{new_dir}\\output_%03d.jpg\""
             cmd = f"echo Y| ffmpeg -ss {loopLenSec*i} -i \"{video_file}\"  -vsync vfr -vf scale=640:360 -q:v 55 -frames:v 1  \"{new_dir}\\output_{i}.webp\" "
             
-            if not os.path.isfile(f"{new_dir}\\output_{i}.webp"):
-                print (f"{new_dir}\\output_{i}.webp")
+            print (f"{new_dir}\\output_{i}.webp")
+            if not os.path.exists(f"{new_dir}\\output_{i}.webp"):
+                
                 subprocess.run(cmd, shell=True, capture_output=True, text=True, encoding='utf-8')
-            
+            else:
+                print("すでに存在するためスキップします。")
       #      tq.update(1)
        # tq.close()
         
@@ -667,8 +669,6 @@ WHERE NOT EXISTS (
     SELECT 1
     FROM score s
     WHERE s.anime_id = t.anime_id
-      AND s.year = t.year
-      AND s.season = t.season
 );
 
          
@@ -739,10 +739,9 @@ def StrToDate(str):
     for p in pattern:
         match = re.search(p, str)
         if match:  
-            if len(match.group()) !=14 :
-                   print("info: 日付の変換に失敗しました。 nullで登録します。")
-                   return
-               
+            print(match.group())
+            print(str)
+
             print(f"Pattern matched: {p}")
             return match.group() 
     

@@ -43,7 +43,7 @@ public class UploadFileJDBC implements UploadFileDao {
     			jdbc.update("INSERT INTO renban (alias) VALUES(?)","a"+i);
     		}
         	*/
-    		String searchTxt=Kakasi.main(TextRep.main(fname+lname),"-KH");
+    		String searchTxt=Kakasi.main(TextRep.main(fname+lname,false),"-KH");
     		String alias=renban.selectOne();
     		jdbc.update("INSERT INTO uploadfile (user_id,fname,lname,alias,extension,searchTxt,mimeId) VALUES(?,?,?,?,?,?,?)",id,fname,lname,alias,mime,searchTxt,mimeId);
     		

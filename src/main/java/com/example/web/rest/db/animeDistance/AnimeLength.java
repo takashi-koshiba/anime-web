@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.web.etc.db.Animetable.Anime;
 import com.example.web.etc.db.Animetable.AnimeService;
-import com.example.web.etc.sta.CalcCost;
 import com.example.web.etc.sta.Kakasi;
+import com.example.web.etc.sta.SimilarWards;
 import com.example.web.etc.sta.TextRep;
 @RestController
 
@@ -25,11 +25,14 @@ public class AnimeLength {
 	//@GetMapping("/anime-web/api/db/animeLen/{str}")
 	@PostMapping("/anime-web/api/db/animeLen/")
 	public List<StrDistance> start(@RequestParam("txt") String str)  {
-		String inputText=Kakasi.main(TextRep.main(str ),"-JH -KH");
+		String inputText=Kakasi.main(TextRep.main(str ,true),"-JH -KH");
+
+		inputText=inputText.replace("　", " ");
 		
 		if(inputText.equals("")) {
 			return new ArrayList<>();
 		}
+		
 		
 		//inputの文字数が長い場合は短いアニメ除外
 		Integer minLength=(int)Math.ceil((double)inputText.length()/6);
@@ -41,15 +44,36 @@ public class AnimeLength {
 		if (animeList.size()==0) {
 			return distanceList;
 		}
+		//スペースで分割
+		String[] inputs = inputText.split(" ");
+		Integer[] inputLen = new Integer[inputs.length];
+		Boolean[] isShort = new Boolean[inputs.length];
+		Integer[] maxCost = new Integer[inputs.length];
+		String[][] splitStr = new String[inputs.length][]; // 内側の長さは後で設定
 
-		Integer inputLen=inputText.length();
-		Boolean isShort=inputLen<4;
-		Integer maxCost=CalcCost.maxCost(inputLen,isShort);
-		String[] splitStr=CalcCost.splitStr(inputText,maxCost,isShort);
+		for (int i = 0; i < inputs.length; i++) {
+		    inputLen[i] = inputs[i].length();
+		    isShort[i] = inputLen[i] < 4;
+		    maxCost[i] = SimilarWards.maxLength(inputLen[i], isShort[i]);
+		    splitStr[i] =SimilarWards.splitStr(inputs[i], maxCost[i], isShort[i]);
+		}
+		
+		
+		
+
+		
 
 		
 		for(Integer i=0;i<animeList.size();i++) {
-			insertDistList(distanceList,inputText,animeList.get(i),maxCost,splitStr,isShort);
+			Double dist=0d;
+
+			
+			for(Integer j=0;j<inputs.length;j++) {
+				dist+=(getMatchStrCount(str,animeList.get(i),maxCost[j],splitStr[j],isShort[j]))*((double)1/(double)inputs.length);
+
+			}
+			dist=dist/(double) inputs.length;
+			insertDistList(distanceList,animeList.get(i),dist);
 		}
 
 		distanceList.sort(Comparator.comparingDouble(item -> ((StrDistance) item).getDistance()).reversed());
@@ -60,18 +84,15 @@ public class AnimeLength {
 		return distanceList;
 	}
 
-	private List<StrDistance> insertDistList(List<StrDistance> distanceList,String str,
-			Anime anime,Integer maxCost,String[] splitStr,Boolean isShort) {
+	private List<StrDistance> insertDistList(List<StrDistance> distanceList,Anime anime,Double dist) {
 		
-		StrDistance distance= new StrDistance();
-		Double dist=getMatchStrCount(str,anime,maxCost,splitStr,isShort);
+		StrDistance strDistance= new StrDistance();
 		
-
-		distance.setDistance(dist);
-		distance.setId(anime.getId());
-		distance.setTitle(anime.getFoldername());
-		distance.setOriginal(anime.getOriginalName());
-		distanceList.add(distance);
+		strDistance.setDistance(dist);
+		strDistance.setId(anime.getId());
+		strDistance.setTitle(anime.getFoldername());
+		strDistance.setOriginal(anime.getOriginalName());
+		distanceList.add(strDistance);
 		
 		return distanceList;
 	}
@@ -80,7 +101,7 @@ public class AnimeLength {
 	
 	private Double getMatchStrCount(String str,Anime  target,Integer maxCost,String[] splitStr,Boolean isShort) {
 		
-		return (double)CalcCost.getMaxCost(target.getFoldername(),maxCost,splitStr,isShort);
+		return (double)SimilarWards.exec(target.getFoldername(),maxCost,splitStr,isShort);
 		
 	}
 

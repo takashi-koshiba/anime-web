@@ -55,12 +55,12 @@ public class video {
 
 		Integer sortIndex=sort ==null?0:sort;
 		
-		ObjSort[]  sortObj=new ObjSort[] {new ObjSort("タイトル",1),new ObjSort("日付",5)};
+		ObjSort[]  sortObj=new ObjSort[] {new ObjSort("タイトル",2),new ObjSort("日付",5)};
 		
 		Info info =new Info(sortIndex,sortObj);
 		model.addObject("info",info);
 		
-	
+
 		List<Video> videoInfo =videoService.selectOne(id,info.getSortId());
 		model.addObject("videoInfo",videoInfo);
 		

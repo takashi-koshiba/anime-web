@@ -352,10 +352,11 @@ DROP TABLE IF EXISTS `score`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `score` (
-  `anime_id` int DEFAULT NULL,
+  `anime_id` int NOT NULL,
   `score` decimal(6,2) DEFAULT NULL,
-  `year` int DEFAULT NULL,
-  `season` int DEFAULT NULL
+  `year` int NOT NULL,
+  `season` int NOT NULL,
+  UNIQUE KEY `anime_id` (`anime_id`,`year`,`season`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

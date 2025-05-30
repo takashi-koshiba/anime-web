@@ -1,9 +1,9 @@
 package com.example.web.etc.sta;
 
-public class CalcCost {
+public class SimilarWards {
 
 
-	public  static Integer maxCost(Integer len,boolean isShort) {
+	public  static Integer maxLength(Integer len,boolean isShort) {
 		Integer cost= (len * (len + 1)) / 2;
 
 		return isShort?cost:cost-len;
@@ -11,10 +11,10 @@ public class CalcCost {
 	
 
 	
-	public static Double getMaxCost(String target,Integer inputTotalCost
+	public static Double exec(String target,Integer inputTotalCost
 			,String[] split,boolean isShort) {
 
-		Integer targetCost=maxCost(target.length(),isShort);
+		Integer targetCost=maxLength(target.length(),isShort);
 		
 		Integer inputCountMatch=countMatch(split,target);
 		

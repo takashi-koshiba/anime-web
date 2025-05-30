@@ -19,12 +19,12 @@ public class edit {
 	public editBean start(@RequestPart("filename") String filename)  {
 		
 		String title=RemoveExtension.main(filename);
-		String folder=Kakasi.main(TextRep.main(title),"-JH -KH");
+		String folder=Kakasi.main(TextRep.main(title,false),"-JH -KH");
 		
 		boolean exist=animeService.IsExistItem(title);
 		
 		editBean result=new editBean(filename,folder,title,exist);
-		System.out.println(Kakasi.main(TextRep.main(title),"-JH -KH"));
+		System.out.println(Kakasi.main(TextRep.main(title,false),"-JH -KH"));
 		return result;
 		
 		
