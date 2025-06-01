@@ -19,9 +19,12 @@ public class SimilarWards {
 		Integer inputCountMatch=countMatch(split,target);
 		
 		Double inputMatchRatio=(double)inputCountMatch/(double)inputTotalCost;
-		Double inputCost=inputMatchRatio*inputCountMatch;
+		//1以上にならないようにして一致率を計算
 		
-		Double result=inputCost/(double)targetCost;
+		Double targetMatchRatio = ((double) Math.min(inputCountMatch, targetCost)) / ((double) Math.max(inputCountMatch, targetCost));
+
+        
+		Double result=inputMatchRatio*targetMatchRatio;
 
 		
 		
