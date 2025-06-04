@@ -162,29 +162,24 @@ def insertRanked_anime_season():
     sql = """
     
                insert into ranked_anime_season ( 
-                   select id,year,season,rank() over (order by score desc ),score,originalName,foldername,txt   from anime
-                    left join
-                    (
-                        -- あらすじ
-                        select video_id,txt,anime_id  from video_prog
-                        join video using(video_id)
-                        where video_id IN(
-                        
-                            select min(video_id) from video join jk_rownumber using(video_id) 
-                            where (anime_id,hiduke) in (
-                                select anime_id,min(hiduke) as hiduke from video 
-                                join jk_rownumber using(video_id)
-                                where video_id in(select video_id from video_prog where length(txt)>10)
-                                group by anime_id
-                            )
-                            group by anime_id
-                        )
+                   select distinct anime_id,t.year,t.season,rank() over (order by score desc ) as all_ranking,score,originalName,folderName ,"" as txt from (
+ 	select anime_id ,YEAR(hiduke) as year,
+				    case
+                        	    when MONTH(hiduke) <=3 then 1
+                        	    when MONTH(hiduke) <=6 then 2
+                        	    when MONTH(hiduke) <=9 then 3
+                        	    when MONTH(hiduke) <=12 then 4
+                        	    else 0
+                    		    end 'season' ,min(hiduke) as hiduke from video_info 
+                                    join anime on anime.id=anime_id
+                                    
+				    group by anime_id,year,season
+                                    having count(*) >2
 
-                        
-                    )as summary on anime.id=summary.anime_id
-                    join score  on anime.id=score.anime_id
-                   
-                    order by score desc 
+) as t
+join score using(anime_id)
+join anime on t.anime_id =anime.id
+order by all_ranking desc 
 )
     """
     insert_query(sql,"")
