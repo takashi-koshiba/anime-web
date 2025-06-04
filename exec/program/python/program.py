@@ -162,24 +162,12 @@ def insertRanked_anime_season():
     sql = """
     
                insert into ranked_anime_season ( 
-                   select distinct anime_id,t.year,t.season,rank() over (order by score desc ) as all_ranking,score,originalName,folderName ,"" as txt from (
- 	select anime_id ,YEAR(hiduke) as year,
-				    case
-                        	    when MONTH(hiduke) <=3 then 1
-                        	    when MONTH(hiduke) <=6 then 2
-                        	    when MONTH(hiduke) <=9 then 3
-                        	    when MONTH(hiduke) <=12 then 4
-                        	    else 0
-                    		    end 'season' ,min(hiduke) as hiduke from video_info 
-                                    join anime on anime.id=anime_id
-                                    
-				    group by anime_id,year,season
-                                    having count(*) >2
 
-) as t
-join score using(anime_id)
-join anime on t.anime_id =anime.id
-order by all_ranking desc 
+                    select anime_id,year,season,all_ranking,score,originalName,foldername,txt from (
+                        select all_ranking,anime_id,year,season from ranking
+                    ) as ranking
+                    join (select anime_id,originalName,foldername,score,txt from ranked_anime) as ranked_anime using(anime_id)
+                    order by all_ranking desc 
 )
     """
     insert_query(sql,"")

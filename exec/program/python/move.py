@@ -40,6 +40,7 @@ DB_CONFIG = {
 
 
 
+
 def connect_db():
     return mysql.connector.connect(**DB_CONFIG)
 
@@ -595,10 +596,53 @@ def insertRanking():
 
     err = insert_query(sql,"")
     
+    
+    
+    
     if err == 1:
         print("Failed to write ranking table.")
         
+    
         
+    sql ="""INSERT INTO ranking (all_ranking, anime_id, year, season, mediun_come_byte, T_count)
+SELECT
+    0 AS all_ranking,
+    anime_id,
+    T_year AS year,
+    T_season AS season,
+    0 AS mediun_come_byte,
+    COUNT(*) AS T_count
+FROM (
+    SELECT 
+        anime_id,
+        YEAR(hiduke) AS T_year,
+        CASE
+            WHEN MONTH(hiduke) <= 3 THEN 1
+            WHEN MONTH(hiduke) <= 6 THEN 2
+            WHEN MONTH(hiduke) <= 9 THEN 3
+            ELSE 4
+        END AS T_season
+    FROM video_info
+    WHERE hiduke IS NOT NULL
+) AS video_info
+WHERE NOT EXISTS (
+    SELECT 1 FROM ranking r
+    WHERE r.anime_id = video_info.anime_id
+      AND r.year = video_info.T_year
+      AND r.season = video_info.T_season
+)
+GROUP BY anime_id, T_year, T_season;
+
+
+    """
+    
+    err = insert_query(sql,"")
+    
+    
+    
+    
+    if err == 1:
+        print("Failed to write ranking table.")
     sql="""
         delete from score;
         """
@@ -608,7 +652,7 @@ def insertRanking():
     sql="""
                     
             INSERT INTO score (anime_id, score, year, season)
-                SELECT 
+               SELECT 
                     r.anime_id,
                     (
                         weighted_avg - global_avg
@@ -621,6 +665,7 @@ def insertRanking():
                         anime_id,
                         SUM(mediun_come_byte * T_count) / SUM(T_count) AS weighted_avg
                     FROM ranking
+                    where mediun_come_byte>0
                     GROUP BY anime_id
                 ) AS a ON r.anime_id = a.anime_id
                 CROSS JOIN (
@@ -632,53 +677,33 @@ def insertRanking():
                             anime_id,
                             SUM(mediun_come_byte * T_count) / SUM(T_count) AS weighted_avg
                         FROM ranking
+                        where mediun_come_byte>0
                         GROUP BY anime_id
                     ) AS sub
-                ) AS stats;
+                ) AS stats
+
+
 
 
         """
     
     insert_query(sql,"")
     
-    # そのシーズンでランキングの取得ができなかった番組をsocreが0として追加する。
-    sql="""
    
-    INSERT ignore INTO score(anime_id, score, year, season)
-SELECT * FROM (
-    SELECT 
-        anime_id,
-        0 AS score,
-        YEAR(IF(ISNULL(gt10th_video), hiduke, hiduke - INTERVAL 2 WEEK)) AS year,
-        CASE
-            WHEN MONTH(IF(ISNULL(gt10th_video), hiduke, hiduke - INTERVAL 2 WEEK)) <= 3 THEN 1
-            WHEN MONTH(IF(ISNULL(gt10th_video), hiduke, hiduke - INTERVAL 2 WEEK)) <= 6 THEN 2
-            WHEN MONTH(IF(ISNULL(gt10th_video), hiduke, hiduke - INTERVAL 2 WEEK)) <= 9 THEN 3
-            ELSE 4
-        END AS season
-    FROM jk_rownumber
-    LEFT JOIN (
-        SELECT video_id, '1' AS gt10th_video
-        FROM video
-        WHERE fname LIKE '%\\_%' AND fname NOT LIKE '%\\_0%'
-    ) AS gt10th_videos USING(video_id)
-    JOIN video USING(video_id)
-    GROUP BY anime_id, year, season
-    HAVING COALESCE(SUM(come_byte), 0) = 0
-) AS t
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM score s
-    WHERE s.anime_id = t.anime_id
-);
-
-         
+    
+    
+    
+    if err == 1:
+        print("Failed to write score table.")
+        
+        
+    sql =     """
+    INSERT IGNORE INTO  score (anime_id, score, year, season)
+    select anime_id,0 as score ,year,season from ranking where mediun_come_byte=0
     
     """
+    
     insert_query(sql,"")
-    
-    
-    
     if err == 1:
         print("Failed to write score table.")
         
