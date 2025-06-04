@@ -28,11 +28,12 @@ document.addEventListener("DOMContentLoaded",function(){
 	async function processData(root,url){
 		let seasonData= await getSeasonRank(root)
 		let result=await getRankAllData(root,url);
+		let extended_program=await  extendVideoRank(root);
 		let noRanked= await getNoRanked(root);
 		
 		imgRootUrl= result[1];
 		imgDatas=[];
-		imgDatas=[result[0],seasonData,noRanked];
+		imgDatas=[result[0],seasonData,extended_program,noRanked];
 		console.dir(imgDatas);
 		
 		
@@ -463,7 +464,20 @@ document.addEventListener("DOMContentLoaded",function(){
 	    return result;
 
 	}
+	async function extendVideoRank(root) {
 
+		let url=new URL(window.location.href);
+		let year=url.searchParams.get('year');
+		let season=url.searchParams.get('season');
+		
+		let urlApi=root + "api/db/extendVideo/";
+		if(year!=null&&season!=null){
+			urlApi=urlApi+"?year="+year+"&season="+season;
+		}
+		let result = await getRankSeasonData(urlApi);
+	    return result;
+
+	}
 
 });
 

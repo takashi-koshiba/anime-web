@@ -27,8 +27,10 @@ public class AnimeLength {
 	public List<StrDistance> start(@RequestParam("txt") String str)  {
 		String inputText=Kakasi.main(TextRep.main(str ,true),"-JH -KH");
 
-		inputText=inputText.replace("　", " ");
-		
+		inputText = inputText.replace("　", " ");
+		inputText = inputText.replaceAll(" {2,}", " ");
+		inputText = inputText.trim();
+
 		if(inputText.equals("")) {
 			return new ArrayList<>();
 		}
@@ -45,11 +47,12 @@ public class AnimeLength {
 			return distanceList;
 		}
 		//スペースで分割
+		
 		String[] inputs = inputText.split(" ");
 		Integer[] inputLen = new Integer[inputs.length];
 		Boolean[] isShort = new Boolean[inputs.length];
 		Integer[] maxCost = new Integer[inputs.length];
-		String[][] splitStr = new String[inputs.length][]; // 内側の長さは後で設定
+		String[][] splitStr = new String[inputs.length][]; 
 
 		for (int i = 0; i < inputs.length; i++) {
 		    inputLen[i] = inputs[i].length();

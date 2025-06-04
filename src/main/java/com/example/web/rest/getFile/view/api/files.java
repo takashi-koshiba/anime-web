@@ -54,7 +54,9 @@ public class files {
 		String  userId=session.getAttribute("id").toString();
 		String inputText=Kakasi.main(TextRep.main(inputStr,true),"-KH");
 		
-		
+		inputText = inputText.replace("　", " ");
+		inputText = inputText.replaceAll(" {2,}", " ");
+		inputText = inputText.trim();
 		
 		String[] inputs = inputText.split(" ");
 		Integer[] inputLen = new Integer[inputs.length];
