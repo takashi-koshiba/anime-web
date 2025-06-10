@@ -277,6 +277,65 @@ document.addEventListener("DOMContentLoaded",function(){
 			  playIcon.style.backgroundImage = 'url("/anime-web/uploader/view/icons/play.avif")';
 			});
 			
+			
+			//シークと音量変更
+			document.addEventListener('keydown', event => {
+				let dist;
+			    if (event.code === 'ArrowRight' ||event.code === 'KeyD') {	
+					dist=5;
+					seekKey(dist);
+					
+			    }else if(event.code === 'ArrowLeft'||event.code === 'KeyA'){
+					dist=-5;
+					seekKey(dist);
+				}
+				
+				else if(event.code === 'ArrowUp'){
+					let vol=10;
+					volumeKey(vol);
+				}
+				else if(event.code === 'ArrowDown'){
+					let vol=-10;
+					volumeKey(vol);
+				}
+				console.dir(event.code );
+				
+				
+			});
+			document.addEventListener('keyup', event => {
+				
+				if(event.code === 'Space'){
+					if (elem.paused) {
+						elem.play(); // 再生
+
+					} else {
+						elem.pause(); // 一時停止
+					}
+				}
+					
+			})
+			
+			
+			
+			function volumeKey(vol) {
+			    console.dir(valumeLevel_prg.value);
+			    
+			    let currentValue = Number(valumeLevel_prg.value);
+				let result= Math.min(Math.max(currentValue + vol,0),100);
+			    valumeLevel_prg.value = result;
+
+			    console.dir(valumeLevel_prg.value);
+				elem.volume=(result)/100;
+				
+				togglePlayBarTimer();
+			}
+
+
+			function seekKey(dist){
+				elem.currentTime=elem.currentTime+dist;
+				togglePlayBarTimer();
+			}
+			
 		}else if(type=="AUDIO" ||getQtyValueOfbutton()==-2){
 
 			elem=document.createElement("audio");
@@ -344,11 +403,19 @@ document.addEventListener("DOMContentLoaded",function(){
 			const canvasW = getCanvasWidth();
 
 			const currentSeekFrame = Math.ceil(percent*Math.ceil(video.duration)) ;
-
+			
             try {
-				if(prevFrame!=currentSeekFrame){
-					const result = await getSeekImage(alias, currentSeekFrame);
-					renderSeekThumbnail(cvs, result, percent, 200, canvasW,currentSeekFrame);
+				if(prevFrame!=currentSeekFrame && currentSeekFrame%4==0){
+					console.dir(currentSeekFrame);
+					let imgData;
+					if (Number.isNaN(currentSeekFrame)){
+						imgData = await getSeekImage(alias, 0);
+						
+					}else {
+						imgData = await getSeekImage(alias, currentSeekFrame);
+					}
+					
+					renderSeekThumbnail(cvs, imgData, percent, 200, canvasW,currentSeekFrame);
 					prevFrame=currentSeekFrame;
 				}
 
@@ -415,6 +482,7 @@ document.addEventListener("DOMContentLoaded",function(){
 		        cvs.restore();
 		
 		        URL.revokeObjectURL(image.src);
+
 		    };
 					}
 					
@@ -422,6 +490,9 @@ document.addEventListener("DOMContentLoaded",function(){
 
 		
 	}
+
+	
+	
 	function formatTime(seconds) {
 	  seconds = Math.floor(seconds); 
 	  const hrs = Math.floor(seconds / 3600);
@@ -478,25 +549,10 @@ document.addEventListener("DOMContentLoaded",function(){
 			  }
 			});
 			
-			//動画下部のアイテムの表示非表示を切り替える
-			let moveTimeout;
-			let isVisible=true;
+
 			pauseDiv.addEventListener('mousemove', function() {
-			  // すでにタイマーがあればキャンセル
-			  clearTimeout(moveTimeout);
-				
-			  //消えてたら表示
-				isVisible=true;
-				visibleItems(isVisible);
-			  
-			  // 4000ms後に非表示
-			  moveTimeout = setTimeout(function() {
-				isVisible=false;
-			    visibleItems(isVisible);
-				
-			  }, 3000);
+				togglePlayBarTimer();
 			});
-			
 			
 			
 			//表示をキャンセル
@@ -504,24 +560,10 @@ document.addEventListener("DOMContentLoaded",function(){
 			itemViewBack.addEventListener("mousemove",function(e){
 				if (e.target !== this) return;
 				isVisible=false;
-				visibleItems(isVisible);
+				togglePlayBar(isVisible);
 
 			});
-			function visibleItems(isVisible) {
-			  const canvas = document.getElementById('canvasSeek');
-			  const progress = document.getElementById('progress');
-			  const videoContorols=document.getElementById('videoContorols');
-			  
-			  [canvas, progress,videoContorols].forEach(el => {
-			    if (!el) return; // 要素が存在しないときにスキップ
 
-			    if (isVisible) {
-			      el.classList.remove('hidden');
-			    } else {
-			      el.classList.add('hidden');
-			    }
-			  });
-			}
 	}
 	function fullScreen(isFullScreen){
 		let canvas =  document.getElementById('canvasSeek');
@@ -931,8 +973,7 @@ document.addEventListener("DOMContentLoaded",function(){
 	        video.currentTime = (Math.round((currentSeekPosX / seekMaxX) * 100000) / 100000) * video.duration;
 			
 	    });
-		
-		
+
 		
 		
 		
@@ -970,10 +1011,12 @@ document.addEventListener("DOMContentLoaded",function(){
 		return data;
 		
 	}
+
 	
 	async function getSeekImage(alias,frame) {
-		let url=location.protocol+"/anime-web/get-file/anime/image/seek/"+alias+"/"+frame;
+		let url="/anime-web/get-file/anime/image/seek/"+alias+"/"+frame;
 		let data = await getData(url);
+
 		return data;
 	}
 	function addPageButton(){
@@ -1024,8 +1067,49 @@ document.addEventListener("DOMContentLoaded",function(){
 	}
 	
 	
+	//動画下部のアイテムの表示非表示を切り替える
+	let moveTimeout;
+	let isVisible=true;
+	function togglePlayBarTimer(){
 		
+
+		
+		
+		// すでにタイマーがあればキャンセル
+		  clearTimeout(moveTimeout);
+			
+		  //消えてたら表示
+			isVisible=true;
+			togglePlayBar(isVisible);
+		  
+		  // 4000ms後に非表示
+		  moveTimeout = setTimeout(function() {
+			isVisible=false;
+		    togglePlayBar(isVisible);
+			
+		  }, 3000);
+		  
+		  
+		  
+		  
+	}
 	
+	function togglePlayBar(isVisible) {
+	    const canvas = document.getElementById('canvasSeek');
+	    const progress = document.getElementById('progress');
+	    const videoContorols=document.getElementById('videoContorols');
+	    
+	    [canvas, progress,videoContorols].forEach(el => {
+	      if (!el) return; // 要素が存在しないときにスキップ
+
+	      if (isVisible) {
+	        el.classList.remove('hidden');
+	      } else {
+	        el.classList.add('hidden');
+	      }
+	    });
+	  }
+
 	
 })
 

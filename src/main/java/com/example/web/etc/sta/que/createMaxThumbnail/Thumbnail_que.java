@@ -64,7 +64,7 @@ public class Thumbnail_que extends Que  {
 
         long maxSize = -1;
 
-        if (files==null) {
+        if (files==null || files.length==0) {
 
         	return null;
         }

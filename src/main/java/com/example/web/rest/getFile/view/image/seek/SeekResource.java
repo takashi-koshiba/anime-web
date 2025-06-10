@@ -72,7 +72,10 @@ public class SeekResource extends FileController {
 		    if (target.isPresent()) {
 		        selectedFile = target.get();  // ← 変数に代入
 		    } else {
-		    	
+				Resource resource = new ClassPathResource("static/anime-web/uploader/view/noImage.webp");
+				return ResponseEntity.ok()
+				    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"noImage.png\"")
+				    .body(resource);
 		    }
 		} catch (IOException e) {
 		    e.printStackTrace();
