@@ -214,7 +214,7 @@ public class sendFile {
 	}
 	private static void compressImg(File inputPath,String outputPath,Integer imgSize,String alias) {
 		//avifに変換
-		String p ="ffmpeg -i \"{0}\"    -vf \"scale=if(gt(iw\\,ih)\\,{2,number,#}\\,-2):if(gt(iw\\,ih)\\,-2\\,{2,number,#})\"  -c:v libsvtav1 -preset 8 -crf 28 \"{1}\"" ;
+		String p ="ffmpeg -i \"{0}\"    -vf \"scale=if(gt(iw\\,ih)\\,{2,number,#}\\,-2):if(gt(iw\\,ih)\\,-2\\,{2,number,#})\"  -c:v libsvtav1 -preset 8 -crf 50 \"{1}\"" ;
 		Path output =  Paths.get(MessageFormat.format(Setting.getRoot()+"content\\anime-web\\upload\\file\\{0}\\"+alias+".avif",outputPath)).normalize();
 		String format;
 		format= MessageFormat.format(p,inputPath.getAbsolutePath().toString(),output.toString(),imgSize);
@@ -268,7 +268,7 @@ public class sendFile {
 	}
 	private static void createEncodeAudio(String input,String fullPath,String alias) {
 		 
-		String p ="ffmpeg -i \"{0}\" -filter:a loudnorm=I=-24:LRA=11:TP=-1.5 -c:a flac  \"{1}\"" ;
+		String p ="ffmpeg -i \"{0}\" -filter:a loudnorm=I=-24:LRA=11:TP=-1.5 -preset ultrafast -vn -threads 4 -c:a flac \"{1}\"" ;
 
 
 		 String output = fullPath+ "content\\anime-web\\upload\\file\\audio\\"+alias+".flac";

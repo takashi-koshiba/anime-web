@@ -51,7 +51,7 @@ public class M3u8 extends FileController {
 		
 	    Path p = Paths.get(alias+"/master.m3u8").normalize();
 
-	    System.out.println(p);
+	   // System.out.println(p);
 	    
 	    return super.getFile(p.toString(),"",false);
    }

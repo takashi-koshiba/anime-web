@@ -50,7 +50,7 @@ public class  Original  extends FileController {
 	//対象ユーザーのファイルを取得
 		List<FileInfo> fileInfoList =  uploadFileService.selectFileOne(userId, alias);
 		
-		System.out.println(alias);
+		//System.out.println(alias);
 		if( fileInfoList.size()<1) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ファイルのアクセス権がありません。");
 		}

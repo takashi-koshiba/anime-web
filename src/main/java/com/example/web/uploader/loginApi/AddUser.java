@@ -29,7 +29,7 @@ public class AddUser {
 			Boolean flag;
 			flag=uploadService.insertUser(name, ToHash256.main(pw));
 			
-			System.out.println( ToHash256.main(pw));
+			//System.out.println( ToHash256.main(pw));
 			result=flag?0:2; //問題なし/書き込み失敗
 			
 		}

@@ -35,7 +35,7 @@ public abstract class FileController {
     		//System.out.println(encodedFname);
     		Path filePath = this.uploadDir.resolve(filepath).normalize();
    
-    		System.out.println(this.uploadDir);
+    		//System.out.println(this.uploadDir);
     		if (!filePath.startsWith(this.uploadDir)) {
     			Log.log(Level.WARNING, "Invalid file path:"+filePath);
     		    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid file path");
@@ -48,7 +48,7 @@ public abstract class FileController {
     			throw new ResponseStatusException(HttpStatus.NOT_FOUND, filePath.toString()+"ファイルが存在しません。");
     			
     		}
-    		Log.log(Level.INFO, "File loaaded: " + filePath);
+    		//Log.log(Level.INFO, "File loaaded: " + filePath);
 
     		// Content-Typeを取得
  

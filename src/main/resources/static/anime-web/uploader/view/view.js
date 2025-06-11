@@ -383,6 +383,7 @@ document.addEventListener("DOMContentLoaded",function(){
 		});
 	
 		let prevFrame=-1;
+		let canLoadSeekImg=true;
 		progress.addEventListener('mousemove',async function(e){
 			let percent=prgPos(e,this)
 
@@ -405,7 +406,8 @@ document.addEventListener("DOMContentLoaded",function(){
 			const currentSeekFrame = Math.ceil(percent*Math.ceil(video.duration)) ;
 			
             try {
-				if(prevFrame!=currentSeekFrame && currentSeekFrame%4==0){
+				if(prevFrame!=currentSeekFrame && currentSeekFrame%8==0&&canLoadSeekImg){
+					canLoadSeekImg=false;
 					console.dir(currentSeekFrame);
 					let imgData;
 					if (Number.isNaN(currentSeekFrame)){
@@ -417,10 +419,12 @@ document.addEventListener("DOMContentLoaded",function(){
 					
 					renderSeekThumbnail(cvs, imgData, percent, 200, canvasW,currentSeekFrame);
 					prevFrame=currentSeekFrame;
+					canLoadSeekImg=true;
 				}
 
             } catch (error) {
                 console.error("Failed to get seek image:", error);
+				canLoadSeekImg=true;
             }
 		});
 		

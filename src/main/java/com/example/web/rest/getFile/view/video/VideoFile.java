@@ -64,7 +64,7 @@ public class VideoFile extends FileController {
 			}
 			
 			Path path=Paths.get(Setting.getRoot()+"content/anime-web/upload/file/hls/"+alias+"/"+width+"/"+file+".ts").normalize();
-			System.out.println(path);
+			//System.out.println(path);
 			
 			return super.getFile(path.toString(),"",false);
 	   }
