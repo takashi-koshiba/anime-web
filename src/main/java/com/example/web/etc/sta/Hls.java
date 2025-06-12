@@ -33,6 +33,7 @@ public class Hls {
 		String input=args.getArgument("input").toString();
 		Path output = Paths.get(args.getArgument("output").toString());
 		String url=args.getArgument("url").toString();
+		String audioPath=args.getArgument("audioPath").toString();
 		
 		int [] ScreenSizeArr=getScreenSize(input);
 		int width=ScreenSizeArr[0];
@@ -57,7 +58,7 @@ public class Hls {
 				int resizeW=(int)(width*ratio);
 				resizeW=resizeW%2==0?resizeW:resizeW+1;
 				int bandwidth=200000;
-				String f=createFolderAndEncode(output,input,resizeH,resizeW,bandwidth);
+				String f=createFolderAndEncode(output,input,resizeH,resizeW,bandwidth,audioPath);
 				AddM3u8(output,(int)bandwidth*5,f,url+"/"+resizeH);
 			} 
 			if(height>=360) {
@@ -66,7 +67,7 @@ public class Hls {
 				int resizeW=(int)(width*ratio);
 				resizeW=resizeW%2==0?resizeW:resizeW+1;
 				int bandwidth=300000;
-				String f=createFolderAndEncode(output,input,resizeH,resizeW,bandwidth);
+				String f=createFolderAndEncode(output,input,resizeH,resizeW,bandwidth,audioPath);
 				AddM3u8(output,(int)bandwidth*5,f,url+"/"+resizeH);
 			}
 			if(height>=720) {
@@ -76,7 +77,7 @@ public class Hls {
 				resizeW=resizeW%2==0?resizeW:resizeW+1;
 				int bandwidth=1000000;
 
-				String f=createFolderAndEncode(output,input,resizeH,resizeW,bandwidth);
+				String f=createFolderAndEncode(output,input,resizeH,resizeW,bandwidth,audioPath);
 				AddM3u8(output,(int)bandwidth*5,f,url+"/"+resizeH);
 			}
 			if(height>=1080) {
@@ -85,12 +86,12 @@ public class Hls {
 				int resizeW=(int)(width*ratio);
 				resizeW=resizeW%2==0?resizeW:resizeW+1;
 				int bandwidth=4000000;
-				String f=createFolderAndEncode(output,input,resizeH,resizeW,bandwidth);
+				String f=createFolderAndEncode(output,input,resizeH,resizeW,bandwidth,audioPath);
 				AddM3u8(output,(int)bandwidth*5,f,url+"/"+resizeH);
 			}
 			int bandwidth= getBitRate(input)*5;
 			//System.out.println( getBitRate(input));
-			String f=createFolderAndEncode(output,input,-1,-1,bandwidth);
+			String f=createFolderAndEncode(output,input,-1,-1,bandwidth,audioPath);
 			AddM3u8(output,(int)bandwidth*5,f,url+"/-1");
 			
 		return null;
@@ -151,12 +152,12 @@ public class Hls {
 		}
 */
 	}
-	private static String createFolderAndEncode(Path outputDir, String inputPath,int h,int w ,int bitRate) {
+	private static String createFolderAndEncode(Path outputDir, String inputPath,int h,int w ,int bitRate,String audioPath) {
 		 try {
 	        	Path dir = Paths.get(outputDir.toString(),String.valueOf(h));     
 				Files.createDirectories(dir);
 				String encodePath= MessageFormat.format(outputDir.toString()+"\\{0,number,#}\\",h);	
-				processEncode(inputPath,encodePath,bitRate,h,w);
+				processEncode(inputPath,encodePath,bitRate,h,w,audioPath);
 
 				return encodePath;
 			} catch (IOException e) {
@@ -167,13 +168,13 @@ public class Hls {
 
 			
 	}
-	private static void processEncode(String inputPath,String outputDir,int bitRate,int height,int width) {
+	private static void processEncode(String inputPath,String outputDir,int bitRate,int height,int width,String audioPath) {
 		String format;
 		String c;
 		if(height==-1) {
 			switch (Setting.getEncoder()) {
 				case Encoders.CPU: {
-					c ="ffmpeg -i \"{0}\"   -c:v libx264 -preset ultrafast -crf 28 -c:a aac -b:a 256k  "
+					c ="ffmpeg -i \"{0}\" -i \"{2}\" -map 0:v:0 -map 1:a:0   -c:v libx264 -preset ultrafast -crf 28 -c:a aac -b:a 256k  "
 							+ "   -filter:a loudnorm=I=-10:LRA=11:TP=-1.5 "
 							+ "-f hls -hls_time 4 -force_key_frames expr:gte(t,n_forced*5) "
 							+ "-hls_playlist_type vod -hls_segment_filename \"{1}video%3d.ts\" "
@@ -193,14 +194,14 @@ public class Hls {
 						      + "-hls_playlist_type vod -hls_segment_filename \"{1}video%03d.ts\" "
 						      + " \"{1}video.m3u8\"";
 						     */
-					c="NVEncC64.exe "
-							+ "-i  \"{0}\"  -o \"{1}video.m3u8\" -f hls "
+					c="ffmpeg -y -i \"{0}\" -i \"{2}\"  -codec:v rawvideo   -map 0:v:0 -map 1:a:0 -f nut - |  NVEncC64.exe "
+							+ "--avsw -i -    -o \"{1}video.m3u8\" -f hls "
 							+ "-m hls_segment_filename:\"{1}video%3d.ts\" -m hls_list_size:0  "
-							+ "-c h264 --audio-codec aac --audio-bitrate 256    --input-analyze 30 "
+							+ "-c h264 --audio-codec aac    --input-analyze 30 "
 							+ "--lookahead 32 --aq --aq-temporal --aq-strength 1 "
 							+ "--vbrhq 1 --vbr-quality 28 --gop-len 32 --bframes 2  "
 							+ "--cqp 24:26:28   --bref-mode each -m hls_time:10 "
-							+ " --preset p1  ";
+							+" --preset p1  ";
 					break;
 				}
 				
@@ -210,13 +211,13 @@ public class Hls {
 				
 				
 			}
-			format= MessageFormat.format(c,inputPath,outputDir);
+			format= MessageFormat.format(c,inputPath,outputDir,audioPath);
 				
 		}else {
 			switch (Setting.getEncoder()) {
 			case Encoders.CPU: {
 				
-				c = "ffmpeg -i \"{0}\"  -c:v libx264 -preset ultrafast -crf 30 "
+				c = "ffmpeg -i \"{0}\" -i \"{5}\" -map 0:v:0 -map 1:a:0   -c:v libx264 -preset ultrafast -crf 30 "
 						+ "-vf \"scale={4,number,#}:{3,number,#}\" -b:v {2,number,#} "
 						+"-filter:a loudnorm=I=-10:LRA=11:TP=-1.5 -f hls -hls_time 10 "
 						+"-force_key_frames expr:gte(t,n_forced*5) "
@@ -235,22 +236,22 @@ public class Hls {
 					      + " \"{1}video.m3u8\"";
 */	
 				bitRate=bitRate/1000;
-				c="NVEncC64.exe "
-						+ "-i  \"{0}\"  -o \"{1}video.m3u8\" -f hls "
+				c="ffmpeg -y -i \"{0}\" -i \"{5}\"  -codec:v rawvideo   -map 0:v:0 -map 1:a:0 -f nut - |  NVEncC64.exe "
+						+ "--avsw -i -    -o \"{1}video.m3u8\" -f hls "
 						+ "-m hls_segment_filename:\"{1}video%3d.ts\" -m hls_list_size:0  "
-						+ "-c h264 --audio-codec aac --audio-bitrate 256    --input-analyze 30 "
+						+ "-c h264 --audio-codec aac    --input-analyze 30 "
 						+ "--lookahead 32 --aq --aq-temporal --aq-strength 1 "
 						+ "--vbrhq 1 --vbr-quality 50 --gop-len 32 --bframes 2  "
 						+ "--cqp 40:45:50   --bref-mode each -m hls_time:10 "
 						+ "--output-res {4,number,#}x{3,number,#} "
 						+ "  --max-bitrate {2,number,#} --preset p1  ";
 				if(height>=720) {
-					c="NVEncC64.exe "
-							+ "-i  \"{0}\"  -o \"{1}video.m3u8\" -f hls "
+					c="ffmpeg -y -i \"{0}\" -i \"{5}\"  -codec:v rawvideo   -map 0:v:0 -map 1:a:0 -f nut - |  NVEncC64.exe "
+							+ "--avsw -i -    -o \"{1}video.m3u8\" -f hls "
 							+ "-m hls_segment_filename:\"{1}video%3d.ts\" -m hls_list_size:0  "
-							+ "-c h264 --audio-codec aac --audio-bitrate 256    --input-analyze 30 "
+							+ "-c h264 --audio-codec aac    --input-analyze 30 "
 							+ "--lookahead 32 --aq --aq-temporal --aq-strength 1 "
-							+ "--vbrhq 1 --vbr-quality 32 --gop-len 32 --bframes 2  "
+							+ "--vbrhq 1 --vbr-quality 30 --gop-len 32 --bframes 2  "
 							+ "--cqp 28:32:35   --bref-mode each -m hls_time:10 "
 							+ "--output-res {4,number,#}x{3,number,#} "
 							+ "  --max-bitrate {2,number,#} --preset p1  ";
@@ -264,8 +265,8 @@ public class Hls {
 			}
 
 			
-			format = MessageFormat.format(c, inputPath, outputDir, bitRate, height,width);
-			
+			format = MessageFormat.format(c, inputPath, outputDir, bitRate, height,width,audioPath);
+			System.out.println(format);
 
 			
 			

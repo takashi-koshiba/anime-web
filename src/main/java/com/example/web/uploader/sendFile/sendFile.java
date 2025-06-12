@@ -126,7 +126,8 @@ public class sendFile {
         	 
         	 upload_hashService.insertHash(alias, hash);
         	 
-        	 
+        	 Path audioOutput=Paths.get(fullPath,"content","anime-web","upload","file","audio",alias+".flac");
+		        
 
 			//動画はサムネとHLS
 			if(Objects.equals( fileType.VIDEO.ordinal(), uploadFileType.getTypeId()) ) {
@@ -137,12 +138,15 @@ public class sendFile {
 		        URI  m3u8Url=new URI ("/anime-web/getFile/view/video/hls/"+alias).normalize();
 		        
 		        //キューに追加
+		        createEncodeAudio(inputPath.toString(),fullPath,alias,audioOutput.toString());
+		        
+		        
 		        Hls_Que hlsQue = new Hls_Que();
-		        ArgsData hlsArgs = new HlsArgs(inputPathStr,dir,m3u8Url.toString(), hlsQue);
+		        ArgsData hlsArgs = new HlsArgs(inputPathStr,dir,m3u8Url.toString(), hlsQue, audioOutput.toString());
 		        Que.addToQueue(hlsArgs);
 		        
 		        createSeekImage(inputPath.toString(),fullPath,alias);
-		        createEncodeAudio(inputPath.toString(),fullPath,alias);
+		       
 				//createThumbnailVideo(inputPath.toString(),fullPath,alias);
 				
 				//画像はサムネ
@@ -151,7 +155,7 @@ public class sendFile {
 				createThumbnailImage(inputPath.toString(),fullPath,alias,mimeType);
 
 			}else if(Objects.equals(fileType.AUDIO.ordinal(),  uploadFileType.getTypeId()) ) {
-				createEncodeAudio(inputPath.toString(),fullPath,alias);
+				createEncodeAudio(inputPath.toString(),fullPath,alias,audioOutput.toString());
 
 			}
 			return alias==null?false:true;
@@ -266,13 +270,13 @@ public class sendFile {
 		 
 		 
 	}
-	private static void createEncodeAudio(String input,String fullPath,String alias) {
+	private static void createEncodeAudio(String input,String fullPath,String alias,String outputPath) {
 		 
-		String p ="ffmpeg -i \"{0}\" -filter:a loudnorm=I=-24:LRA=11:TP=-1.5 -preset ultrafast -vn -threads 4 -c:a flac \"{1}\"" ;
+		String p ="ffmpeg -i \"{0}\" -filter:a loudnorm=I=-10:LRA=11:TP=-1.5  -preset ultrafast -vn -threads 4 -c:a flac \"{1}\"" ;
 
 
-		 String output = fullPath+ "content\\anime-web\\upload\\file\\audio\\"+alias+".flac";
-		 String format= MessageFormat.format(p,input,output);	
+		// String output = fullPath+ "content\\anime-web\\upload\\file\\audio\\"+alias+".flac";
+		 String format= MessageFormat.format(p,input,outputPath);	
 		 
 		 Cmd_que cmdQue = new Cmd_que();
 	     ArgsData cmdArgs = new Cmd_Args(format, cmdQue);

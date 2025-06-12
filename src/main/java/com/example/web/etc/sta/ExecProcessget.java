@@ -46,7 +46,7 @@ public class ExecProcessget {
            
             
             System.out.println("Process exited with code: " + exitCode);
-            Log.log(exitCode==0?Level.INFO:Level.WARNING, "エラーコード : "+outputLog.toString());
+            Log.log((exitCode==0 ||  Integer.valueOf(exitCode).toString().length()==0)?Level.INFO:Level.WARNING, "エラーコード : "+ exitCode+" :"+outputLog.toString());
             // 標準出力の内容を返す
             return outputLog.toString();
         } catch (IOException | InterruptedException e) {
