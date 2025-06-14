@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import jakarta.servlet.http.HttpSession;
@@ -68,28 +69,25 @@ public class SeekResource extends FileController {
 			    .body(resource);
 		}
 		   
-		Optional<Path> target = java.util.Optional.empty();
+		List<Path> allFiles = new ArrayList<>();
 		try (Stream<Path> paths = Files.list(path)) {
-		    target = paths
-		        .filter(p -> p.toString().toLowerCase().endsWith(".webp"))
+		    allFiles = paths.collect(Collectors.toList());
+		} catch (IOException e) {
+		    e.printStackTrace();
+		}
+
+		Optional<Path> target = allFiles.stream()
+		    .filter(p -> p.toString().toLowerCase().endsWith(".webp"))
+		    .skip(frame)
+		    .findFirst();
+
+		if (!target.isPresent()) {
+		    target = allFiles.stream()
+		        .filter(p -> p.toString().toLowerCase().endsWith(".jpg"))
 		        .skip(frame)
 		        .findFirst();
-		} catch (IOException e) {
-			// TODO 自動生成された catch ブロック
-			e.printStackTrace();
-		}	
-		//webpがなければ予備を使用
-		if (!target.isPresent()){
-			try (Stream<Path> paths = Files.list(path)) {
-			    target = paths
-				        .filter(p -> p.toString().toLowerCase().endsWith(".jpg"))
-				        .skip(frame)
-				        .findFirst();
-			}catch (IOException e) {
-				// TODO 自動生成された catch ブロック
-				e.printStackTrace();
-			}	
 		}
+
 
 		//画像がなければ代替画像を使用
 		    if (target.isPresent()) {

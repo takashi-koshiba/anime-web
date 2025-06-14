@@ -402,13 +402,17 @@ document.addEventListener("DOMContentLoaded",function(){
 			    return [w,margin];
 			};
 			const canvasW = getCanvasWidth();
-
-			const currentSeekFrame = Math.ceil(percent*Math.ceil(video.duration)) ;
+			
+			let currentSeekFrame = Math.ceil(percent*Math.ceil(video.duration)) ;
 			const frameStep = Math.ceil(video.duration/100);
+			currentSeekFrame=(currentSeekFrame-(currentSeekFrame%frameStep));
+		
+			//currentSeekFrame=Math.min(currentSeekFrame-(currentSeekFrame%frameStep),0);
+			
             try {
-				if(prevFrame!=currentSeekFrame && currentSeekFrame%frameStep==0&&canLoadSeekImg){
+				if(prevFrame!=currentSeekFrame &&canLoadSeekImg){
 					canLoadSeekImg=false;
-					console.dir(currentSeekFrame);
+
 					let imgData;
 					if (Number.isNaN(currentSeekFrame)){
 						imgData = await getSeekImage(alias, 0);
