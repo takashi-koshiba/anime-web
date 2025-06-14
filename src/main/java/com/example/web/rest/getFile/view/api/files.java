@@ -151,10 +151,14 @@ public class files {
 	}
 	private String videoUrl(FileInfo fileInfo) {
 
-	    String fname="max.jpg";
+	    String fname="max.webp";
 	    //サムネがなければ生成
 	    Path maxImagePath = Paths.get(Setting.getRoot(),"content","anime-web","upload","file","maxSeek",fileInfo.getAlias()).resolve(fname).toAbsolutePath().normalize();
-	    
+	    if (!Files.exists( maxImagePath)) {
+	    	fname="max.jpg";
+	    	maxImagePath = Paths.get(Setting.getRoot(),"content","anime-web","upload","file","maxSeek",fileInfo.getAlias()).resolve(fname).toAbsolutePath().normalize();
+		    
+	    }
 	    
 	    if (!Files.exists( maxImagePath)) {
 

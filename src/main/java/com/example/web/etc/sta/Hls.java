@@ -198,9 +198,9 @@ public class Hls {
 							+ "--avsw -i -    -o \"{1}video.m3u8\" -f hls "
 							+ "-m hls_segment_filename:\"{1}video%3d.ts\" -m hls_list_size:0  "
 							+ "-c h264 --audio-codec aac    --input-analyze 30 "
-							+ "--lookahead 32 --aq --aq-temporal --aq-strength 1 "
-							+ "--vbrhq 1 --vbr-quality 28 --gop-len 32 --bframes 2  "
-							+ "--cqp 24:26:28   --bref-mode each -m hls_time:10 "
+							+"--vpp-mpdecimate --output-thread 1 "
+							+ "--vbr-quality 28 --gop-len 90  "
+							+ "--cqp 24:26:28   -m hls_time:10 "
 							+" --preset p1  ";
 					break;
 				}
@@ -239,20 +239,18 @@ public class Hls {
 				c="ffmpeg -y -i \"{0}\" -i \"{5}\"  -codec:v rawvideo   -map 0:v:0 -map 1:a:0 -f nut - |  NVEncC64.exe "
 						+ "--avsw -i -    -o \"{1}video.m3u8\" -f hls "
 						+ "-m hls_segment_filename:\"{1}video%3d.ts\" -m hls_list_size:0  "
-						+ "-c h264 --audio-codec aac    --input-analyze 30 "
-						+ "--lookahead 32 --aq --aq-temporal --aq-strength 1 "
-						+ "--vbrhq 1 --vbr-quality 50 --gop-len 32 --bframes 2  "
-						+ "--cqp 40:45:50   --bref-mode each -m hls_time:10 "
+						+ "-c h264 --audio-codec aac --vpp-mpdecimate --output-thread 1  --input-analyze 30 "
+						+ "--vbr-quality 40 --gop-len 90 "
+						+ "--cqp 45:48:50  -m hls_time:10 "
 						+ "--output-res {4,number,#}x{3,number,#} "
 						+ "  --max-bitrate {2,number,#} --preset p1  ";
 				if(height>=720) {
 					c="ffmpeg -y -i \"{0}\" -i \"{5}\"  -codec:v rawvideo   -map 0:v:0 -map 1:a:0 -f nut - |  NVEncC64.exe "
 							+ "--avsw -i -    -o \"{1}video.m3u8\" -f hls "
 							+ "-m hls_segment_filename:\"{1}video%3d.ts\" -m hls_list_size:0  "
-							+ "-c h264 --audio-codec aac    --input-analyze 30 "
-							+ "--lookahead 32 --aq --aq-temporal --aq-strength 1 "
-							+ "--vbrhq 1 --vbr-quality 30 --gop-len 32 --bframes 2  "
-							+ "--cqp 28:32:35   --bref-mode each -m hls_time:10 "
+							+ "-c h264 --audio-codec aac --vpp-mpdecimate --output-thread 1  --input-analyze 30 "
+							+ "--vbr-quality 35 --gop-len 90 "
+							+ "--cqp 36:38:40   -m hls_time:10 "
 							+ "--output-res {4,number,#}x{3,number,#} "
 							+ "  --max-bitrate {2,number,#} --preset p1  ";
 				}

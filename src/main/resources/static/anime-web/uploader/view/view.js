@@ -404,9 +404,9 @@ document.addEventListener("DOMContentLoaded",function(){
 			const canvasW = getCanvasWidth();
 
 			const currentSeekFrame = Math.ceil(percent*Math.ceil(video.duration)) ;
-			
+			const frameStep = Math.ceil(video.duration/100);
             try {
-				if(prevFrame!=currentSeekFrame && currentSeekFrame%8==0&&canLoadSeekImg){
+				if(prevFrame!=currentSeekFrame && currentSeekFrame%frameStep==0&&canLoadSeekImg){
 					canLoadSeekImg=false;
 					console.dir(currentSeekFrame);
 					let imgData;

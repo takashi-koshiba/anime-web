@@ -56,7 +56,9 @@ public class SeekResource extends FileController {
 		
 		Path root=Paths.get( "content/anime-web/upload/file/seek-image/");
 		Path path=Paths.get(Setting.getRoot()+root+"/"+alias).normalize();
-
+		
+		
+		
 
 		Path selectedFile = null; 
 		if(!Files.exists(path)) {
@@ -66,20 +68,40 @@ public class SeekResource extends FileController {
 			    .body(resource);
 		}
 		   
-		
+		Optional<Path> target = java.util.Optional.empty();
 		try (Stream<Path> paths = Files.list(path)) {
-		    Optional<Path> target = paths.skip(frame).findFirst();
-		    if (target.isPresent()) {
-		        selectedFile = target.get();  // ← 変数に代入
-		    } else {
-				Resource resource = new ClassPathResource("static/anime-web/uploader/view/noImage.webp");
-				return ResponseEntity.ok()
-				    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"noImage.png\"")
-				    .body(resource);
-		    }
+		    target = paths
+		        .filter(p -> p.toString().toLowerCase().endsWith(".webp"))
+		        .skip(frame)
+		        .findFirst();
 		} catch (IOException e) {
-		    e.printStackTrace();
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}	
+		//webpがなければ予備を使用
+		if (!target.isPresent()){
+			try (Stream<Path> paths = Files.list(path)) {
+			    target = paths
+				        .filter(p -> p.toString().toLowerCase().endsWith(".jpg"))
+				        .skip(frame)
+				        .findFirst();
+			}catch (IOException e) {
+				// TODO 自動生成された catch ブロック
+				e.printStackTrace();
+			}	
 		}
+
+		//画像がなければ代替画像を使用
+		    if (target.isPresent()) {
+		        selectedFile = target.get(); 
+		    } else {
+		        Resource resource = new ClassPathResource("static/anime-web/uploader/view/noImage.webp");
+		        return ResponseEntity.ok()
+		            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"noImage.png\"")
+		            .body(resource);
+		    }
+		
+
 		
 		
 		

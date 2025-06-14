@@ -15,9 +15,10 @@ import java.util.logging.SimpleFormatter;
 
 public class Log {
 	private static Logger logger;
-	
+	private static String currentLogDate = "";
 	private synchronized static  Logger write() throws IOException  {
-        if (logger != null) {
+		 String today = printNow();
+        if (logger != null  && today.equals(currentLogDate)) {
             return logger; // すでに作成済みなら再利用
         }
 
@@ -25,7 +26,7 @@ public class Log {
         String fullPath = Setting.getRoot();
         Path logDir = Paths.get(fullPath, "content", "anime-web", "logs");
 
-
+        currentLogDate = today;
 
         try {
             if (!Files.exists(logDir)) {
@@ -37,6 +38,7 @@ public class Log {
             logger.addHandler(fHandler);
             logger.setUseParentHandlers(false); 
             return logger;
+            
         } catch (SecurityException | IOException e) {
             throw new IOException("ログファイルを作成できませんでした: " + e.getMessage(), e);
         }

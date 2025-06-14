@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.Objects;
+import java.util.logging.Level;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -28,6 +29,7 @@ import com.example.web.etc.db.upload_hash.Upload_hashService;
 import com.example.web.etc.sta.DeleteR;
 import com.example.web.etc.sta.GetExtension;
 import com.example.web.etc.sta.Img;
+import com.example.web.etc.sta.Log;
 import com.example.web.etc.sta.RemoveExtension;
 import com.example.web.etc.sta.SaveFile;
 import com.example.web.etc.sta.Setting;
@@ -242,20 +244,27 @@ public class sendFile {
 		 
 		 
 	}
-	private static void createSeekImage(String input,String fullPath,String alias) {
-		 
-		String p ="ffmpeg -i \"{0}\"  -r 1 -vf \"scale=-1:128\"  -f image2  \"{1}\"" ;
-        Path dir = Paths.get(fullPath,"content", "anime-web", "upload", "file", "seek-image",alias).normalize();
-        try {
+	private static void createFolder(Path dir) {
+		try {
 			Files.createDirectories(dir);
+			Log.log(Level.INFO, "フォルダを作成しました。"+dir.toString());
 		} catch (IOException e) {
 			// TODO 自動生成された catch ブロック
 			e.printStackTrace();
+			Log.detail(Level.WARNING, "フォルダ作成に失敗しました"+dir.toString(), e);
 		} 
+	}
+	
+	private static void createSeekImage(String input,String fullPath,String alias) {
+		String p ="ffmpeg -i \"{0}\"  -r 1 -vf \"scale=-1:128\" -compression_level 6  -c:v libwebp -q:v 75   \"{1}\"" ;
+		//String p ="ffmpeg -i \"{0}\"  -r 1 -vf \"scale=-1:128\"  -f image2  \"{1}\"" ;
+        Path dir = Paths.get(fullPath,"content", "anime-web", "upload", "file", "seek-image",alias).normalize();
+        createFolder(dir);
 		
-		
-		 String output = fullPath+ "content\\anime-web\\upload\\file\\seek-image\\"+alias+"\\"+"%08d.jpg";
-		 String format= MessageFormat.format(p,input,output);	
+		 Path outputDir=Paths.get(fullPath,"content","anime-web","upload","file","seek-image",alias);
+
+		 //String output = fullPath+ "content\\anime-web\\upload\\file\\seek-image\\"+alias+"\\"+"%08d.jpg";
+		 String format= MessageFormat.format(p,input,outputDir.toString()+"\\%08d.webp");	
 		 
 		 
 		 Cmd_que cmdQue = new Cmd_que();
@@ -264,15 +273,18 @@ public class sendFile {
 		 
 	     
 	     Thumbnail_que que = new Thumbnail_que();
-	     ArgsData args = new Thumbnail_Args(alias,"max.jpg",que);
+	     ArgsData args = new Thumbnail_Args(alias,"max.webp",que);
 	     SecondQue.addToQueue(args);
 
-		 
+
 		 
 	}
+
+
+	
 	private static void createEncodeAudio(String input,String fullPath,String alias,String outputPath) {
 		 
-		String p ="ffmpeg -i \"{0}\" -filter:a loudnorm=I=-10:LRA=11:TP=-1.5  -preset ultrafast -vn -threads 4 -c:a flac \"{1}\"" ;
+		String p ="ffmpeg -i \"{0}\" -filter:a loudnorm=I=-10:LRA=11:TP=-1.5   -vn -threads 4 -c:a flac \"{1}\"" ;
 
 
 		// String output = fullPath+ "content\\anime-web\\upload\\file\\audio\\"+alias+".flac";

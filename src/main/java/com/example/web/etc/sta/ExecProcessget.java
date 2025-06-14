@@ -33,7 +33,8 @@ public class ExecProcessget {
             errorReader.join();
             System.out.println("=== cmd ===");
             System.out.println(cmd);
-            Log.log(Level.INFO, "コマンド実行 : "+cmd);
+            Log.log(Level.INFO, "===コマンド実行結果==="+cmd);
+            Log.log(Level.INFO, "実行したコマンド : "+cmd);
             System.out.println("=== OUTPUT ===");
             System.out.println(outputLog.toString());
             Log.log(Level.INFO, "実行結果 : "+outputLog.toString());

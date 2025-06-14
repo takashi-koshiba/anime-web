@@ -17,7 +17,12 @@ public abstract class Que {
 
     
     public static synchronized void addToQueue(ArgsData args) {
+    	Log.log(Level.INFO, "===キューに追加されました。===");
+    	writeLog(args);
+    	
         encodingQueue.add(args);
+        Log.log(Level.INFO, "===キューの追加が終わりました。===");
+        
         processQueue(); // キューの処理を開始
     }
 
@@ -31,12 +36,15 @@ public abstract class Que {
 
         
         new Thread(() -> {
+        	ArgsData args = null;
             try {
-                ArgsData args = encodingQueue.take();
+                args = encodingQueue.take();
                 Que currentInstance = args.getQueInstance(); 
                 
                 if (currentInstance != null) {
+                	Log.log(Level.INFO, "===プロセスを実行します。===");
                 	writeLog(args);
+                	Log.log(Level.INFO, "===ここから===");
                     currentInstance.process(args); 
                 } else {
                 	Log.log(Level.WARNING,"Que is null! ");
