@@ -37,6 +37,8 @@ import com.example.web.etc.sta.ToHash256;
 import com.example.web.etc.sta.que.ArgsData;
 import com.example.web.etc.sta.que.Que;
 import com.example.web.etc.sta.que.SecondQue;
+import com.example.web.etc.sta.que.LoundNorm.Lound_Args;
+import com.example.web.etc.sta.que.LoundNorm.Lound_que;
 import com.example.web.etc.sta.que.cmd.Cmd_Args;
 import com.example.web.etc.sta.que.cmd.Cmd_que;
 import com.example.web.etc.sta.que.createMaxThumbnail.Thumbnail_Args;
@@ -220,7 +222,7 @@ public class sendFile {
 	}
 	private static void compressImg(File inputPath,String outputPath,Integer imgSize,String alias) {
 		//avifに変換
-		String p ="ffmpeg -i \"{0}\"    -vf \"scale=if(gt(iw\\,ih)\\,{2,number,#}\\,-2):if(gt(iw\\,ih)\\,-2\\,{2,number,#})\"  -c:v libsvtav1 -preset 8 -crf 50 \"{1}\"" ;
+		String p ="ffmpeg -i \"{0}\"    -vf \"scale=if(gt(iw\\,ih)\\,{2,number,#}\\,-2):if(gt(iw\\,ih)\\,-2\\,{2,number,#})\"  -c:v libaom-av1 -preset 8 -crf 50 \"{1}\"" ;
 		Path output =  Paths.get(MessageFormat.format(Setting.getRoot()+"content\\anime-web\\upload\\file\\{0}\\"+alias+".avif",outputPath)).normalize();
 		String format;
 		format= MessageFormat.format(p,inputPath.getAbsolutePath().toString(),output.toString(),imgSize);
@@ -231,7 +233,7 @@ public class sendFile {
 	}
 	private static void createThumbnailVideo(String input,String fullPath,String alias) {
 		 
-		String p ="ffmpeg -i \"{0}\"  -ss 1  -vframes 1 -vf \"scale=if(gt(iw\\,ih)\\,440\\,-2):if(gt(iw\\,ih)\\,-2\\,440)\"  -c:v libsvtav1 -preset 8 -crf 30 \"{1}\"" ;
+		String p ="ffmpeg -i \"{0}\"  -ss 1  -vframes 1 -vf \"scale=if(gt(iw\\,ih)\\,440\\,-2):if(gt(iw\\,ih)\\,-2\\,440)\"  -c:v libaom-av1 -preset 8 -crf 30 \"{1}\"" ;
 		 
 		 String output = fullPath+ "content\\anime-web\\upload\\file\\thumbnail\\"+alias+".avif";
 		 String format= MessageFormat.format(p,input,output);	
@@ -284,15 +286,16 @@ public class sendFile {
 	
 	private static void createEncodeAudio(String input,String fullPath,String alias,String outputPath) {
 		 
-		String p ="ffmpeg -i \"{0}\" -filter:a loudnorm=I=-10:LRA=11:TP=-1.5   -vn -threads 4 -c:a flac \"{1}\"" ;
-
+		//String p ="ffmpeg -i \"{0}\" -filter:a loudnorm=I=-10:LRA=11:TP=-1.5   -vn -threads 4 -c:a flac \"{1}\"" ;
+		 //String p ="cmd /c ffmpeg -y -i \"{0}\" -af loudnorm=I=-16:TP=-1.5:LRA=11:print_format=json -f null  - ";
 
 		// String output = fullPath+ "content\\anime-web\\upload\\file\\audio\\"+alias+".flac";
-		 String format= MessageFormat.format(p,input,outputPath);	
+		// String format= MessageFormat.format(p,input);	
 		 
-		 Cmd_que cmdQue = new Cmd_que();
-	     ArgsData cmdArgs = new Cmd_Args(format, cmdQue);
+		 Lound_que cmdQue = new Lound_que();
+	     ArgsData cmdArgs = new Lound_Args(input,outputPath,cmdQue);
 	     Que.addToQueue(cmdArgs);
 	}
+
 		
 }

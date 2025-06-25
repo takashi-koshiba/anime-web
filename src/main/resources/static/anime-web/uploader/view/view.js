@@ -76,6 +76,7 @@ document.addEventListener("DOMContentLoaded",function(){
 		
 		
 		let itemView = document.getElementById("itemView");
+		
 
 		while (itemView.children.length > 0) {
 		  itemView.children[0].remove();
@@ -737,10 +738,11 @@ document.addEventListener("DOMContentLoaded",function(){
 		let fileElem = document.getElementsByClassName('fileElem')[0];
 		let max = f + l > items.length ? items.length : f + l;
 		let min = f > max ? max : f;
-
+	
+		
 		async function loadOne(i) {
 			if (i >= max) return;
-
+			console.dir((i)+":"+(max));
 			let clonefileElem = fileElem.cloneNode(true);
 			clonefileElem.style.display = "block";
 
@@ -776,7 +778,11 @@ document.addEventListener("DOMContentLoaded",function(){
 				// 次の画像を読み込む
 				loadOne(i + 1);
 			};
-
+			img.onerror = (err) => {
+				// 次の画像を読み込む
+				console.warn('❌ 失敗:', items[i]["fname"] , err);
+				loadOne(i + 1);
+			};
 			
 			
 		}

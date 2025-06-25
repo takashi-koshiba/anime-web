@@ -147,6 +147,11 @@
 	opacity: 0.5;
 	cursor: pointer;
 }
+.rank-anime-img-div img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
 #page{
 	float:right;
 }
