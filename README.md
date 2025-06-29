@@ -286,21 +286,26 @@ else 0 end
 <h2>番組の重複確認</h2>
 <p>動作確認中</p>
 <p>動画の全フレームのphashをDBに格納します。</p>
-<p>動画から30フレームほど抽出し何ビット一致するか確認し、一致率を計算します。<br>
+<p>動画から90フレームほど抽出し何ビット一致するか確認し、一致率を計算します。<br>
 OP/ED/CMは共通のため、再放送であれば60～70%以上で一致します。</p>
 
 <p>私の環境では２万個の番組がありますが、phashの書き込みに１ヶ月、一致率の計算で5,6日かかりました。<br>
 実行するスクリプトは他のスクリプトと同時に実行しても問題ないです。排他制御はしておりますので
 タスクスケジューラなどで登録して実行してください。<br>
-maybeDuplicate.py はphashを使用するため先にsimilarVideo.pyを実行して全ての動画のphashを登録してください。</p>
+maybeDuplicate.py はsimilarVideo.pyで取得したphashを使用するため、先にsimilarVideo.pyを実行して全ての動画のphashを登録してください。</p>
 ※必要なテーブルは動作確認ができ次第、pushします。
 
 ```bash
-python similarVideo.py    --未処理の動画からphashを取得します。途中処理を中止しても問題ないです
-python maybeDuplicate.py   --類似するtsファイルがあるかを確認します。
+python similarVideo.py    --未処理の動画からphashを取得します。途中で処理を中止しても問題ないです
+python maybeDuplicate.py   --類似するtsファイルがあるかを確認し、ファイルを移動します。
 python simTest.py [-v] tsファイルのパス        -- maybeDuplicateで使用します。単体で使用する場合は -v のオプションを付けるとどの番組で重複しているかを確認できます。
 
 ```
+<br><br>
+すでに処理済みの番組の重複確認や重複削除をする場合はSQLを実行して確認してください。
+
+<a href="https://github.com/takashi-koshiba/anime-web/tree/main/exec/sql">sql</a>
+
 
 <h1>アップローダー</h1>
 ファイルをアップロードできます。<br>
@@ -342,6 +347,11 @@ apiを経由してファイルにアクセスしますが、30分後にセッシ
 <p>再生/停止：スペースキー</p>
 <p>前方にシーク：Aキー/左矢印キー</p>
 <p>後方にシーク：Dキー/右矢印キー</p>
+
+
+<br><br>
+動画や音楽はラウドネスノーマライズにしており、シークバーにマウスを合わせるとサムネイルが表示されます。
+<img src="https://raw.githubusercontent.com/takashi-koshiba/anime-web/refs/heads/main/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88%20(1).webp">
 
 
 <h2>サムネイルが表示されないとき</h2>
