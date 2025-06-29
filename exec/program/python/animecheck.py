@@ -14,6 +14,9 @@ import sys
 PORT=8082  #実行しているjavaのポート番号
 
 
+sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+
 
 DB_CONFIG = {
     'host': "localhost",
@@ -88,7 +91,7 @@ def isExistDBToFolder(videoPath,animeResult,videoResult):
             
             
 def isExistFolderToDB(videoPath,animeResult):
-    print("--------DBに登録されていないフォルダがあるか---------------")
+    print("--------フォルダがDB登録されているか---------------")
     print("")
     folderName=[row[2] for row in animeResult]
     files = glob.glob(videoPath+"*")

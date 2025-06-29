@@ -1,0 +1,23 @@
+select p from (
+SELECT
+d.videoId_search,
+d.similar AS m_sim,
+concat('move ','\"','D:\\java-web\\content\\anime-web\\anime\video\\',foldername,'\\',v1.fname,v1.ext,'\"',' "','D:\TV\ts\del','"') as p,
+d.videoId_target,
+v2.fname AS t_f,
+(GREATEST(v2.video_time, v1.video_time) - LEAST(v2.video_time, v1.video_time))/GREATEST(v2.video_time, v1.video_time) as '動画の長さの差'
+FROM duplicatevideo d
+JOIN (
+SELECT videoId_search, MAX(similar) AS max_sim
+FROM duplicatevideo
+GROUP BY videoId_search
+) AS m
+ON d.videoId_search = m.videoId_search AND d.similar = m.max_sim
+JOIN video_info v1 ON d.videoId_search = v1.video_id
+JOIN video_info v2 ON d.videoId_target = v2.video_id
+join anime on anime.id = v1.anime_id
+WHERE (v2.video_time - v1.video_time > 0
+OR (GREATEST(v2.video_time, v1.video_time) - LEAST(v2.video_time, v1.video_time))/GREATEST(v2.video_time, v1.video_time) <= 0.2 )
+AND d.similar >=0.9
+ORDER BY m_sim DESC
+) as t

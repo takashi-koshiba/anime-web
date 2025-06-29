@@ -1,0 +1,61 @@
+--------------------------------------------------------------------------------------------------------
+select * from (
+SELECT
+d.videoId_search,
+d.similar AS m_sim,
+-- パスは環境に合わせて変えてください。
+concat('D:\\java-web\\content\\anime-web\\anime\\video\\',foldername,'\\',v1.fname) as p,
+d.videoId_target,
+v2.fname AS t_f,
+(GREATEST(v2.video_time, v1.video_time) - LEAST(v2.video_time, v1.video_time))/GREATEST(v2.video_time, v1.video_time) as '動画の長さの差'
+FROM duplicatevideo d
+JOIN (
+SELECT videoId_search, MAX(similar) AS max_sim
+FROM duplicatevideo
+GROUP BY videoId_search
+) AS m
+ON d.videoId_search = m.videoId_search AND d.similar = m.max_sim
+JOIN video_info v1 ON d.videoId_search = v1.video_id
+JOIN video_info v2 ON d.videoId_target = v2.video_id
+join anime on anime.id = v1.anime_id
+WHERE (v2.video_time - v1.video_time > 0
+OR (GREATEST(v2.video_time, v1.video_time) - LEAST(v2.video_time, v1.video_time))/GREATEST(v2.video_time, v1.video_time) < 0.2)
+
+-- 0.5以上一致のものを抽出します
+-- 0.5のもの重複していない場合あり、精度が低いのでファイル名で判断してください。
+
+and d.similar>=0.5
+ORDER BY m_sim DESC
+) as t
+-- アニメidを指定できます。
+where videoId_search in (select video_id from video where anime_id = 8315)
+--------------------------------------------------------------------------------------------------------
+
+[実行例]
+
+m_simはp列とt_f列の一致率です。
+一致率が高く、話数が同じものはp列の動画が重複していることが確認できます。
+p列のほうがあとに追加されたもののため特にこだわりが無ければp列の動画を削除してください。
+
+
+
++----------------+-------+----------------------------------------------------------------------------------------------------------------------------------------------------------+----------------+----------------------------------------------------------------------------+----------------+
+| videoId_search | m_sim | p                                                                                                                                                        | videoId_target | t_f                                                                        | 動画の長さの差 |
++----------------+-------+----------------------------------------------------------------------------------------------------------------------------------------------------------+----------------+----------------------------------------------------------------------------+----------------+
+|          54021 |  1.00 | D:\java-web\content\anime-web\anime\video\いにしゃるＤＦＩＲＳＴＳＴＡＧＥ\[字]頭文字[イニシャル]D First Stage _０９,10-20250618-0100ＢＳアニマックス    |          53711 | [字]頭文字[イニシャル]D First Stage _０９,10-20250617-1500ＢＳアニマックス |         0.0000 |
+|          54124 |  1.00 | D:\java-web\content\anime-web\anime\video\いにしゃるＤＦＩＲＳＴＳＴＡＧＥ\[字]頭文字[イニシャル]D First Stage _１１,12-20250619-0100ＢＳアニマックス    |          54122 | [字]頭文字[イニシャル]D First Stage _１１,12-20250618-1500ＢＳアニマックス |         0.0000 |
+|          54239 |  1.00 | D:\java-web\content\anime-web\anime\video\いにしゃるＤＦＩＲＳＴＳＴＡＧＥ\[字]頭文字[イニシャル]D First Stage _１５,16-20250621-0100ＢＳアニマックス    |          54237 | [字]頭文字[イニシャル]D First Stage _１５,16-20250620-1500ＢＳアニマックス |         0.0000 |
+|          54465 |  0.99 | D:\java-web\content\anime-web\anime\video\いにしゃるＤＦＩＲＳＴＳＴＡＧＥ\[字]頭文字[イニシャル]D First Stage _１９,20-20250625-0100ＢＳアニマックス    |          54429 | [字]頭文字[イニシャル]D First Stage _１９,20-20250624-1500ＢＳアニマックス |         0.0000 |
+|          53695 |  0.91 | D:\java-web\content\anime-web\anime\video\いにしゃるＤＦＩＲＳＴＳＴＡＧＥ\[字]頭文字[イニシャル]D First Stage _０３,4-20250612-1500ＢＳアニマックス     |          53693 | [字]頭文字[イニシャル]D First Stage _０３,4-20250612-0700ＢＳアニマックス  |         0.0000 |
+|          53689 |  0.87 | D:\java-web\content\anime-web\anime\video\いにしゃるＤＦＩＲＳＴＳＴＡＧＥ\[字]頭文字[イニシャル]D First Stage _０１,2-20250611-1500ＢＳアニマックス     |          53687 | [字]頭文字[イニシャル]D First Stage _０１,2-20250611-0700ＢＳアニマックス  |         0.0000 |
+|          53701 |  0.87 | D:\java-web\content\anime-web\anime\video\いにしゃるＤＦＩＲＳＴＳＴＡＧＥ\[字]頭文字[イニシャル]D First Stage _０５,6-20250613-1500ＢＳアニマックス     |          53699 | [字]頭文字[イニシャル]D First Stage _０５,6-20250613-0700ＢＳアニマックス  |         0.0002 |
+|          54122 |  0.84 | D:\java-web\content\anime-web\anime\video\いにしゃるＤＦＩＲＳＴＳＴＡＧＥ\[字]頭文字[イニシャル]D First Stage _１１,12-20250618-1500ＢＳアニマックス    |          54120 | [字]頭文字[イニシャル]D First Stage _１１,12-20250618-0700ＢＳアニマックス |         0.0000 |
+|          54201 |  0.84 | D:\java-web\content\anime-web\anime\video\いにしゃるＤＦＩＲＳＴＳＴＡＧＥ\[字]頭文字[イニシャル]D First Stage _０７,8-20250616-0700ＢＳアニマックス_dec |          53705 | [字]頭文字[イニシャル]D First Stage _０７,8-20250616-1500ＢＳアニマックス  |         0.0000 |
+|          54237 |  0.83 | D:\java-web\content\anime-web\anime\video\いにしゃるＤＦＩＲＳＴＳＴＡＧＥ\[字]頭文字[イニシャル]D First Stage _１５,16-20250620-1500ＢＳアニマックス    |          54193 | [字]頭文字[イニシャル]D First Stage _１５,16-20250620-0700ＢＳアニマックス |         0.0000 |
+|          54429 |  0.83 | D:\java-web\content\anime-web\anime\video\いにしゃるＤＦＩＲＳＴＳＴＡＧＥ\[字]頭文字[イニシャル]D First Stage _１９,20-20250624-1500ＢＳアニマックス    |          54423 | [字]頭文字[イニシャル]D First Stage _１９,20-20250624-0700ＢＳアニマックス |         0.0002 |
+|          54166 |  0.81 | D:\java-web\content\anime-web\anime\video\いにしゃるＤＦＩＲＳＴＳＴＡＧＥ\[字]頭文字[イニシャル]D First Stage _１３,14-20250619-1500ＢＳアニマックス    |          54126 | [字]頭文字[イニシャル]D First Stage _１３,14-20250619-0700ＢＳアニマックス |         0.0000 |
+|          54414 |  0.78 | D:\java-web\content\anime-web\anime\video\いにしゃるＤＦＩＲＳＴＳＴＡＧＥ\[字]頭文字[イニシャル]D First Stage _１７,18-20250624-0100ＢＳアニマックス    |          54356 | [字]頭文字[イニシャル]D First Stage _１７,18-20250623-0700ＢＳアニマックス |         0.0000 |
+|          53711 |  0.74 | D:\java-web\content\anime-web\anime\video\いにしゃるＤＦＩＲＳＴＳＴＡＧＥ\[字]頭文字[イニシャル]D First Stage _０９,10-20250617-1500ＢＳアニマックス    |          53709 | [字]頭文字[イニシャル]D First Stage _０９,10-20250617-0700ＢＳアニマックス |         0.0000 |
++----------------+-------+----------------------------------------------------------------------------------------------------------------------------------------------------------+----------------+----------------------------------------------------------------------------+----------------+
+14 rows in set (0.09 sec)
+

@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sat May  3 13:55:59 2025
-
-@author: muu4
-"""
 from multiprocessing import Pool
 
 from concurrent.futures import ProcessPoolExecutor
@@ -60,8 +54,8 @@ DB_CONFIG = {
     'database': "db1"
 }
 
-similarThreshold=0.9
-num_workers = min (multiprocessing.cpu_count(),6)
+similarThreshold=0.87
+num_workers = min (multiprocessing.cpu_count(),12)
 
 def connect_db():
     return mysql.connector.connect(**DB_CONFIG)
@@ -119,7 +113,7 @@ def calcDistance(phash1, phash2):
 
 
 def avgSimilar(searchId,targetId):
-    max_count=30 #比較するフレーム数
+    max_count=90 #比較するフレーム数
 
     result_sim=[]
     conn=connect_db()
@@ -178,6 +172,15 @@ def get_root_dir():
     response = requests.get(url)
     return json.loads(response.text)['documentRoot']
 
+# 中央80%をクロップする関数
+def asymmetric_crop(pil_img, left_ratio=0.0, top_ratio=0.3, right_ratio=0.0, bottom_ratio=0.3):
+    w, h = pil_img.size
+    left = int(w * left_ratio)
+    top = int(h * top_ratio)
+    right = w - int(w * right_ratio)
+    bottom = h - int(h * bottom_ratio)
+    return pil_img.crop((left, top, right, bottom))
+
 
 def getFramePhash(video_path,videoId, resize_to=(64, 36)):
     cap = cv2.VideoCapture(video_path)
@@ -202,16 +205,23 @@ def getFramePhash(video_path,videoId, resize_to=(64, 36)):
                 # OpenCVのBGR画像をPILのRGB画像に変換
                 pil_img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
 
+                
+                # クロップ
+                cropped_img = asymmetric_crop(pil_img)
                 # リサイズ（高速化のため）
 
-                resized_img = pil_img.resize(resize_to, Image.Resampling.BILINEAR)
+                resized_img = cropped_img.resize(resize_to, Image.Resampling.BILINEAR)
 
+                
 
                 # pHash計算
                 phash = imagehash.phash(resized_img)
                 phash_bytes = phash.hash.tobytes()
 
                 result.append((videoId, phash_bytes))
+                
+
+  
 
             except Exception as e:
                 print(f"エラー発生: {e}")

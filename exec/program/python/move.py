@@ -20,24 +20,19 @@ from datetime import datetime
 
 
 
-
-
-sys.stdout.reconfigure(encoding='utf-8', errors='ignore')
-############環境に応じて修正してください########################################
-♯TS_FILES_DIR = 'D:\\TV\\ts\\'  #移動元のTSファイルのディレクトリ
-♯ENCODED_VIDEO_PATH = 'D:\\TV\\ts\\encoded\\'  # エンコードした動画があるディレクトリ(mp4 と mkvファイルなど)
-♯TEMP_DIR = 'D:\\TV\\ts\\encoding\\'  # DBとファイル名が部分一致したtsファイルの移動先
+sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+TS_FILES_DIR = 'D:\\TV\\ts\\'  #移動元のTSファイルのディレクトリ
+ENCODED_VIDEO_PATH = 'D:\\TV\\ts\\encoded\\'  # エンコードした動画があるディレクトリ(mp4 と mkvファイル)
+TEMP_DIR = 'D:\\TV\\ts\\encoding\\'  # DBとファイル名が部分一致したtsファイルの移動先
 PORT=8082  #実行しているjavaのポート番号
-♯DUPLICATE_DIR="D:\\TV\\ts\\duplicate\\"  #動画がすでにDB書き込まれている場合に移動する動画の移動先
+DUPLICATE_DIR="D:\\TV\\ts\\duplicate\\"  #動画がすでにDBにある場合に移動する動画の移動先
 DB_CONFIG = {
     'host': "localhost",
     'user': "java",
     'password': "java",
     'database': "db1"
 }
-############################################################################
-
-
 
 
 
@@ -232,7 +227,7 @@ def move_files_to_folder(files, destination_folder,videoid=0):
             return
         
         sql="delete from video where video_id =%s"
-        insert_query(sql,videoid)
+        insert_query(sql,[videoid])
         
 def moveTs(anime_data,extension):
     #DBに一致したらTSファイルを移動する
@@ -429,7 +424,7 @@ def insertRanking():
                        when video.fname like  "%フジテレビ%" then 3
                        when video.fname like  "%テレビ東京１%" then 4
                        when video.fname like  "%テレビ朝日%" then 5
-                       when video.fname like  "%Ｊ：ＣＯＭテレビ%" then 6
+
                        when video.fname like  "%ＴＢＳ１%" then 7
                        when video.fname like  "%ｔｖｋ１%" then 8
                        when video.fname like  "%日テレ１%" then 9
@@ -503,7 +498,6 @@ def insertRanking():
                         when video.fname like  "%フジテレビ%" then 3
                         when video.fname like  "%テレビ東京１%" then 4
                         when video.fname like  "%テレビ朝日%" then 5
-                        when video.fname like  "%Ｊ：ＣＯＭテレビ%" then 6
                         when video.fname like  "%ＴＢＳ１%" then 7
                         when video.fname like  "%ｔｖｋ１%" then 8
                         when video.fname like  "%日テレ１%" then 9
@@ -535,7 +529,7 @@ def insertRanking():
                                         when video.fname like  "%フジテレビ%" then 3
                                         when video.fname like  "%テレビ東京１%" then 4
                                         when video.fname like  "%テレビ朝日%" then 5
-                                        when video.fname like  "%Ｊ：ＣＯＭテレビ%" then 6
+ 
                                         when video.fname like  "%ＴＢＳ１%" then 7
                                         when video.fname like  "%ｔｖｋ１%" then 8
                                         when video.fname like  "%日テレ１%" then 9
@@ -651,7 +645,7 @@ GROUP BY anime_id, T_year, T_season;
     
     sql="""
                     
-            INSERT INTO score (anime_id, score, year, season)
+            INSERT IGNORE INTO score (anime_id, score, year, season)
                SELECT 
                     r.anime_id,
                     (

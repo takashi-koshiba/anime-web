@@ -13,7 +13,7 @@ import imagehash
 import cv2
 
 
-similarThreshold=0.9
+similarThreshold=0.87
 
 DB_CONFIG = {
     'host': "localhost",
@@ -46,6 +46,15 @@ def execute_query(query, params=None):
         conn.close()
     return result
 
+# 中央80%をクロップする関数
+def asymmetric_crop(pil_img, left_ratio=0.0, top_ratio=0.3, right_ratio=0.0, bottom_ratio=0.3):
+    w, h = pil_img.size
+    left = int(w * left_ratio)
+    top = int(h * top_ratio)
+    right = w - int(w * right_ratio)
+    bottom = h - int(h * bottom_ratio)
+    return pil_img.crop((left, top, right, bottom))
+
 
 def videoFrameHash(video_path,count,resize_to=(64, 36)):
     cap = cv2.VideoCapture(video_path)
@@ -70,14 +79,17 @@ def videoFrameHash(video_path,count,resize_to=(64, 36)):
                     # OpenCVのBGR画像をPILのRGB画像に変換
                     pil_img = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
 
-
-                    resized_img = pil_img.resize(resize_to, Image.Resampling.BILINEAR)
+                   # クロップ
+                    cropped_img = asymmetric_crop(pil_img)
+                    
+                    resized_img = cropped_img.resize(resize_to, Image.Resampling.BILINEAR)
 
                     # pHash計算
                     phash = imagehash.phash(resized_img)
                     phash_bytes = phash.hash.tobytes()
 
                     hashes.append(phash_bytes)
+                    
 
                 except Exception as e:
                     print(f"ハッシュの計算で失敗: {e}")
@@ -232,7 +244,7 @@ if __name__ == "__main__":
     
     #引数で指定した動画のハッシュを取得
     
-    phashes=videoFrameHash(fpath,30,(64,36))
+    phashes=videoFrameHash(fpath,90,(64,36))
     
     targetVideoPhashSql="select distinct phash from phash_video where video_id =%s"
     #print(videoIdList)
@@ -256,8 +268,9 @@ if __name__ == "__main__":
         avgSim=sum(sim)/len(sim)
         
         if args.verbose:
-            print(str(avgSim)+":"+fname)
             
+            print(str(avgSim)+":"+fname)
+            print(sim)
             
         if currentSim<avgSim:
             currentSim=avgSim

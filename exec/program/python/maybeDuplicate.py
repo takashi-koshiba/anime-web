@@ -10,6 +10,8 @@ logger.setLevel(DEBUG)
 
 # ファイルハンドラー
 log_path = Path(__file__).resolve().parent / 'mybeDupliLog.log'
+
+
 simPath=Path(__file__).resolve().parent / 'simTest.py'
 
 
@@ -66,12 +68,12 @@ def simTest(fname,output_path):
 if __name__ == "__main__":
     logger.debug('start')
     ############環境に応じて変更してください########################
-    input_dir = r"D:\TV\ts\encoding"
-    maybe_duplicates_dir = r"D:\TV\ts\duplicate\maybeDupli"
-    confirmed_unique_dir=r"D:\TV\ts\encoding_ok"
-    unique_dir=r"D:\TV\ts\del"
+    input_dir = r"D:\TV\ts\encoding"  #重複を確認したいtsファイルが有るパス
+    maybe_duplicates_dir = r"D:\TV\ts\duplicate\maybeDupli"   #重複があった際の移動先ディレクトリ
+    confirmed_unique_dir=r"D:\TV\ts\encoding_ok" #重複がなかった場合の移動先
+    delDir=r"D:\TV\ts\del"
     ####################ここまで#####################################
-    if not os.path.isdir(input_dir) or not os.path.isdir(maybe_duplicates_dir)or not os.path.isdir(confirmed_unique_dir)or not os.path.isdir(unique_dir):
+    if not os.path.isdir(input_dir) or not os.path.isdir(maybe_duplicates_dir)or not os.path.isdir(confirmed_unique_dir)or not os.path.isdir(delDir):
         print("パスが存在しません")
     
 
@@ -91,12 +93,12 @@ if __name__ == "__main__":
 
 
             
-        if sim and  sim>0.7:
+        if sim and  sim>0.8:
             logger.debug("重複確定！")
             
-            shutil.move(full_path, unique_dir)
+            shutil.move(full_path, delDir)
         
-        elif sim and sim>0.5:
+        elif sim and sim>0.7:
             logger.debug("たぶん重複！")
 
             shutil.move(full_path, maybe_duplicates_dir)
