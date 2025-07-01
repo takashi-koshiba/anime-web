@@ -280,4 +280,16 @@
 #valumeLevel_prg:hover{
 	cursor: pointer;
 }
+#repeatIcon:hover{
+	opacity: 0.4;
+}
+#repeatIcon{
+	
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	width: 30px;
+	height:30px;
+	margin-left: 90px;
+}
 

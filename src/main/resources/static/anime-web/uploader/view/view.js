@@ -94,17 +94,24 @@ document.addEventListener("DOMContentLoaded",function(){
 			elem.setAttribute('id','playable');
 			//elem.setAttribute("controls", "");
 			//elem.controls = true; // 常に表示
-	
+			let imgPath = "/anime-web/get-file/anime/image/seekMax/"+alias+"/max.webp";
+
+			
 			if (Hls.isSupported()) {
-				  hls = new Hls({
-					    capLevelToPlayerSize: true, 
-						maxBufferLength: 60, // バッファ
-						maxBufferSize: 300 * 1000 * 1000, // バッファサイズの上限 
-						maxMaxBufferLength: 60, // 最大バッファ長
-						nudgeMaxRetry: 15, 
-						nudgeOffset: 0.2,   
-						backBufferLength: 10, 
-					});
+				hls = new Hls({
+					capLevelToPlayerSize: true,
+					maxBufferLength: 6,
+					maxMaxBufferLength: 20, 
+					maxBufferSize: 150 * 1000 * 1000,
+					nudgeMaxRetry: 5,
+					nudgeOffset: 0.3,
+					backBufferLength: 5,
+					startLevel: -1,
+					abrEwmaFastLive: 2.0,
+					abrEwmaSlowLive: 5.0,
+					abrBandWidthFactor: 0.8,
+					abrBandWidthUpFactor: 0.7,
+				});
 
 				hls.loadSource(path + alias);
 				 
@@ -115,9 +122,53 @@ document.addEventListener("DOMContentLoaded",function(){
 				hls.on(Hls.Events.MANIFEST_PARSED, function () {
 			      console.log('HLS manifest parsed successfully.');
 				  let highestQuality = hls.levels.length - 1; // 最高画質のインデックス
-				  hls.currentLevel = getQtyValueOfbutton()==1?highestQuality:getQtyValueOfbutton();
 				  addSwitchQltEventButton();
+				  
+				  let toLowLevelTimer = null;
+				  
+				  //自動だったら
+				  if (getQtyValueOfbutton() === -1) {
+				    hls.startLevel = highestQuality;
+				    hls.currentLevel = -1;
+				    hls.autoLevelEnabled = true;
+
+					//最低画質へ変更
+					toLowLevelTimer = setTimeout(function () {
+					  hls.currentLevel=0;    
+
+					  
+					  toAutoTimer = setTimeout(function () {//自動へ変更
+					    hls.currentLevel=-1;    
+
+					  }, 9000);
+					}, 3000);
+
+				  } else {
+				    hlsAuto(hls);
+				  }
+				  
+				  
+				  hls.on(Hls.Events.BUFFER_APPENDED, function (event, data) {
+				    if (data.type === 'video' && toLowLevelTimer !== null) {
+				      clearTimeout(toLowLevelTimer);
+	
+				      toLowLevelTimer = null;
+		
+				      console.log('最初のセグメントがバッファに入りました → タイマーキャンセル');
+				    }
+				  });
+
+		
+
+
+
 			    });
+				function hlsAuto(hls){
+					hls.currentLevel = getQtyValueOfbutton()==1?highestQuality:getQtyValueOfbutton();
+					
+
+				}
+				
 			    hls.on(Hls.Events.ERROR, function (event, data) {
 			      console.error('HLS error occurred: ', data);
 				  hls.recoverMediaError();
@@ -249,6 +300,25 @@ document.addEventListener("DOMContentLoaded",function(){
 
 
 			}
+			
+			//リピート
+			
+			
+			elem.loop=true;
+			let repeatIcon = document.createElement("div");
+			repeatIcon.setAttribute('id','repeatIcon');
+			repeatIcon.style.backgroundImage = 'url("/anime-web/uploader/view/icons/repeat.avif")';
+			videoContorols.appendChild(repeatIcon); 
+			repeatIcon.addEventListener('click', function(e) {
+				
+				
+				if (elem.loop) {
+				  repeatIcon.style.opacity = "0.6";
+				} else {
+				  repeatIcon.style.opacity = "1.0";
+				}
+				elem.loop=elem.loop?false:true;
+			});
 			
 			//動画の再生時間を反映
 			elem.addEventListener('timeupdate', function() {
@@ -1108,6 +1178,7 @@ document.addEventListener("DOMContentLoaded",function(){
 		  
 	}
 	
+
 	function togglePlayBar(isVisible) {
 	    const canvas = document.getElementById('canvasSeek');
 	    const progress = document.getElementById('progress');

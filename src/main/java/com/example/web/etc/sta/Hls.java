@@ -176,7 +176,7 @@ public class Hls {
 				case Encoders.CPU: {
 					c ="ffmpeg -i \"{0}\" -i \"{2}\" -map 0:v:0 -map 1:a:0   -c:v libx264 -preset ultrafast -crf 28 -c:a aac -b:a 256k  "
 							+ "   -filter:a loudnorm=I=-10:LRA=11:TP=-1.5 "
-							+ "-f hls -hls_time 4 -force_key_frames expr:gte(t,n_forced*5) "
+							+ "-f hls -hls_time 2 -force_key_frames expr:gte(t,n_forced*5) "
 							+ "-hls_playlist_type vod -hls_segment_filename \"{1}video%3d.ts\" "
 							+ " \"{1}video.m3u8\"";
 					/*
@@ -198,9 +198,9 @@ public class Hls {
 							+ "--avsw -i -    -o \"{1}video.m3u8\" -f hls "
 							+ "-m hls_segment_filename:\"{1}video%3d.ts\" -m hls_list_size:0  "
 							+ "-c h264 --audio-codec aac    --input-analyze 30 "
-							+"--vpp-mpdecimate --output-thread 1 "
-							+ "--vbr-quality 28 --gop-len 90  "
-							+ "--cqp 24:26:28   -m hls_time:10 "
+							+" --output-thread 1 "
+							+ "--vbr-quality 28 --gop-len 60  "
+							+ "--cqp 24:26:28   -m hls_time:2 "
 							+" --preset p1  ";
 					break;
 				}
@@ -219,7 +219,7 @@ public class Hls {
 				
 				c = "ffmpeg -i \"{0}\" -i \"{5}\" -map 0:v:0 -map 1:a:0   -c:v libx264 -preset ultrafast -crf 30 "
 						+ "-vf \"scale={4,number,#}:{3,number,#}\" -b:v {2,number,#} "
-						+"-filter:a loudnorm=I=-10:LRA=11:TP=-1.5 -f hls -hls_time 10 "
+						+"-filter:a loudnorm=I=-10:LRA=11:TP=-1.5 -f hls -hls_time 2 "
 						+"-force_key_frames expr:gte(t,n_forced*5) "
 						+ "-hls_playlist_type vod -hls_segment_filename \"{1}video%03d.ts\" "
 						+ " \"{1}video.m3u8\"";
@@ -239,18 +239,18 @@ public class Hls {
 				c="ffmpeg -y -i \"{0}\" -i \"{5}\"  -codec:v rawvideo   -map 0:v:0 -map 1:a:0 -f nut - |  NVEncC64.exe "
 						+ "--avsw -i -    -o \"{1}video.m3u8\" -f hls "
 						+ "-m hls_segment_filename:\"{1}video%3d.ts\" -m hls_list_size:0  "
-						+ "-c h264 --audio-codec aac --vpp-mpdecimate --output-thread 1  --input-analyze 30 "
-						+ "--vbr-quality 40 --gop-len 90 "
-						+ "--cqp 45:48:50  -m hls_time:10 "
+						+ "-c h264 --audio-codec aac  --output-thread 1  --input-analyze 30 "
+						+ "--vbr-quality 40 --gop-len 60 "
+						+ "--cqp 45:48:50  -m hls_time:2 "
 						+ "--output-res {4,number,#}x{3,number,#} "
 						+ "  --max-bitrate {2,number,#} --preset p1  ";
 				if(height>=720) {
 					c="ffmpeg -y -i \"{0}\" -i \"{5}\"  -codec:v rawvideo   -map 0:v:0 -map 1:a:0 -f nut - |  NVEncC64.exe "
 							+ "--avsw -i -    -o \"{1}video.m3u8\" -f hls "
 							+ "-m hls_segment_filename:\"{1}video%3d.ts\" -m hls_list_size:0  "
-							+ "-c h264 --audio-codec aac --vpp-mpdecimate --output-thread 1  --input-analyze 30 "
-							+ "--vbr-quality 35 --gop-len 90 "
-							+ "--cqp 36:38:40   -m hls_time:10 "
+							+ "-c h264 --audio-codec aac  --output-thread 1  --input-analyze 30 "
+							+ "--vbr-quality 35 --gop-len 60 "
+							+ "--cqp 36:38:40   -m hls_time:2 "
 							+ "--output-res {4,number,#}x{3,number,#} "
 							+ "  --max-bitrate {2,number,#} --preset p1  ";
 				}
