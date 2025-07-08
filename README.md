@@ -17,7 +17,7 @@
 <h1>デモ</h1>
 <a href="https://youtu.be/Hc1_0fOKe4M">youtubeをご覧ください。</a>
 
-<h1>基地のバグ</h1>
+<h1>既知のバグ</h1>
 <ul>
   <li>同じディレクトリに大量のファイルがあるとIOが低下する</li>
 </ul>
