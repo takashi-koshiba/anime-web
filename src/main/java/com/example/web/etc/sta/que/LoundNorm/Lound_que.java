@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +27,8 @@ public class Lound_que extends Que  {
 	}
 	
 	static void encode(String in, String out, Map<String, String> m) throws Exception {
-
+		
+		
 	    String filter = String.format(
 	        "loudnorm=I=-16:TP=-1.5:LRA=11:measured_I=%s:measured_TP=%s:measured_LRA=%s:measured_thresh=%s:offset=%s:linear=true:print_format=summary",
 	        m.get("measured_I"),
@@ -95,9 +98,8 @@ public class Lound_que extends Que  {
 			
 			Log.log(Level.INFO, audioParam.toString());
 			
-			System.out.println("jikkou");
+			Files.createDirectories(Paths.get(output).getParent());
 			encode(input, output, audioParam);
-			System.out.println("jikkouOK!");
 			
 		}catch (Exception e) {
 		    Log.detail(Level.WARNING, "ラウドネス正規化失敗", e);

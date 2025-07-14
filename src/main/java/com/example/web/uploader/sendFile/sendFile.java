@@ -47,6 +47,8 @@ import com.example.web.etc.sta.que.hls.HlsArgs;
 import com.example.web.etc.sta.que.hls.Hls_Que;
 import com.example.web.etc.sta.que.resize.Resize_Args;
 import com.example.web.etc.sta.que.resize.Resize_que;
+import com.example.web.etc.sta.que.upFileDel.DelArgs;
+import com.example.web.etc.sta.que.upFileDel.DelFile_Que;
 @RestController
 
 
@@ -102,13 +104,17 @@ public class sendFile {
 		 
 		 Integer exId=uploadFileType.getExId();
 		 String alias=uploadFileService.insertFile(fname,lname, mimeType, userId,exId);
-		 String inputPathStr=folder+"\\" + alias;
+		 //同ディレクトリに大量のファイルが保存されるのを防ぐ
+		 Path inputFolder= folder.resolve(alias);
+		 Path inputPath = inputFolder.resolve(alias);
+		 String inputPathStr = inputFolder.resolve(alias).toString();
 			
-		 Path inputPath = Paths.get(inputPathStr).normalize();
+		 
 
          try {
+        	 Files.createDirectories(inputFolder);
         	//ファイルを保存
-        	 SaveFile.main(file,inputPath.toString());
+        	 SaveFile.main(file,inputPathStr);
         	// byte[] fBytes =GetBytes.getFileBytes(file);
         	 String hash=ToHash256.hashWithFile(inputPath.toFile());
         	 
@@ -130,7 +136,7 @@ public class sendFile {
         	 
         	 upload_hashService.insertHash(alias, hash);
         	 
-        	 Path audioOutput=Paths.get(fullPath,"content","anime-web","upload","file","audio",alias+".flac");
+        	 Path audioOutput=Paths.get(fullPath,"content","anime-web","upload","file","audio",alias,alias+".flac");
 		        
 
 			//動画はサムネとHLS
@@ -204,7 +210,7 @@ public class sendFile {
 			compressImg(new File(input),"thumbnail",biggestSize,alias);
 		 }
 
-		
+		 
 		 img=null;
 		// ResizeImg.main(new File(input), output, 200,mimeType);//サイズが大きいとエラーになるため別で処理
 	}
@@ -223,13 +229,27 @@ public class sendFile {
 	private static void compressImg(File inputPath,String outputPath,Integer imgSize,String alias) {
 		//avifに変換
 		String p ="ffmpeg -i \"{0}\"    -vf \"scale=if(gt(iw\\,ih)\\,{2,number,#}\\,-2):if(gt(iw\\,ih)\\,-2\\,{2,number,#})\"  -c:v libaom-av1 -preset 8 -crf 50 \"{1}\"" ;
-		Path output =  Paths.get(MessageFormat.format(Setting.getRoot()+"content\\anime-web\\upload\\file\\{0}\\"+alias+".avif",outputPath)).normalize();
+		
+		Path output =  Paths.get(MessageFormat.format(Setting.getRoot()+"content\\anime-web\\upload\\file\\{0}\\"+alias+"\\"+alias+".avif",outputPath)).normalize();
 		String format;
+		 try {
+			Files.createDirectories(output.getParent());
+		} catch (IOException e) {
+			// TODO 自動生成された catch ブロック
+			Log.detail(Level.WARNING, "フォルダの作成に失敗しました。"+output.toString(), e);
+			Log.log(Level.WARNING,"画像の圧縮を中止します。");
+			return ;
+		}
 		format= MessageFormat.format(p,inputPath.getAbsolutePath().toString(),output.toString(),imgSize);
 	
 		Cmd_que cmdQue = new Cmd_que();
 		ArgsData cmdArgs = new Cmd_Args(format, cmdQue);
 		Que.addToQueue(cmdArgs);
+		
+		//temp画像を削除
+		DelFile_Que delfileQue= new DelFile_Que ();
+		DelArgs delArgs = new DelArgs(inputPath.toPath(), delfileQue);
+		Que.addToQueue(delArgs);
 	}
 	private static void createThumbnailVideo(String input,String fullPath,String alias) {
 		 
@@ -281,7 +301,6 @@ public class sendFile {
 
 		 
 	}
-
 
 	
 	private static void createEncodeAudio(String input,String fullPath,String alias,String outputPath) {

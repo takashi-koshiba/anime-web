@@ -21,5 +21,8 @@ public class Resize_que extends Que  {
 		 Img img=new Img(new File(input));
 		System.out.println(argsdata.getArgument("output").toString());
 		img.Resize(argsdata.getArgument("output").toString(), Integer.valueOf(argsdata.getArgument("size").toString()), argsdata.getArgument("mime").toString());
-	}
+	
+		
+	
+	}	
 }

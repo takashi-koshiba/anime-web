@@ -56,7 +56,7 @@ public class SeekResource extends FileController {
 		}
 		
 		Path root=Paths.get( "content/anime-web/upload/file/seek-image/");
-		Path path=Paths.get(Setting.getRoot()+root+"/"+alias).normalize();
+		Path path=Paths.get(Setting.getRoot(),root.toString(),alias,zeroPad(frame,8)).normalize();
 		
 		
 		
@@ -68,7 +68,7 @@ public class SeekResource extends FileController {
 			    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"noImage.png\"")
 			    .body(resource);
 		}
-		   
+		
 		List<Path> allFiles = new ArrayList<>();
 		try (Stream<Path> paths = Files.list(path)) {
 		    allFiles = paths.collect(Collectors.toList());
@@ -78,13 +78,11 @@ public class SeekResource extends FileController {
 
 		Optional<Path> target = allFiles.stream()
 		    .filter(p -> p.toString().toLowerCase().endsWith(".webp"))
-		    .skip(frame)
 		    .findFirst();
 
 		if (!target.isPresent()) {
 		    target = allFiles.stream()
 		        .filter(p -> p.toString().toLowerCase().endsWith(".jpg"))
-		        .skip(frame)
 		        .findFirst();
 		}
 
@@ -108,7 +106,9 @@ public class SeekResource extends FileController {
 		
    }
 
-
+	private static String zeroPad(int number, int length) {
+	    return String.format("%0" + length + "d", number);
+	}
 
 	private ImageInfo seekImageInfo(File[] files) {
 		

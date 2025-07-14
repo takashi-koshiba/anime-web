@@ -24,6 +24,8 @@ document.addEventListener("DOMContentLoaded",function(){
 	delButton.addEventListener('click',function(){
 		if(!window.confirm("ファイルを削除しますか?")){return}
 		fileDel();
+		
+		
 	})
 	
 	button.addEventListener('click',function(){
@@ -51,63 +53,60 @@ document.addEventListener("DOMContentLoaded",function(){
 	        menuCancel.style.display = "block";
 	    }
 	}
-	function fileDel(){
+	async function fileDel() {
+	    let fileElem = document.getElementsByClassName('fileElem');
+	    if (fileElem.length <= 1) {
+	        alert("ファイルがありません");
+	        return;
+	    }
 		
-		
-		
-		
-		let fileElem = document.getElementsByClassName('fileElem');
-		if(fileElem.length<=1){
-			alert("ファイルがありません");
-			return;
-		}
+	    let promises = [];
+	    let isChecked = false;
 
-		
-		
-		let isChecked=false;
-		let error=false;
-		for(let i=1;i<fileElem.length;i++){
-			let elem = fileElem[i].children[0].children[2].children[0].children[0]
-			let elemChecked=elem.checked;
-			if(!elemChecked){
-				continue;
-				
-			}	
-			
-			isChecked=true
-			let alias=elem.getAttribute("alias");
-			
-			let ajax = new class_ajax("/anime-web/getFile/view/del/elem");
-			ajax.args("alias",alias);
-			
-			
-			ajax.run();
-			ajax.xhr.addEventListener('loadend', function() {
-				
-				if(!error){
-					if(this.status==403){
-						alert("セッションが切れました");
-						
-					}else if(this.status!=200){
-						alert("エラーが発生しました。ステータス："+this.status);
-					}
+	    for (let i = 1; i < fileElem.length; i++) {
+	        let elem = fileElem[i].children[0].children[2].children[0].children[0];
+	        let elemChecked = elem.checked;
+	        if (!elemChecked) continue;
 
-				}
+	        isChecked = true;
+	        let alias = elem.getAttribute("alias");
 
-				error=true;
-			});
-			//console.dir(fileElem[i].children[0].children[2].children[0].children[0]);
-		}
+	        let p = new Promise((resolve, reject) => {
+	            let ajax = new class_ajax("/anime-web/getFile/view/del/elem");
+	            ajax.args("alias", alias);
+	            ajax.run();
+	            ajax.xhr.addEventListener('loadend', function () {
+	                if (this.status === 403) {
+	                    alert("セッションが切れました");
+	                    reject("session");
+	                } else if (this.status !== 200) {
+	                    console.error("エラーが発生しました。ステータス：" + this.status);
+	                    reject("error");
+	                } else {
+	                    resolve();
+	                }
+	            });
+	        });
 
-		if(!isChecked){
-			alert("選択されているファイルがありません");
-			return;
-		}
-		if(!error){
-			alert("削除しました。");
+	        promises.push(p);
+	    }
+
+	    if (!isChecked) {
+	        alert("選択されているファイルがありません");
+	        return;
+	    }
+
+	    try {
+	        await Promise.all(promises);
+	        alert("削除しました。");
+	        
+	    } catch (e) {
+			alert("エラーが発生しました。詳細はコンソール確認してください。");
+	    }finally{
 			location.reload();
 		}
 	}
+
 	
 
 	function addEventChangeQltButton(){

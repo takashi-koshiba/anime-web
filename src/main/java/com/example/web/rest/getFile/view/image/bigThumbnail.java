@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.logging.Level;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Controller;
 
 import com.example.web.etc.db.uploadFile.FileInfo;
 import com.example.web.etc.db.uploadFile.UploadFileService;
+import com.example.web.etc.sta.Log;
 import com.example.web.etc.sta.Setting;
 import com.example.web.rest.getFile.view.file.ItemData;
 
@@ -36,15 +38,24 @@ public class  bigThumbnail  extends ItemData {
 	   return super.getFile(alias, session,false);
    }
 	private boolean isExist(List<FileInfo> upfile,String fpath,String ext) {
-		Path root=Paths.get( Setting.getRoot()+"content/anime-web/upload/file/"+fpath+"/");
-		Path path=(root.resolve(upfile.getFirst().getAlias()+ext).normalize());
-	
-		return Files.exists(path);
+		String alias =upfile.getFirst().getAlias();
+		
+		Path root=Paths.get( Setting.getRoot()+"content/anime-web/upload/file/"+fpath+"/").resolve(alias);
+		Path path=(root.resolve(alias+ext).normalize());
+		
+		Boolean result =Files.exists(path);
+		
+		if(!result) {
+			Log.log(Level.INFO,"パスが見つかりませんでした。"+path);
+		}
+		
+		return result ;
 
 	}
 	private Path imagePath(List<FileInfo> upfile,String fpath,String ext) {
-		Path root=Paths.get(Setting.getRoot()+ "content/anime-web/upload/file/"+fpath+"/");
-		Path path=(root.resolve(upfile.getFirst().getAlias()+ext).normalize());
+		String alias =upfile.getFirst().getAlias();
+		Path root=Paths.get(Setting.getRoot()+ "content/anime-web/upload/file/"+fpath+"/").resolve(alias);
+		Path path=(root.resolve(alias+ext).normalize());
 		return path;
 
 	}
@@ -55,7 +66,7 @@ public class  bigThumbnail  extends ItemData {
 				 
          if(isExist(upfile,"thumbnail-big",".avif")) {
 		     path = imagePath(upfile,"thumbnail-big",".avif");
-		    
+		     
 		 }else if(isExist(upfile,"image","")) {
 			 path = imagePath(upfile,"image","");
 			

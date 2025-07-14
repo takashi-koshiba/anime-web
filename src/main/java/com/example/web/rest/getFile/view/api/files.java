@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Level;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -20,6 +21,7 @@ import com.example.web.etc.db.uploadFile.FileInfo;
 import com.example.web.etc.db.uploadFile.UploadFileService;
 import com.example.web.etc.sta.Columns;
 import com.example.web.etc.sta.Kakasi;
+import com.example.web.etc.sta.Log;
 import com.example.web.etc.sta.Setting;
 import com.example.web.etc.sta.SimilarWards;
 import com.example.web.etc.sta.TextRep;
@@ -73,13 +75,16 @@ public class files {
 		
 		
 		if(inputStr.equals("")||inputStr.isEmpty()||inputStr.isBlank()) {
-			
+			 long startTime = System.currentTimeMillis();
+			 Log.log(Level.INFO, "SQL実行開始："+startTime);
 			//対象ユーザーのファイルを取得
 			List<FileInfo> fileInfoList =  uploadFileService.selectFile(userId,columnId,orderText.name(),ftype.intValue());
 			for(FileInfo f :fileInfoList) {
 				f.setUrl(getUrl(f));
 				
 			}
+			long endTime = System.currentTimeMillis();
+			 Log.log(Level.INFO, "SQL実行時間：" + (endTime - startTime) + " ms");
 			return fileInfoList ;
 		}
 		
@@ -134,15 +139,13 @@ public class files {
 	}
 	
 	private String getImageUrl(FileInfo fileInfo) {
-		String root = Setting.getRoot();
-	    String subDir = "content/anime-web/upload/file/thumbnail";
-	    Path imagePath = Paths.get(root, subDir, fileInfo.getAlias()+".avif").normalize();
-
-	    
-	    if (!Files.exists(imagePath)) {
-	    	
-	        return "/anime-web/get-file/view/image/noImage/NoImage";
+		
+	    /* 重いので中止
+	    if (!Files.exists(imagePath) || !Files.isRegularFile(imagePath) || !Files.isReadable(imagePath)) {
+	    //    Log.log(Level.WARNING, "パスにアクセスできません。:"+imagePath);
+	    	return "/anime-web/get-file/view/image/noImage/NoImage";
 	    }
+	    */
 
 	    String urlPrefix =	"/anime-web/get-file/anime/image/small/";
 	    

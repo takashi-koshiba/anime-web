@@ -1,5 +1,6 @@
 package com.example.web.rest.getFile.view.video;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.ZonedDateTime;
@@ -46,7 +47,9 @@ public class VideoFile extends FileController {
 		}
 		
 		Path path=Paths.get(Setting.getRoot()+"content/anime-web/upload/file/hls/"+alias+"/"+width+"/video.m3u8").normalize();
-	
+		if(!Files.isRegularFile(path)) {
+			return ResponseEntity.status(HttpStatus.GONE).build();
+		}
 		
 		return super.getFile(path.toString(),"",false);
    }

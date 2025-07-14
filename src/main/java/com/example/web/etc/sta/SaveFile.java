@@ -12,6 +12,7 @@ public  class SaveFile{
 
 	public static void   main( MultipartFile file,String savePath) {
         try (InputStream inputStream = file.getInputStream();
+        		
                 OutputStream outputStream = new FileOutputStream(savePath)) {
                byte[] buffer = new byte[8192];
                int bytesRead;

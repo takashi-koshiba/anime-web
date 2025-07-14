@@ -1,10 +1,12 @@
 package com.example.web.rest.getFile.view.image;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.logging.Level;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -22,13 +24,17 @@ import org.springframework.web.server.ResponseStatusException;
 import com.example.web.etc.db.uploadFile.FileInfo;
 import com.example.web.etc.db.uploadFile.UploadFileService;
 import com.example.web.etc.sta.FileController;
+import com.example.web.etc.sta.Log;
 import com.example.web.etc.sta.Setting;
+import com.example.web.rest.getFile.view.image.noImage.NoImage;
 
 @RestController
 public class SmallThumbnail extends FileController {
 
 	@Autowired
 	private ResourceLoader resourceLoader;
+	@Autowired
+	NoImage noImage;
 	
 	@Autowired
 	UploadFileService uploadFileService;
@@ -48,18 +54,35 @@ public class SmallThumbnail extends FileController {
 
 		List<FileInfo> upfile= uploadFileService.selectFileOne(session.getAttribute("id").toString(), alias);
 		if(upfile.size()==0) {
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ファイルのアクセス権がありません。");
+			Log.log(Level.WARNING, "ファイルのアクセス権がありません。:"+"sessionId:"+session.getAttribute("id")+"/alias:"+alias);
+			return noImage.getFile();
+			//throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ファイルのアクセス権がありません。");
 		}
 
 		Path root=Paths.get( "content/anime-web/upload/file/thumbnail/");
-		Path path=Paths.get(Setting.getRoot()+root+"/"+upfile.getFirst().getAlias()+".avif").normalize();
+		String alias2 = upfile.getFirst().getAlias();
+		Path path=Paths.get(Setting.getRoot(),root.toString(),alias2 ,alias2 +".avif").normalize();
 
 		
 		
 		String fname=upfile.get(0).getFname()+upfile.get(0).getLname();
        
-		 
-		return super.getFile(path.toString(), fname, false);
+		if(!Files.isRegularFile(path)) {
+			return noImage.getFile();
+		}
+		//return super.getFile(path.toString(), fname, false);
+		
+		try {
+			ResponseEntity<Resource>  result=super.getFile(path.toString(), fname, false);
+			return result;
+		}catch(ResponseStatusException e) {
+			Log.detail(Level.WARNING, "ファイルの取得に失敗しました。："+fname, e);
+			return noImage.getFile();
+		}catch(Exception e) {
+			Log.detail(Level.WARNING, "未知のエラーが発生しました。："+fname, e);
+			return noImage.getFile();
+		}
+		
 		
    }
 	

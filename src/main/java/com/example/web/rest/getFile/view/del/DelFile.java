@@ -48,9 +48,9 @@ public class DelFile  {
 		del(root+"file\\audio\\"+alias+".mp3");
 		del(root+"file\\image\\"+alias);
 		del(root+"file\\other\\"+alias);
-		del(root+"file\\thumbnail\\"+alias+".avif");
-		del(root+"file\\thumbnail-big\\"+alias+".avif");
-		del(root+"file\\thumbnail-temp\\"+alias+".avif");
+		del(root+"file\\thumbnail\\"+alias);
+		del(root+"file\\thumbnail-big\\"+alias);
+		del(root+"file\\thumbnail-temp\\"+alias);
 		del(root+"file\\video\\"+alias);
 		del(root+"file\\hls\\"+alias);
 		del(root+"file\\seek-image\\"+alias);

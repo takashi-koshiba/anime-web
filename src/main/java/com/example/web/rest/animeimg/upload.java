@@ -105,8 +105,11 @@ public class upload {
 	private void ffmpeg(String fname,Path sourcePath) throws IOException {
 		
 		String root = Setting.getRoot();
+		
+		Path p = Paths.get(root,"content","anime-web","upload","img","thumbnail",fname);
+		Files.createDirectory(p);
 		//String sourcePath=root+"content\\anime-web\\upload\\img\\temp\\"+fname+"."+extension;
-		String savePath=root+"content\\anime-web\\upload\\img\\thumbnail\\"+fname+".avif";
+		String savePath=p+"\\"+fname+".avif";
 		
 		//String cmd="echo Y | ffmpeg -i \"{0}\"   -vf scale=480:-1 -compression_level 6 -q:v 18 \"{1}\"" ;
 		//cpu

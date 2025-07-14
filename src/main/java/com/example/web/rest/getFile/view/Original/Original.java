@@ -65,16 +65,16 @@ public class  Original  extends FileController {
 		String p=Setting.getRoot()+"content/anime-web/upload/file/";
 		
 		if(upfile.getType()==fileType.AUDIO) {
-			Path path=Paths.get(p+"audio/"+upfile.getAlias()).normalize();
+			Path path=Paths.get(p,"audio",upfile.getAlias(),upfile.getAlias()).normalize();
 			return path;
 		}else if(upfile.getType()==fileType.IMAGE) {
-			Path path=Paths.get(p+"image/"+upfile.getAlias()).normalize();
+			Path path=Paths.get(p,"image",upfile.getAlias(),upfile.getAlias()).normalize();
 			return path;
 		}else if(upfile.getType()==fileType.OTHER) {
-			Path path=Paths.get(p+"other/"+upfile.getAlias()).normalize();
+			Path path=Paths.get(p,"other",upfile.getAlias(),upfile.getAlias()).normalize();
 			return path;
 		}else if(upfile.getType()==fileType.VIDEO) {
-			Path path=Paths.get(p+"video/"+upfile.getAlias()).normalize();
+			Path path=Paths.get(p,"video",upfile.getAlias(),upfile.getAlias()).normalize();
 			return path;
 		}
 		

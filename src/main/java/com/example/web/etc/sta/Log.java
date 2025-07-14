@@ -65,7 +65,7 @@ public class Log {
 		        e2.printStackTrace(pw);
 		        
 		        logger.log(lev, txt + "\n" + sw.toString());
-
+		        System.out.println(lev.toString()+":"+txt);
 		    } catch (IOException e) {
 		        e.printStackTrace();
 		    }

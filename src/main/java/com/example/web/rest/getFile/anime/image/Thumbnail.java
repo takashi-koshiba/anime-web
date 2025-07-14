@@ -4,6 +4,8 @@ package com.example.web.rest.getFile.anime.image;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.NoSuchElementException;
+import java.util.logging.Level;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -17,12 +19,16 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.web.etc.db.Animetable.Anime;
 import com.example.web.etc.db.Animetable.AnimeService;
 import com.example.web.etc.sta.FileController;
+import com.example.web.etc.sta.Log;
 import com.example.web.etc.sta.Setting;
+import com.example.web.rest.getFile.view.image.noImage.NoImage;
 
 @RestController
 public class Thumbnail extends FileController {
 	@Autowired
 	AnimeService animeService;
+	@Autowired
+	NoImage noImage;
 	
 	public Thumbnail() {
 		super(Setting.getRoot()+"content/anime-web/upload/img/thumbnail/");
@@ -30,8 +36,24 @@ public class Thumbnail extends FileController {
 	
 	@GetMapping("/anime-web/get-file/anime/image/thumbnail/{animeid}")
    public ResponseEntity<Resource> getFile(@PathVariable Integer animeid) {
-		Anime anime = animeService.selectOne(animeid).getFirst();
-	   return super.getFile(anime.getOriginalName()+".avif",anime.getOriginalName()+".avif",false);
+	    
+		
+		
+		
+		try {
+			Anime anime = animeService.selectOne(animeid).getFirst();
+			ResponseEntity<Resource>  result=super.getFile(anime.getOriginalName()+"/"+anime.getOriginalName()+".avif",anime.getOriginalName()+".avif",false);
+			return result;
+		}catch(NoSuchElementException e) {
+			Log.detail(Level.WARNING, "ファイルの取得に失敗しました。入力ID："+animeid.toString(), e);
+			return noImage.getFile();
+		}catch(Exception e) {
+			Log.detail(Level.WARNING, "未知のエラーが発生しました。入力ID："+animeid.toString(), e);
+			return noImage.getFile();
+		}
+	
+		
+		//return result;
    }
 	protected ResponseEntity.BodyBuilder responseBuilder(){
 		ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.ok()

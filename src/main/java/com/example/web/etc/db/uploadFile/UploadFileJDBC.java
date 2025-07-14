@@ -3,6 +3,7 @@ package com.example.web.etc.db.uploadFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 import jakarta.transaction.Transactional;
 
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import com.example.web.etc.db.renban.renbanService;
 import com.example.web.etc.sta.Kakasi;
+import com.example.web.etc.sta.Log;
 import com.example.web.etc.sta.TextRep;
 import com.example.web.uploader.sendFile.fileType;
 
@@ -175,7 +177,8 @@ public class UploadFileJDBC implements UploadFileDao {
     
     @Override
     public List<FileInfo> selectFile(String userId,Integer columnId,String order,Integer ftypeId){
-
+		 long startTime = System.currentTimeMillis();
+		 Log.log(Level.INFO, "SQL実行開始2："+startTime);
     	    	try {
     	    		List<Map<String, Object>> result=getSqlTxt(userId,columnId,order,ftypeId);
     				List<FileInfo> list = new ArrayList<>();
@@ -199,7 +202,8 @@ public class UploadFileJDBC implements UploadFileDao {
 
     					list.add( fileInfo);
     				}
-
+    				long endTime = System.currentTimeMillis();
+    				 Log.log(Level.INFO, "SQL実行時間：2" + (endTime - startTime) + " ms");
     				return list;
     	    	}catch (Exception e) {
     	    		e.printStackTrace();

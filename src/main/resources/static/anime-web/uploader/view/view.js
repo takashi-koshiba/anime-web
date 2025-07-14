@@ -111,6 +111,9 @@ document.addEventListener("DOMContentLoaded",function(){
 					abrEwmaSlowLive: 5.0,
 					abrBandWidthFactor: 0.8,
 					abrBandWidthUpFactor: 0.7,
+					manifestLoadingMaxRetry: 2,
+					levelLoadingMaxRetry: 2,
+					fragLoadingMaxRetry: 2
 				});
 
 				hls.loadSource(path + alias);
@@ -118,6 +121,16 @@ document.addEventListener("DOMContentLoaded",function(){
 			    hls.attachMedia(elem);
 
 				hls.autoLevelEnabled=false;
+				
+				hls.on(Hls.Events.ERROR, function (event, data) {
+				  console.error("HLSエラー発生:", data.details);
+				  if(data.details=="levelParsingError" || data.details=="levelLoadError"){
+					alert("読み込みに失敗しました。リロードしてください。再度お試しください。")
+					window.location.reload();
+					throw new Error("動画の読み込みに失敗しました。")
+				  }
+
+				});
 				
 				hls.on(Hls.Events.MANIFEST_PARSED, function () {
 			      console.log('HLS manifest parsed successfully.');

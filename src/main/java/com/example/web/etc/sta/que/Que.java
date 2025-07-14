@@ -28,10 +28,16 @@ public abstract class Que {
 
     // キューの処理
     protected static synchronized void processQueue() {
-        if (isRunning || encodingQueue.isEmpty()) {
+        if (isRunning) {
+        	Log.log(Level.INFO, "他のキューが実行中です。");
+        	Log.log(Level.INFO, "残りキュー数:"+String.valueOf(encodingQueue.size()) );
             return; 
         }
-
+        if (encodingQueue.isEmpty()) {
+        	Log.log(Level.INFO,"キューが空です");
+        	Log.log(Level.INFO,"処理を終了しました。");
+        }
+        Log.log(Level.INFO, "残りキュー数:"+String.valueOf(encodingQueue.size()) );
         isRunning = true;
 
         
