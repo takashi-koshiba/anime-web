@@ -72,6 +72,7 @@ public class Setting {
 		
 
 	}
+	
 	public static Encoders getEncoder() {
 		String enc=settings.getProperty("encoder");
 		Encoders[] encoders=Encoders.values();
@@ -97,6 +98,22 @@ public class Setting {
 			fileOut.close();
 		}
 	}
+	public static String getProgPath() {
+		return settings.getProperty("progPath");
+	}
+	
+	public static void setProgPath(String path) throws IOException {
+		FileOutputStream fileOut= null;
+		try {
+			fileOut = new FileOutputStream(settingfile);
+			Path p= Paths.get(path).normalize();
+			settings.setProperty("progPath", p.toString());
+			settings.store(fileOut, "setting");
+		} finally {
+			fileOut.close();
+		}
+	}
+	
 	public static String getVideoPath() {
 		return settings.getProperty("videoPath");
 	}

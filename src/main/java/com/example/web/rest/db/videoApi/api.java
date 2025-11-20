@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.web.etc.db.video.PlayList;
 import com.example.web.etc.db.video.VideoService;
+import com.example.web.etc.sta.Setting;
 
 @RestController
 public class api {
@@ -47,7 +48,7 @@ public class api {
 		String data = "#EXTM3U\n";
 		for(PlayList item:playlist) {
 			data+="#EXTINF:"+item.getVideo_time()+", "+item.getFname()+"\n";
-			data+="\\\\MAIN\\video\\"+item.getFoldername()+"\\"+item.getFname()+"\n";
+			data+=Setting.getVideoPath()+item.getFoldername()+"\\"+item.getFname()+"\n";
 			
 		}
 	    byte[] b=data.getBytes();

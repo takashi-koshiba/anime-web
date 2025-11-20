@@ -23,6 +23,7 @@ public class SettingAdmin {
 			model.addObject("path",Setting.getRoot());
 
 			model.addObject("videoPath",Setting.getVideoPath());
+		//	model.addObject("progPath",Setting.getProgPath());
 			model.addObject("encoder",Setting.getEncoder().ordinal());
 			
 		}else {

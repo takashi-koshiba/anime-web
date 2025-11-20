@@ -28,7 +28,30 @@
 				</form>
 				
 				
+				
 				<p id="result"></p>
+				
+				<h2>番組名検索ベクトル</h2>
+				<hr>
+				<p>残り番組数：
+					<span id="remainingTitleCount" th:text="${titleCount}">  </span>
+					
+					<span><input id="titleAjaxButton" type="button" value="実行"></span>
+				</p>
+				<p>/anime-web/api/db/vectorAPI/AnimeVector/{limitter}</p>
+				<textarea id="vectorTitleArea"></textarea>
+				
+				
+				<h2>番組説明検索ベクトル</h2>
+				<hr>
+				<p>残り番組数：
+					<span id="remainingCount" th:text="${progCount}">  </span>
+					
+					<span><input id="progAjaxButton" type="button" value="実行"></span>
+				</p>
+				<p>/anime-web/api/db/vectorAPI/progInsert/{limitter}</p>
+								
+				<textarea id="vectorArea"></textarea>
 				
 				<h2>エラー</h2>
 				<hr>

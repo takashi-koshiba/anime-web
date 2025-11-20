@@ -4,14 +4,17 @@ document.addEventListener("DOMContentLoaded",function(){
 	searchResult.style.display='none';
 	
 	let searchCancel =document.getElementById("searchCancel");
+	let searchMenu=document.getElementById("searchMenu");
+	
 	
 	search.addEventListener('input',function(){
-		execute(search);
+		
+		execute(search,searchMenu.value);
 
 
 	})
 	search.addEventListener('focus',function(){
-		execute(search);
+		execute(search,searchMenu.value);
 
 	})
 	
@@ -22,14 +25,15 @@ document.addEventListener("DOMContentLoaded",function(){
 		this.style.display='none';
 	})
 	
-	function execute(elem){
-		if(elem.value.length>0){
+	function execute(elem,modeIndex){
+		if(elem.value.length>1){
 					searchCancel.style.display="block";
 		}else{
 			searchCancel.style.display="none";
+			return;
 		}
 
-		getDistanceData(elem.value).then(result => {
+		getDistanceData(elem.value,modeIndex).then(result => {
 			setResult(result);
 		})
 	}
@@ -53,14 +57,14 @@ document.addEventListener("DOMContentLoaded",function(){
 	}
 
 	
-	async function getDistanceData(param) {
+	async function getDistanceData(param,modeIndex) {
 		
 		
 		if(!param || isOnlyBlank(param)){	
 			return;
 		}
 		console.dir(param);
-		let url=location.protocol+"api/db/animeLen/";
+		let url=location.protocol+"api/db/animeLen/"+modeIndex;
 		let ajax_search = new class_ajax(url);
 		ajax_search.args('txt', param);
 		

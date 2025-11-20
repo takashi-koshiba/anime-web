@@ -17,7 +17,8 @@ document.addEventListener("DOMContentLoaded",function(){
 	let  imgDatas;
 	let calculateLayoutTimer;
 
-	let root=location.protocol+"/anime-web/";
+	let root=location.protocol+"//"+location.host+"/anime-web/";
+
 	let url=root+"api/db/rankedAnime/";
 	let rankObj=[];
 	
@@ -30,10 +31,11 @@ document.addEventListener("DOMContentLoaded",function(){
 		let result=await getRankAllData(root,url);
 		let extended_program=await  extendVideoRank(root);
 		let noRanked= await getNoRanked(root);
+		let newVideo=await  newVideoRank(root);
 		
 		imgRootUrl= result[1];
 		imgDatas=[];
-		imgDatas=[result[0],seasonData,extended_program,noRanked];
+		imgDatas=[result[0],newVideo,seasonData,extended_program,noRanked];
 		console.dir(imgDatas);
 		
 		
@@ -478,6 +480,22 @@ document.addEventListener("DOMContentLoaded",function(){
 	    return result;
 
 	}
+	async function newVideoRank(root) {
+
+		let url=new URL(window.location.href);
+		let year=url.searchParams.get('year');
+		let season=url.searchParams.get('season');
+		
+		let urlApi=root + "api/db/rankedNewAnime/";
+		if(year!=null&&season!=null){
+			urlApi=urlApi+"?year="+year+"&season="+season;
+		}
+		let result = await getRankSeasonData(urlApi);
+		console.dir(urlApi)
+	    return result;
+
+	}
+	
 
 });
 

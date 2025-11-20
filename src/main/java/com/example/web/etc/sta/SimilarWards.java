@@ -3,20 +3,32 @@ package com.example.web.etc.sta;
 public class SimilarWards {
 
 
-	public  static Integer maxLength(Integer len,boolean isShort) {
-		Integer cost= (len * (len + 1)) / 2;
+	public  static int maxLength(int len,boolean isShort,int maxLen) {
 
-		return isShort?cost:cost-len;
+		
+		int cost= (len * (len + 1)) / 2;
+		int r=isShort?cost:cost-len;
+		if ((len-maxLen<0)|| maxLen<=0) {
+			return r;
+			
+		}
+		
+		
+		int diff=len-maxLen;
+		if (diff>0) {
+			r=r-maxLength(diff,true,0);
+		}
+		return r;
 	}
 	
 
 	
-	public static Double exec(String target,Integer inputTotalCost
-			,String[] split,boolean isShort) {
+	public static Double exec(String target,int inputTotalCost
+			,String[] split,boolean isShort,int maxLen) {
 
-		Integer targetCost=maxLength(target.length(),isShort);
+		int targetCost=maxLength(target.length(),isShort,maxLen);
 		
-		Integer inputCountMatch=countMatch(split,target);
+		int inputCountMatch=countMatch(split,target);
 		
 		Double inputMatchRatio=(double)inputCountMatch/(double)inputTotalCost;
 		//1以上にならないようにして一致率を計算
@@ -31,7 +43,7 @@ public class SimilarWards {
 		return result;
 		
 	}
-	public static String[] splitStr(String str,Integer totalCost,boolean isShort) {
+	public static String[] splitStr(String str,int totalCost,boolean isShort,int maxLen) {
 		String arr[]=new String[totalCost];
 		
 		Integer index=0;
@@ -40,7 +52,7 @@ public class SimilarWards {
 			for(Integer ii=i+1;ii<=strLen;ii++) {
 				
 				String subStr=str.substring(i,ii);
-				if(!isShort &&subStr.length()<=1) {
+				if((!isShort &&subStr.length()<=1) || subStr.length()>maxLen) {
 					continue;
 				}
 				

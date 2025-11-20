@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -93,10 +94,14 @@ public class WebApplication {
         
         
         //seekImageのパスを修正
+        Log.log(Level.INFO, "修正が必要なパスを探索中");
         Path inputDir=Paths.get(Setting.getRoot(), "content", "anime-web", "upload", "file", "seek-image");
         pathFixDir(inputDir);
         
         Log.log(Level.INFO, "パス修正が完了しました。");
+        
+        
+
         
     }
     private static void pathFixDir(Path inputDir) {
@@ -126,24 +131,20 @@ public class WebApplication {
     		return;
     	}
     	
-    	Log.log(Level.INFO, "パスの修正開始："+inputPath);
+    	//Log.log(Level.INFO, "パスの修正開始："+inputPath);
     	
-    	try (DirectoryStream<Path> stream = Files.newDirectoryStream(inputPath)) {
-    		
-    		
-    	    for (Path path : stream) {
-    	        if (Files.isRegularFile(path)) {
-    	        	DeepPathMover.move(path);
-    	        }
-    	    }
+    	try (Stream<Path> stream = Files.list(inputPath)) {
+    	    stream
+    	        .filter(Files::isRegularFile)
+    	        .forEach(DeepPathMover::move);
     	} catch (IOException e) {
-			// TODO 自動生成された catch ブロック
-			Log.detail(Level.WARNING, "パスの修正で異常な問題が発生:",e);
-		}
+    	    Log.detail(Level.WARNING, "パスの修正で異常な問題が発生:", e);
+    	}
+
     	
     	
 
-    	Log.log(Level.INFO, "imageパスの修正が完了しました。");
+    //	Log.log(Level.INFO, "imageパスの修正が完了しました。");
 
     }
     private static void selectEncoder() throws IOException {

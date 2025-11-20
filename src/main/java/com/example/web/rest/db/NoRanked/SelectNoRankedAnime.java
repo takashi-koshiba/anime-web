@@ -20,8 +20,10 @@ public class SelectNoRankedAnime{
 	    
 		
 		if (season != null && year!=null) {
+			
 	        return noRankedAnimeService.selectAll(year, season);
 	    } else if(season != null) {
+	    	
 	        return noRankedAnimeService.selectAll(year);
 	    }else {
 	    	

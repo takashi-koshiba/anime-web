@@ -2,21 +2,34 @@ package com.example.web.etc.settings.addanime;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.example.web.etc.db.animeVector.insert.AnimeInsertService;
+import com.example.web.etc.db.progVector.insert.ProgInsertService;
 import com.example.web.index.BeanUser;
 import com.example.web.index.GetIP;
 
+
+
 @Controller
 public class animeImg {
+	@Autowired
+	ProgInsertService progInsertService;
+	
+	@Autowired
+	AnimeInsertService animeInsertService;
+	
 	@GetMapping("/anime-web/etc/settings/addanime/")
 	public ModelAndView  start(HttpServletRequest request) {
 		BeanUser user =GetIP.GetNameAndIp(request);
 		ModelAndView model;
 		if(user.isAdmin()) {
 			model= new ModelAndView("anime-web/etc/settings/addanime/index");
+			model.addObject("progCount",progInsertService.countSelect());
+			model.addObject("titleCount",animeInsertService.showCount());
 		}else {
 			 model= new ModelAndView("anime-web/etc/error/admin/index");
 			

@@ -12,6 +12,9 @@
 	position: relative;
 	z-index: 30;
 }
+#searchMenu{
+	font-size: 10px;
+}
 .searchChild{
 	margin:0;
 	

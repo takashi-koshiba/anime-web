@@ -29,7 +29,7 @@
 }
 #menu{
 	width: 350px;
-
+	height:100%;
 	
 	position: fixed;
 	z-index: 106;
@@ -37,12 +37,17 @@ left:-310px;
 	transition: 0.5s all;
 	
 }
+#main-menuLap{
+	height: 100%;
 
+}
 #main-menu{
 	width:310px;
 	background-color: rgb(255, 244, 255);
 	border-radius: 5px;
 	float:left;
+	height: 100%;
+	
 }
 #menu-button{
 	width: 30px;

@@ -142,24 +142,56 @@ def getVideoPath(rootDir,videoId):
     
     return videoPath
 
+def can_still_reach_threshold(values, total_count, threshold=0.89):
+    current_sum = sum(values)
+    current_count = len(values)
+    
+
+
+    # 残り要素数
+    remaining =total_count - current_count
+
+    # 残りを「仮にすべて最大値(=1.0)」として足したときの最大到達値
+    max_possible_total = current_sum + remaining * 1.0
+    max_possible_avg = max_possible_total / total_count
+ 
+    # まだしきい値を超える可能性があるか？
+    return max_possible_avg > threshold
+
+
 def get_root_dir():
     url = f"http://localhost:{PORT}/anime-web/api/setting/"
     response = requests.get(url)
     return json.loads(response.text)['documentRoot']
 
 #フレームごとの最大一致率を取得
-def similar(searchPHash,targetPhash):
+def similar(searchPHash,targetPhash,simple,argsThresh):
     resultSim=[]
     for searchP in searchPHash:
         maxSim=0
+        
+        #しきい値を超えない時点で終了
+        if simple and not can_still_reach_threshold(resultSim,len(searchPHash),argsThresh):
+            resultSim.append(maxSim)
+            
+            continue
+        
         for targetP in targetPhash:
             currernt=max(calcDistance(searchP,targetP[0]),maxSim)
             if currernt>maxSim:
                 maxSim=currernt
 
+            if maxSim==1.0:
+                break;
+            
         if maxSim<similarThreshold:
             maxSim=0
+            
+        
         resultSim.append(maxSim)
+
+        
+        
     return resultSim
 
 if __name__ == "__main__":
@@ -171,9 +203,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('filename')  # 必須の位置引数
     parser.add_argument('-v', '--verbose', action='store_true')
-
+    parser.add_argument('-s', '--simple', action='store_true')
+    parser.add_argument('--thresholdArgs', default='0.89')
+    
     args = parser.parse_args()
-
+    args.thresholdArgs=float(args.thresholdArgs)  
 
     fpath=args.filename
     if(not os.path.isfile(fpath)):
@@ -261,7 +295,7 @@ if __name__ == "__main__":
         
 
         
-        sim=similar(phashes,targetPhash)
+        sim=similar(phashes,targetPhash,args.simple,args.thresholdArgs)
 
 
             
@@ -274,6 +308,10 @@ if __name__ == "__main__":
             
         if currentSim<avgSim:
             currentSim=avgSim
+            
+        if args.simple and args.thresholdArgs<currentSim:
+            break;
+            
     print(currentSim)
    
     

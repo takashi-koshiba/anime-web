@@ -14,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.example.web.etc.db.Animetable.Anime;
 import com.example.web.etc.db.Animetable.AnimeService;
+import com.example.web.etc.db.animeVector.insert.AnimeInsertService;
 import com.example.web.index.BeanUser;
 import com.example.web.index.GetIP;
 
@@ -23,6 +24,9 @@ public class alias {
 	
 	@Autowired
 	AnimeService animeService;
+	
+	@Autowired
+	AnimeInsertService animeInsertService;
 	
 	@GetMapping("/anime-web/anime/video/video-alias/{id}")
 	public ModelAndView  start(@PathVariable("id") Integer id,HttpServletRequest request) {
@@ -59,6 +63,12 @@ public class alias {
 		}
 		
 		insertAlias(models.getTitle(),models.getId());
+		
+		//ベクトル削除
+		animeInsertService.delAnimeVector(models.getId());
+		//ベクトル追加
+		animeInsertService.insertTitle(-1);
+		
 		ModelAndView model= new ModelAndView(path);
 		return model;
 

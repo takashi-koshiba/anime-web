@@ -15,10 +15,12 @@ document.addEventListener("DOMContentLoaded",function(){
 	let extension=document.getElementsByClassName('extension'); 
 	let error=document.getElementById('error');
 		
+
+	
 	imgUploadButton.addEventListener("click",function(){
 		//let files=selectFile.files;
 		let fileCount=base64.length;
-
+		
 		
 	
 		if(fileCount>0){
@@ -59,9 +61,121 @@ document.addEventListener("DOMContentLoaded",function(){
 		}else{
 			document.getElementById('result').innerText="0/0";
 			
+						
 		}
+		
+
 
 	})
+	//番組説明
+	let remainingCount=document.getElementById('remainingCount');
+	let progAjaxButton =document.getElementById('progAjaxButton');
+	let vectorArea=document.getElementById('vectorArea');
+	progAjaxButton.addEventListener("click",function(){
+		let progcountAjax = new class_ajax('/anime-web/api/db/vectorAPI/progInsert/showCount');
+		progcountAjax.run();
+		progcountAjax.xhr.onload = function() {
+			if (this.status !== 200) {
+			    vectorArea.value += `HTTPエラー: ${this.status}`+"\n";
+			    return;
+			}
+			
+			let res = this.response;
+			
+			let progInsertAjax = [];
+			if (!isNaN(res)) {
+				vectorArea.value="実行開始"+"\n";
+				for(let i=0;i<res;i++){
+					progInsertAjax[i] = new class_ajax('/anime-web/api/db/vectorAPI/progInsert/1');
+					progInsertAjax[i].xhr.onload = function() {
+						if (this.status !== 200) {
+						    vectorArea.value += `HTTPエラー: ${this.status}`+"\n";
+						    return;
+						}
+						
+						remainingCount.innerText=(res-i);
+						if (i + 1 < res) {
+							progInsertAjax[i+1].run();
+						}
+						else{
+							
+						}
+											
+						
+					}
+					progInsertAjax[i].xhr.addEventListener('error', function() {
+								vectorArea.value+="通信に失敗しました。"+"\n";
+					});
+				}
+				progInsertAjax[0].run();
+				progInsertAjax[0].xhr.addEventListener('error', function() {
+							vectorArea.value+="通信に失敗しました。"+"\n";
+				});
+			} else {
+			    vectorArea.value+="エラー"+"\n"
+			}
+			
+		}
+		progcountAjax.xhr.addEventListener('error', function() {
+					vectorArea.value="通信に失敗しました。"+"\n";
+		});
+		
+	})
+	
+	//番組名検索ベクトル
+	let remainingTitleCount=document.getElementById('remainingTitleCount');
+	let titleAjaxButton =document.getElementById('titleAjaxButton');
+	let vectorTitleArea=document.getElementById('vectorTitleArea');
+	titleAjaxButton.addEventListener("click",function(){
+			let titlecountAjax = new class_ajax('/anime-web/api/db/vectorAPI/AnimeVector/showCount');
+			titlecountAjax.run();
+			titlecountAjax.xhr.onload = function() {
+				if (this.status !== 200) {
+				    vectorTitleArea.value += `HTTPエラー: ${this.status}`+"\n";
+				    return;
+				}
+				
+				let res = this.response;
+				
+				let titleInsertAjax = [];
+				if (!isNaN(res)) {
+					vectorTitleArea.value="実行開始"+"\n";
+					for(let i=0;i<res;i++){
+						titleInsertAjax[i] = new class_ajax('/anime-web/api/db/vectorAPI/AnimeVector/1');
+						titleInsertAjax[i].xhr.onload = function() {
+							if (this.status !== 200) {
+							    vectorTitleArea.value += `HTTPエラー: ${this.status}`+"\n";
+							    return;
+							}
+							
+							remainingTitleCount.innerText=(res-i);
+							if (i + 1 < res) {
+								titleInsertAjax[i+1].run();
+							}
+							else{
+								
+							}
+												
+							
+						}
+						titleInsertAjax[i].xhr.addEventListener('error', function() {
+									vectorTitleArea.value+="通信に失敗しました。"+"\n";
+						});
+					}
+					titleInsertAjax[0].run();
+					titleInsertAjax[0].xhr.addEventListener('error', function() {
+								vectorTitleArea.value+="通信に失敗しました。"+"\n";
+					});
+				} else {
+				    vectorTitleArea.value+="エラー"+"\n"
+				}
+				
+			}
+			titlecountAjax.xhr.addEventListener('error', function() {
+						vectorTitleArea.value="通信に失敗しました。"+"\n";
+			});
+			
+		})
 }) 
 
 

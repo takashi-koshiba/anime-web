@@ -37,7 +37,7 @@ import com.example.web.uploader.sendFile.fileType;
 public class files {
 	@Autowired
 	UploadFileService uploadFileService;
-
+	int maxLen=2;
 	
 	//検索にヒットするファイルを取得
 	@GetMapping("/anime-web/getFile/view/api/file")
@@ -69,8 +69,8 @@ public class files {
 		for (int i = 0; i < inputs.length; i++) {
 		    inputLen[i] = inputs[i].length();
 		    isShort[i] = inputLen[i] < 4;
-		    maxCost[i] = SimilarWards.maxLength(inputLen[i], isShort[i]);
-		    splitStr[i] = SimilarWards.splitStr(inputs[i], maxCost[i], isShort[i]);
+		    maxCost[i] = SimilarWards.maxLength(inputLen[i], isShort[i],maxLen);
+		    splitStr[i] = SimilarWards.splitStr(inputs[i], maxCost[i], isShort[i],maxLen);
 		}
 		
 		
@@ -106,7 +106,7 @@ public class files {
 
 			
 			for(Integer j=0;j<inputs.length;j++) {
-				dist+=SimilarWards.exec(searchTxt,maxCost[j],splitStr[j],isShort[j])*((double)1/(double)inputs.length);
+				dist+=SimilarWards.exec(searchTxt,maxCost[j],splitStr[j],isShort[j],maxLen)*((double)1/(double)inputs.length);
 			}
 			dist=dist/(double) inputs.length;
 

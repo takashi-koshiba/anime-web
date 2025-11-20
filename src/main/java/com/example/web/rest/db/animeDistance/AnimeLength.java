@@ -1,16 +1,18 @@
 package com.example.web.rest.db.animeDistance;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.web.etc.db.Animetable.Anime;
 import com.example.web.etc.db.Animetable.AnimeService;
+import com.example.web.etc.db.animeVector.select.AnimeStrVector;
+import com.example.web.etc.db.animeVector.select.AnimeVecDB;
 import com.example.web.etc.sta.Kakasi;
 import com.example.web.etc.sta.SimilarWards;
 import com.example.web.etc.sta.TextRep;
@@ -20,11 +22,33 @@ public class AnimeLength {
 	@Autowired
 	AnimeService animeService;
 	
+	@Autowired
+	AnimeStrVector animeStrVector;
 	
-	
-	//@GetMapping("/anime-web/api/db/animeLen/{str}")
-	@PostMapping("/anime-web/api/db/animeLen/")
-	public List<StrDistance> start(@RequestParam("txt") String str)  {
+	//@GetMapping("/anime-web/api/db/animeLen/{txt}")
+	@PostMapping("/anime-web/api/db/animeLen/{modeIndex}")
+	public List<StrDistance> start(@PathVariable("modeIndex")int modeIndex, @RequestParam("txt") String str)  {
+		//String inputText=Kakasi.main(TextRep.main(str ,true),"-JH -KH");
+		String inputText=Kakasi.main(TextRep.main(str ,true),"-KH ");
+		
+		
+		List<AnimeVecDB> vecList = animeStrVector.selectStr(inputText, modeIndex)
+			    .stream()
+			    .map(v -> (AnimeVecDB) v)   // VecDB → AnimeVecDB にキャスト
+			    .collect(Collectors.toList());
+
+			List<StrDistance> distances = vecList.stream()
+			    .map(v -> {
+			        StrDistance sd = new StrDistance();
+			        sd.setId(v.getVecParent_id() != null ? v.getVecParent_id().intValue() : 0);
+			        sd.setDistance((double) v.getMaxMatched());
+			        sd.setOriginal(v.getOriginal());
+			        sd.setTitle(v.getTitle());
+			        return sd;
+			    })
+			    .collect(Collectors.toList());
+			return distances;
+		/*
 		String inputText=Kakasi.main(TextRep.main(str ,true),"-JH -KH");
 
 		inputText = inputText.replace("　", " ");
@@ -85,6 +109,7 @@ public class AnimeLength {
 		animeList=null;
 		
 		return distanceList;
+		
 	}
 
 	private List<StrDistance> insertDistList(List<StrDistance> distanceList,Anime anime,Double dist) {
@@ -98,13 +123,14 @@ public class AnimeLength {
 		distanceList.add(strDistance);
 		
 		return distanceList;
+		*/
 	}
 
 
 	
 	private Double getMatchStrCount(String str,Anime  target,Integer maxCost,String[] splitStr,Boolean isShort) {
-		
-		return (double)SimilarWards.exec(target.getFoldername(),maxCost,splitStr,isShort);
+		int maxLen=2;
+		return (double)SimilarWards.exec(target.getFoldername(),maxCost,splitStr,isShort,maxLen);
 		
 	}
 

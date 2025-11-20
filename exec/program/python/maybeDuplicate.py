@@ -35,9 +35,9 @@ logger.propagate = False
 
 
 
-def simTest(fname,output_path):
+def simTest(fname,output_path,thresholdArgs):
     proc = subprocess.run(
-        ['python', simPath, fname],
+        ['python', simPath, fname,"-s","--thresholdArgs",thresholdArgs],
         capture_output=True, text=True
     )
 
@@ -66,7 +66,7 @@ def simTest(fname,output_path):
 
 
 if __name__ == "__main__":
-    logger.debug('start')
+    logger.debug('maybeDuplicate.py is started')
     ############環境に応じて変更してください########################
     input_dir = r"D:\TV\ts\encoding"  #重複を確認したいtsファイルが有るパス
     maybe_duplicates_dir = r"D:\TV\ts\duplicate\maybeDupli"   #重複があった際の移動先ディレクトリ
@@ -85,7 +85,8 @@ if __name__ == "__main__":
 
     for f in files:
         full_path = os.path.abspath(os.path.join(input_dir, f))
-        sim=simTest(full_path,confirmed_unique_dir)
+        logger.debug("処理開始:"+ full_path)
+        sim=simTest(full_path,confirmed_unique_dir,"0.75")
         logger.debug(type(sim))
         logger.debug(str(sim)+" : "+full_path)
         
@@ -93,18 +94,21 @@ if __name__ == "__main__":
 
 
             
-        if sim and  sim>0.8:
+        if isinstance(sim, (int, float)) and sim and  sim>0.75:
             logger.debug("重複確定！")
             
             shutil.move(full_path, delDir)
         
-        elif sim and sim>0.7:
+        elif isinstance(sim, (int, float)) and sim and sim>0.70:
             logger.debug("たぶん重複！")
 
             shutil.move(full_path, maybe_duplicates_dir)
         else :
             logger.debug("重複なし")
             shutil.move(full_path, confirmed_unique_dir)
+
+
+    logger.debug("重複確認が正常に終了しました。")
 
 
          

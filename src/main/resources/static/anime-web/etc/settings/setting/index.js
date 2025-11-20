@@ -18,10 +18,18 @@ document.addEventListener("DOMContentLoaded",function(){
 		
 		videoPathResult.innerText=await isExistPath(this.value);
 		
+	});
+	/*
+	let progPath=document.getElementById('progPath');
+	let progPathResult=document.getElementById('progPathResult');
+	progPath.addEventListener('input',async function(){
+
+		
+		progPathResult.innerText=await isExistPath(this.value);
+		
 	})
+*/
 	
-
-
 	
 	let button =document.getElementById('button');
 	button.addEventListener('click',function(){
@@ -32,7 +40,7 @@ document.addEventListener("DOMContentLoaded",function(){
 			let ajax2 = new class_ajax('/anime-web/api/change-directory/');
 
 			ajax2.args('path',root.value);
-
+			ajax2.args('progPath',progPath.value);
 			ajax2.args('videoPath',videoPath.value);
 			ajax2.args('encoder',encoder.value);
 			

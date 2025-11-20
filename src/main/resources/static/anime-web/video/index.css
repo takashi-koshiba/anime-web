@@ -97,7 +97,7 @@ p{
 	
 
 }#poster{
-	
+	margin-top:20px;
 	
 }
 #left_main_child .label{
@@ -128,7 +128,7 @@ p{
 
 #poster_img{
 
-	width: 80%;
+	width: 100%;
 
 	margin: auto;
 	display: block;
@@ -163,7 +163,7 @@ ul li p{
 	padding-left: 40px;
 
 }#left_main_child  .sub{
-	margin-top: 20px;
+
 	border: 2px solid lightgray;
 	
 }

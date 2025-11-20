@@ -34,7 +34,11 @@
 			<div id="left_div">
 				<h2>検索</h2>
 					<hr>
-					<input type="text" id="search" placeholder="漢字NG！">
+					<input type="text" id="search">
+					<select id="searchMenu" name="searchMenu">
+						<option value="1">タイトル</option>
+						<option value="2" >番組説明</option>
+					</select>
 					<div id="searchResult" style="position: absolute;">
 					</div><!--searchResult-->
 					
@@ -119,6 +123,20 @@
 					</div>	<!--rank-scroll-->																																																			<!--kakeeeee-->
 				</div><!--rank-->
 			
+				
+				<h2>新着番組</h2><hr>		
+												
+					<div class="rank" id="new_program">
+						<div class="scrollButton leftButton"></div>
+							<div class="rank-scroll">
+								<div class="rank-div">																										</div><!--rank-anime-->
+								</div><!--rank-div-->
+							<div class="scrollButton rightButton"></di>
+						</div>	<!--rank-scroll-->																																																			<!--kakeeeee-->
+					</div><!--extended_program -->
+				
+				
+				
 				<div id="seasonTitle_div">
 					<h2 id="season_h2">シーズン別ランキング</h2>
 					<select id="animeyear"></select>

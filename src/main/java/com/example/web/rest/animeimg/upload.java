@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import com.example.web.etc.db.Animetable.Anime;
 import com.example.web.etc.db.Animetable.AnimeService;
+import com.example.web.etc.db.animeVector.insert.AnimeInsertService;
 import com.example.web.etc.sta.ExecProcessget;
 import com.example.web.etc.sta.Kakasi;
 import com.example.web.etc.sta.Setting;
@@ -30,6 +31,9 @@ public class upload {
 	
 	@Autowired
 	AnimeService animeService;
+	
+	@Autowired 
+	AnimeInsertService animeInsertService;
 	
 	@PostMapping("/anime-web/api/upload")
 
@@ -75,8 +79,8 @@ public class upload {
 			         anime.setFoldername(TextRep.main(Kakasi.main(foldername,"-JH -KH"),false));
 			         animeService.insert(anime);
 			         
+			         animeInsertService.insertTitle(-1);
 			         
-
 			         
 			         return "ok";
 			         

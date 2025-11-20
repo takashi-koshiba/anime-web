@@ -8,10 +8,10 @@ document.addEventListener("DOMContentLoaded",function(){
 
 		if(topItem_groundHeight<=this.pageYOffset){
 			left.style.position="fixed";	
-			left.style.top=(leftTop-topItem_groundHeight)+"px";
+			left.style.marginTop=-(leftTop-topItem_groundHeight)-80+"px";
 		}else{
 			left.style.position="absolute";	
-			left.style.top=149+"px";
+			left.style.marginTop=0+"px";
 	
 		}
 		

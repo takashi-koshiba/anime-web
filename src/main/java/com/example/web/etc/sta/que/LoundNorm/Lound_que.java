@@ -84,12 +84,12 @@ public class Lound_que extends Que  {
 			);
 
 		try {
-			System.out.println("jikkoumaemae");
+			
 			String j=jsonData(firstPass);
-			System.out.println("jikkouk");
+			
 			Log.log(Level.INFO, j);
 			
-			System.out.println("jikkoumae");
+			
 			Map<String,String> audioParam= getValuesFromJson(j);
 			if (audioParam.values().stream().anyMatch(Objects::isNull)) {
 			    Log.log(Level.WARNING, "loudnorm JSON が解析できません");  

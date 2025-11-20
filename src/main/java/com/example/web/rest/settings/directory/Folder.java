@@ -4,6 +4,7 @@ package com.example.web.rest.settings.directory;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.logging.Level;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.web.etc.sta.Log;
 import com.example.web.etc.sta.PathClass;
 import com.example.web.etc.sta.Setting;
 import com.example.web.index.BeanUser;
@@ -44,21 +46,32 @@ public class Folder {
 		Path documentRoot=Paths.get(path).toAbsolutePath().normalize();
 		Path videopath=Paths.get(videoPath).toAbsolutePath().normalize();
 		
-		System.out.println(documentRoot);
 		if(!PathClass.IsExistFolder(documentRoot.toString())) {
-			System.out.println("指定されたフォルダは存在しません"+documentRoot);
+
+			Log.log(Level.WARNING, "指定されたフォルダは存在しません"+documentRoot);
+			
 			result=1;
 		}else if(!user.isAdmin()) {
-			System.out.println("管理者以外のユーザーでアクセスがありました。");
+
+			Log.log(Level.WARNING, "管理者以外のユーザーでアクセスがありました。");
+			
 			result=2;
 		}else if(!PathClass.IsExistFolder(videopath.toString())) {
-			System.out.println("指定された動画のディレクトリは存在しません"+videopath);
+			Log.log(Level.WARNING, "指定された動画のディレクトリは存在しません"+videopath);
+		
 			result=4;
 		}
+
+		
+		
 		else {
 			try {
 				Setting.setRoot(documentRoot.toString());
 				Setting.setVideoPath(videopath.toString());
+				
+
+			//	Setting.setProgPath(progPath);
+				
 				//フォルダを作成
 				result=Setting.makeDirectory()? 0 : 2;
 				
@@ -69,6 +82,13 @@ public class Folder {
 				
 			}
 		}
+		/*
+		if(!PathClass.IsExistFolder(progPath.toString())) {
+			Log.log(Level.INFO, "指定された字幕パスは存在しません。　字幕を使用しない場合は無視できます。"+progPath);
+			
+			//result=5;
+		}
+		*/
 		Setting.setEncoder(enc);
 		
 		System.out.println(Setting.getRoot());
