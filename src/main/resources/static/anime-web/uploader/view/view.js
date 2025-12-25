@@ -219,7 +219,17 @@ document.addEventListener("DOMContentLoaded",function(){
 
 			//'動画の一時停止用に見えないdivを追加'
 			itemView.appendChild(addPauseDiv()); 
+			let skipDiv_right_child=document.getElementById('skipDiv_right_child');
+			skipDiv_right_child.addEventListener("click", function () {
 			
+				seekKey(30);
+			});
+			
+			let skipDiv_left_child =document.getElementById('skipDiv_left_child');
+			skipDiv_left_child.addEventListener("click", function () {
+
+				seekKey(-30);
+			});
 			//プログレスバーを表示
 			let progress = document.createElement("progress");
 			progress.value=0;
@@ -604,15 +614,20 @@ document.addEventListener("DOMContentLoaded",function(){
 	function addEventPauseDiv(){
 		let pauseDiv = document.getElementById("pauseDiv");
 		let media= document.getElementById("playable");
-
+		let skipDiv=document.getElementById("skipDiv");
 		
 		if(pauseDiv==null) return;
 		pauseDiv.addEventListener('click',function(){
 			if (media.paused) {
 			    media.play(); // 再生
-
+				pauseDiv.style.backgroundColor = 'rgba(0, 0, 0, 0.0)';
+				
+				skipDiv.style.backgroundColor = 'rgba(0, 0, 0, 0.0)';
+				skipDiv.style.display = "none";
 			} else {
 			    media.pause(); // 一時停止
+				pauseDiv.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+				skipDiv.style.display = "flex";
 			}
 		});
 		//ダブルクリックでフルスクリーンにする
@@ -692,7 +707,70 @@ document.addEventListener("DOMContentLoaded",function(){
 		pauseDiv.style.objectFit = "contain";  
 		pauseDiv.style.position="absolute";
 		
-		pauseDiv.style.opacity=0.3
+		let skipDiv = document.createElement("div");
+		skipDiv.id = "skipDiv";
+		skipDiv.style.height = "100%";
+		skipDiv.style.width = "100%";
+		skipDiv.style.display = "none"; 
+		
+
+		
+		
+		let skipDiv_left = document.createElement("div");
+		skipDiv_left.id = "skipDiv_left";
+		skipDiv_left.style.height = "100%";
+		skipDiv_left.style.width = "50%";
+		skipDiv_left.style.display = "flex";
+		skipDiv_left.style.justifyContent = "center"; // 横中央
+		skipDiv_left.style.alignItems = "center";     // 縦中央
+
+		let skipDiv_left_child = document.createElement("div");
+		skipDiv_left_child.id = "skipDiv_left_child";
+		skipDiv_left_child.style.width = "100px";
+		skipDiv_left_child.style.height = "100px";
+		skipDiv_left_child.style.width = "100px";
+		skipDiv_left_child.style.height = "100px";
+		skipDiv_left_child.style.backgroundImage = 'url("/anime-web/uploader/view/icons/skipBackward.avif")';
+		skipDiv_left_child.style.backgroundRepeat="no-repeat";
+		skipDiv_left_child.style.backgroundSize="cover";
+		skipDiv_left_child.style.display = "flex";
+		skipDiv_left_child.style.alignItems = "center";     // 縦中央
+		skipDiv_left_child.style.justifyContent = "center"; // 横中央	
+		
+		skipDiv_left.append(skipDiv_left_child);
+		
+		let skipDiv_right = document.createElement("div");
+		skipDiv_right.id = "skipDiv_right";
+		skipDiv_right.style.height = "100%";
+		skipDiv_right.style.width = "50%";
+		skipDiv_right.style.display = "flex";
+		skipDiv_right.style.justifyContent = "center"; // 横中央
+		skipDiv_right.style.alignItems = "center";     // 縦中央
+				
+					
+		
+		
+		let skipDiv_right_child = document.createElement("div");
+		skipDiv_right_child.id = "skipDiv_right_child";
+		skipDiv_right_child.style.width = "100px";
+		skipDiv_right_child.style.height = "100px";
+		skipDiv_right_child.style.backgroundImage = 'url("/anime-web/uploader/view/icons/skipForward.avif")';
+		skipDiv_right_child.style.backgroundRepeat="no-repeat";
+		skipDiv_right_child.style.display = "flex";
+		skipDiv_right_child.style.alignItems = "center";     // 縦中央
+		skipDiv_right_child.style.justifyContent = "center"; // 横中央		
+		skipDiv_right_child.style.backgroundSize="cover";
+		
+
+		
+		skipDiv_right.append(skipDiv_right_child);
+		
+		
+		skipDiv.append(skipDiv_left, skipDiv_right);
+
+		
+		pauseDiv.append(skipDiv);
+		
 		return pauseDiv;
 	}
 

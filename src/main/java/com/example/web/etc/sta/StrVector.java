@@ -135,7 +135,7 @@ public abstract class StrVector<T extends VecDB> {
 	        )
 	        .collect(Collectors.toList());
 
-	    System.out.println(sortedList);
+	    //System.out.println(sortedList);
 	    return sortedList;
 	}
 
@@ -153,7 +153,7 @@ public abstract class StrVector<T extends VecDB> {
 
 	        String s = split[i];
 	        
-	        long avgNgram = strToVecNgram1D(s, 512, 2);
+	        long avgNgram = strToVecNgram1D(s, 1, 2);
 	        
 
 	        avgNgrams[i]=avgNgram;

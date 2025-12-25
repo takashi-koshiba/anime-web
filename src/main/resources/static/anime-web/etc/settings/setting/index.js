@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded",function(){
 			let ajax2 = new class_ajax('/anime-web/api/change-directory/');
 
 			ajax2.args('path',root.value);
-			ajax2.args('progPath',progPath.value);
+		
 			ajax2.args('videoPath',videoPath.value);
 			ajax2.args('encoder',encoder.value);
 			

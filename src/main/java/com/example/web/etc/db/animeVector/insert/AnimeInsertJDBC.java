@@ -91,6 +91,9 @@ public class AnimeInsertJDBC implements AnimeInsertrDao {
     
     //アニメのタイトルや別名を取得
     private List<AnimeInsert> selectAll(int tableId,int limitter){
+    	
+    	List<Object> arary = new ArrayList<>();
+    	
     	String sql = "select id,txt from ( "
     			+ "select id,txt from ( "
     			+ "    select id,originalName as txt from anime "
@@ -101,14 +104,16 @@ public class AnimeInsertJDBC implements AnimeInsertrDao {
     			+ "where (id) not in (select parentId from strvecparent where tableId = ?     and parentId is not null and childId is not null) "
     			
     			;
+    	arary.add(tableId);
     	if (limitter>0) {
     		sql+="and id in (select id from (select id from anime union select anime_id as id from alias)as t "
     				+ "where (id) not in (select parentId from strvecparent where tableId = ?     and parentId is not null and childId is not null)  ) limit "+limitter;
+    		arary.add(tableId);
     	}
-    	
+    
 
     	
-    	List<Map<String, Object>> result = jdbc.queryForList(sql,tableId,tableId);
+    	List<Map<String, Object>> result = jdbc.queryForList(sql,arary.toArray());
     	List<AnimeInsert> animeList = new ArrayList<>();
 		for(Map<String,Object>map:result) {
 			
