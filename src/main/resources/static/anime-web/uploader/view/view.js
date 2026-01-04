@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded",function(){
 		pageQty:5//表示するページの数
 	}
 	let items=[];
+	let videoLastIndex=-1;
 	(async function ()  {
 	  items =await exec(); // execの処理が完了するまで待つ
 	})();
@@ -66,7 +67,7 @@ document.addEventListener("DOMContentLoaded",function(){
 		}
 	}
 	
-	function itemAdd(type,originalType,alias){
+	function itemAdd(type,originalType,alias,index){
 		//let type = obj.getAttribute("itemtype");
 		//let alias=obj.getAttribute("title");
 		
@@ -92,6 +93,35 @@ document.addEventListener("DOMContentLoaded",function(){
 		}else if(type=="VIDEO" &&getQtyValueOfbutton()!=-2){
 			elem=document.createElement("video");
 			elem.setAttribute('id','playable');
+			
+			elem.addEventListener("ended", () => {
+				playNext();
+			});
+			current=index;
+			function playNext(){
+				let start = index;
+				
+				let nextAlias = null;
+
+				do {
+				    current++;
+					console.dir(current);
+				    if (current >= items.length) {
+				        current = 0;
+				    }
+
+				    if (items[current].type === "VIDEO") {
+				        nextAlias = items[current].alias;
+				        break;
+				    }
+
+				} while (current !== start && videoLastIndex !== current);
+				videoLastIndex=current;//次の動画が読み込みできないときに無限ループになるのを防ぐ
+
+				
+				hls.loadSource(path + nextAlias);
+				elem.play();
+			}
 			//elem.setAttribute("controls", "");
 			//elem.controls = true; // 常に表示
 			let imgPath = "/anime-web/get-file/anime/image/seekMax/"+alias+"/max.webp";
@@ -125,8 +155,14 @@ document.addEventListener("DOMContentLoaded",function(){
 				hls.on(Hls.Events.ERROR, function (event, data) {
 				  console.error("HLSエラー発生:", data.details);
 				  if(data.details=="levelParsingError" || data.details=="levelLoadError"){
-					alert("読み込みに失敗しました。リロードしてください。再度お試しください。")
-					window.location.reload();
+					
+					console.dir(elem.loop);
+					if(!elem.loop){
+						playNext();
+						return;
+					}
+					alert("読み込みに失敗しました。")
+					
 					throw new Error("動画の読み込みに失敗しました。")
 				  }
 
@@ -185,6 +221,12 @@ document.addEventListener("DOMContentLoaded",function(){
 			    hls.on(Hls.Events.ERROR, function (event, data) {
 			      console.error('HLS error occurred: ', data);
 				  hls.recoverMediaError();
+				  
+				  if(!elem.loop){
+				  	playNext();
+				  	
+				  }
+				  
 			    });
 				hls.on(Hls.Events.LEVEL_SWITCHED, function (event, data) {
 				       let newQuality = data.level; // 新しい画質のレベル
@@ -327,11 +369,12 @@ document.addEventListener("DOMContentLoaded",function(){
 			//リピート
 			
 			
-			elem.loop=true;
+			elem.loop=false;
 			let repeatIcon = document.createElement("div");
 			repeatIcon.setAttribute('id','repeatIcon');
 			repeatIcon.style.backgroundImage = 'url("/anime-web/uploader/view/icons/repeat.avif")';
 			videoContorols.appendChild(repeatIcon); 
+			repeatIcon.style.opacity = "0.6";
 			repeatIcon.addEventListener('click', function(e) {
 				
 				
@@ -899,11 +942,11 @@ document.addEventListener("DOMContentLoaded",function(){
 		let fileElem = document.getElementsByClassName('fileElem')[0];
 		let max = f + l > items.length ? items.length : f + l;
 		let min = f > max ? max : f;
-	
+		console.dir(items);
 		
 		async function loadOne(i) {
 			if (i >= max) return;
-			console.dir((i)+":"+(max));
+			//console.dir((i)+":"+(max));
 			let clonefileElem = fileElem.cloneNode(true);
 			clonefileElem.style.display = "block";
 
@@ -913,12 +956,13 @@ document.addEventListener("DOMContentLoaded",function(){
 			let imgUrl=items[i]["url"];
 
 			img.setAttribute("src", imgUrl);
-
+			
+			img.setAttribute("index", i);
 			img.setAttribute("itemtype", items[i]["type"]);
 			img.setAttribute("originaltype", items[i]["type"]);
 			img.setAttribute("loading", "lazy");
 			img.addEventListener("click", function () {
-				itemAdd(this.getAttribute("itemtype"), this.getAttribute("originalType"), this.getAttribute("title"));
+				itemAdd(this.getAttribute("itemtype"), this.getAttribute("originalType"), this.getAttribute("title"),i);
 			});
 			
 
@@ -953,7 +997,7 @@ document.addEventListener("DOMContentLoaded",function(){
 
 	async function exec(){
 		const items = await fileApi(); 
-		console.dir(items);
+		//console.dir(items);
 		pageObj.pagemax=Math.ceil(items.length/pageObj.itemLimit);
 		let offset =pageObj.current*pageObj.itemLimit;
 		await insertElem(items,offset,pageObj.itemLimit); 
@@ -1061,8 +1105,8 @@ document.addEventListener("DOMContentLoaded",function(){
 			let type = media.getAttribute("itemtype");
 			let originalType=media.getAttribute("originalType");
 			let alias=media.getAttribute("title");
-
-		  	itemAdd(type,originalType,alias);
+			let index=media.getAttribute("index");
+		  	itemAdd(type,originalType,alias,index);
 
 			qtyValueTemp=getQtyValueOfbutton();
 			//return;
