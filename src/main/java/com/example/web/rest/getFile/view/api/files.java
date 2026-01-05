@@ -4,6 +4,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
@@ -85,7 +86,10 @@ public class files {
 			}
 			long endTime = System.currentTimeMillis();
 			 Log.log(Level.INFO, "SQL実行時間：" + (endTime - startTime) + " ms");
-			return fileInfoList ;
+			
+			 if(columnId==-1)Collections.shuffle(fileInfoList);
+			 //
+			 return fileInfoList ;
 		}
 		
 		

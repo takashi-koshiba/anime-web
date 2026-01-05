@@ -118,6 +118,7 @@ public class Controll4 {
 		listType.add(new Type(sortColumnEnum.DATE.ordinal() ,listColumns.get(sortColumnEnum.DATE.ordinal()).getColumnName()));
 		
 		listType.add(new Type(sortColumnEnum.NAME.ordinal() ,listColumns.get(sortColumnEnum.NAME.ordinal()).getColumnName()));
+		listType.add(new Type(sortColumnEnum.SHUFFLE.ordinal() ,listColumns.get(sortColumnEnum.SHUFFLE.ordinal()).getColumnName()));
 		
 		return listType;
 	}

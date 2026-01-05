@@ -12,6 +12,10 @@ document.addEventListener("DOMContentLoaded",function(){
 	  items =await exec(); // execの処理が完了するまで待つ
 	})();
 	
+	let progressMoveHandler = null;
+	let progressClickHandler=null;
+	let canvasMoveHandler = null;
+	
 	
 	let itemViewBack =document.getElementById("itemViewBack");
 	let hls;
@@ -74,7 +78,9 @@ document.addEventListener("DOMContentLoaded",function(){
 		//let originalType=obj.getAttribute("originalType");
 		//console.dir(originalType);
 		let path="/anime-web/get-file/upload/data/view/";
-		
+		if(!canAccess(path+alias)){
+			return;
+		}
 		
 		let itemView = document.getElementById("itemView");
 		
@@ -95,10 +101,11 @@ document.addEventListener("DOMContentLoaded",function(){
 			elem.setAttribute('id','playable');
 			
 			elem.addEventListener("ended", () => {
+				console.log("動画の再生が終わりました。");
 				playNext();
 			});
 			current=index;
-			function playNext(){
+			async function  playNext(){
 				let start = index;
 				
 				let nextAlias = null;
@@ -117,10 +124,35 @@ document.addEventListener("DOMContentLoaded",function(){
 
 				} while (current !== start && videoLastIndex !== current);
 				videoLastIndex=current;//次の動画が読み込みできないときに無限ループになるのを防ぐ
+				
+				const url = path + nextAlias;
+
+				const ok = await canAccess(url);
+				if(!ok){
+					console.warn("動画のロードに失敗しました。;",url);
+					return;
+				}
+				
+				console.dir(progress);
 
 				
-				hls.loadSource(path + nextAlias);
+				hls.loadSource(url);
+				if (progressMoveHandler) {
+					
+				    progress.removeEventListener('mousemove', progressMoveHandler);
+				}
+				if (canvasMoveHandler) {
+				    canvas.removeEventListener('mousemove', canvasMoveHandler);
+				}
+				if(progressClickHandler){
+					progress.removeEventListener('click', progressClickHandler);
+				}
+				
 				elem.play();
+
+				
+				addProgressEvents(progress,elem,canvas,nextAlias);
+				
 			}
 			//elem.setAttribute("controls", "");
 			//elem.controls = true; // 常に表示
@@ -158,7 +190,7 @@ document.addEventListener("DOMContentLoaded",function(){
 					
 					console.dir(elem.loop);
 					if(!elem.loop){
-						playNext();
+						//playNext();
 						return;
 					}
 					alert("読み込みに失敗しました。")
@@ -218,16 +250,30 @@ document.addEventListener("DOMContentLoaded",function(){
 
 				}
 				
-			    hls.on(Hls.Events.ERROR, function (event, data) {
-			      console.error('HLS error occurred: ', data);
-				  hls.recoverMediaError();
-				  
-				  if(!elem.loop){
-				  	playNext();
-				  	
-				  }
-				  
-			    });
+				let sessionDead = false;
+
+				hls.on(Hls.Events.ERROR, async function (event, data) {
+				    console.error("HLS error:", data);
+
+				    if (sessionDead) return;
+
+				    // NETWORK_ERROR はまず疑う
+				    if (data.fatal && data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+				        const ok = await canAccess(path + alias);
+				        if (!ok) {
+				            sessionDead = true;
+				            hls.destroy();
+				           
+				            return;
+				        }
+				        
+				        return;
+				    }
+
+				    if (data.fatal && data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+				        hls.recoverMediaError();
+				    }
+				});
 				hls.on(Hls.Events.LEVEL_SWITCHED, function (event, data) {
 				       let newQuality = data.level; // 新しい画質のレベル
 				       let bitrate = hls.levels[newQuality].bitrate; // ビットレート情報
@@ -276,6 +322,8 @@ document.addEventListener("DOMContentLoaded",function(){
 			let progress = document.createElement("progress");
 			progress.value=0;
 			progress.setAttribute('id','progress');
+
+			
 			addProgressEvents(progress,elem,canvas,alias);
 			itemView.appendChild(progress); 
 			
@@ -512,69 +560,74 @@ document.addEventListener("DOMContentLoaded",function(){
 	}
 	  function  addProgressEvents(progress,video,canvas,alias){
 		
-		canvas.addEventListener('mousemove',async function(e){
-			const canvas = document.getElementById("canvasSeek");
-			const cvs = canvas.getContext("2d");
-			cvs.clearRect(0, 0, canvas.width, canvas.height);
+		canvasMoveHandler=		async function(e){
+					const canvas = document.getElementById("canvasSeek");
+					const cvs = canvas.getContext("2d");
+					cvs.clearRect(0, 0, canvas.width, canvas.height);
 
-		});
+				};
+		
+		canvas.addEventListener('mousemove',canvasMoveHandler);
 	
 		let prevFrame=-1;
 		let canLoadSeekImg=true;
-		progress.addEventListener('mousemove',async function(e){
+		
+		progressMoveHandler=async function(e){
 			let percent=prgPos(e,this)
 
-			const canvas = document.getElementById("canvasSeek");
-			const cvs = canvas.getContext("2d");
-			//itemView.appendChild(canvas);
-			const getCanvasWidth = () => {
-			    const itemV = canvas;
-			    const style = window.getComputedStyle(canvas);
-			    const marginLeft = parseFloat(style.marginLeft) || 0;
-			    const marginRight = parseFloat(style.marginRight) || 0;
-				
-				const margin=marginLeft + marginRight;
-				const w=(itemV.offsetWidth) - margin;
-				
-			    return [w,margin];
-			};
-			const canvasW = getCanvasWidth();
-			
-			let currentSeekFrame = Math.ceil(percent*Math.ceil(video.duration)) ;
-			const frameStep = Math.ceil(video.duration/100);
-			currentSeekFrame=(currentSeekFrame-(currentSeekFrame%frameStep));
-		
-			//currentSeekFrame=Math.min(currentSeekFrame-(currentSeekFrame%frameStep),0);
-			
-            try {
-				if(prevFrame!=currentSeekFrame &&canLoadSeekImg){
-					canLoadSeekImg=false;
-
-					let imgData;
-					if (Number.isNaN(currentSeekFrame)){
-						imgData = await getSeekImage(alias, 0);
+						const canvas = document.getElementById("canvasSeek");
+						const cvs = canvas.getContext("2d");
+						//itemView.appendChild(canvas);
+						const getCanvasWidth = () => {
+						    const itemV = canvas;
+						    const style = window.getComputedStyle(canvas);
+						    const marginLeft = parseFloat(style.marginLeft) || 0;
+						    const marginRight = parseFloat(style.marginRight) || 0;
+							
+							const margin=marginLeft + marginRight;
+							const w=(itemV.offsetWidth) - margin;
+							
+						    return [w,margin];
+						};
+						const canvasW = getCanvasWidth();
 						
-					}else {
-						imgData = await getSeekImage(alias, currentSeekFrame);
-					}
+						let currentSeekFrame = Math.ceil(percent*Math.ceil(video.duration)) ;
+						const frameStep = Math.ceil(video.duration/100);
+						currentSeekFrame=(currentSeekFrame-(currentSeekFrame%frameStep));
 					
-					renderSeekThumbnail(cvs, imgData, percent, 200, canvasW,currentSeekFrame);
-					prevFrame=currentSeekFrame;
-					canLoadSeekImg=true;
-				}
+						//currentSeekFrame=Math.min(currentSeekFrame-(currentSeekFrame%frameStep),0);
+						
+			            try {
+							if(prevFrame!=currentSeekFrame &&canLoadSeekImg){
+								canLoadSeekImg=false;
 
-            } catch (error) {
-                console.error("Failed to get seek image:", error);
-				canLoadSeekImg=true;
-            }
-		});
+								let imgData;
+								if (Number.isNaN(currentSeekFrame)){
+									imgData = await getSeekImage(alias, 0);
+									
+								}else {
+									imgData = await getSeekImage(alias, currentSeekFrame);
+								}
+								
+								renderSeekThumbnail(cvs, imgData, percent, 200, canvasW,currentSeekFrame);
+								prevFrame=currentSeekFrame;
+								canLoadSeekImg=true;
+							}
+
+			            } catch (error) {
+			                console.error("Failed to get seek image:", error);
+							canLoadSeekImg=true;
+			            }
+		}
+		progress.addEventListener('mousemove',progressMoveHandler);
 		
 		//クリックした位置で再生
-		progress.addEventListener('click',function(e){
-			let percent=prgPos(e,this);
-			video.currentTime = Math.floor(percent*Math.floor(video.duration)) ;
-			
-		})
+		progressClickHandler=		function(e){
+					let percent=prgPos(e,this);
+					video.currentTime = Math.floor(percent*Math.floor(video.duration)) ;
+					
+				}
+		progress.addEventListener('click',progressClickHandler)
 	
 		function prgPos(e, progress) {
 		    const rect = progress.getBoundingClientRect();
@@ -1312,7 +1365,19 @@ document.addEventListener("DOMContentLoaded",function(){
 		  
 		  
 	}
-	
+	async function canAccess(url) {
+	    try {
+	        const res = await fetch(url, {
+	            method: "HEAD",
+	            credentials: "include" 
+	        });
+	        return res.status === 200;
+	    } catch (e) {
+			console.error("アクセスエラー:"+url+"error"+e);
+	        return false;
+	    }
+	}
+
 
 	function togglePlayBar(isVisible) {
 	    const canvas = document.getElementById('canvasSeek');

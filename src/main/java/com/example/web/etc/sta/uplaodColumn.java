@@ -16,7 +16,8 @@ public class uplaodColumn {
 	}
 	public static enum sortColumnEnum{
 		NAME("ファイル名"),
-		DATE("日付");
+		DATE("日付"),
+		SHUFFLE("シャッフル");
 		
 		String column;
 		sortColumnEnum(String column) {
@@ -31,6 +32,7 @@ public class uplaodColumn {
 		columnList = new getColumn();
 		columnList.addValue(3, "ファイル名");
 		columnList.addValue(7, "日付");
+		columnList.addValue(-1, "シャッフル");
 		//return columnList.getColumns();
 		                          
 	}
