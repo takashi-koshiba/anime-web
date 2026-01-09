@@ -228,7 +228,7 @@ public class sendFile {
 	}
 	private static void compressImg(File inputPath,String outputPath,Integer imgSize,String alias) {
 		//avifに変換
-		String p ="ffmpeg -i \"{0}\"    -vf \"scale=if(gt(iw\\,ih)\\,{2,number,#}\\,-2):if(gt(iw\\,ih)\\,-2\\,{2,number,#})\"  -c:v libaom-av1 -preset 8 -crf 50 \"{1}\"" ;
+		String p ="ffmpeg -i \"{0}\"    -vf \"scale=if(gt(iw\\,ih)\\,{2,number,#}\\,-2):if(gt(iw\\,ih)\\,-2\\,{2,number,#})\"  -c:v libaom-av1 -preset 4 -crf 28 \"{1}\"" ;
 		
 		Path output =  Paths.get(MessageFormat.format(Setting.getRoot()+"content\\anime-web\\upload\\file\\{0}\\"+alias+"\\"+alias+".avif",outputPath)).normalize();
 		String format;

@@ -89,7 +89,7 @@ public class SmallThumbnail extends FileController {
 	
 	protected ResponseEntity.BodyBuilder responseBuilder(){
 			ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.ok()
-					.header(HttpHeaders.CACHE_CONTROL, "public, max-age=31536000")
+					.header(HttpHeaders.CACHE_CONTROL, "private, max-age=31536000")
 					.header(HttpHeaders.EXPIRES, ZonedDateTime.now().plusYears(1)
 					    .format(DateTimeFormatter.RFC_1123_DATE_TIME));
 		    
@@ -101,7 +101,7 @@ public class SmallThumbnail extends FileController {
 			protected ResponseEntity.BodyBuilder responseBuilder(String contentType) {
 				ResponseEntity.BodyBuilder responseBuilder =responseBuilder()
 						.header(HttpHeaders.CONTENT_TYPE, contentType)
-				.header(HttpHeaders.CACHE_CONTROL, "public, max-age=31536000")
+				.header(HttpHeaders.CACHE_CONTROL, "private, max-age=31536000")
 				.header(HttpHeaders.EXPIRES, ZonedDateTime.now().plusYears(1)
 				    .format(DateTimeFormatter.RFC_1123_DATE_TIME));
 						

@@ -24,7 +24,7 @@ public class edit {
 		boolean exist=animeService.IsExistItem(title);
 		
 		editBean result=new editBean(filename,folder,title,exist);
-		System.out.println(Kakasi.main(TextRep.main(title,false),"-JH -KH"));
+		//System.out.println(Kakasi.main(TextRep.main(title,false),"-JH -KH"));
 		return result;
 		
 		

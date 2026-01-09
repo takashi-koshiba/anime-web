@@ -61,7 +61,7 @@ public class UpThumbnail extends FileController {
 		   
 		
 		    ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.ok()
-		            .header(HttpHeaders.CACHE_CONTROL, "public, max-age=604800") 
+		            .header(HttpHeaders.CACHE_CONTROL, "private, max-age=604800") 
 		            .header(HttpHeaders.EXPIRES, String.valueOf(System.currentTimeMillis() + 604800000L)); //7日間
 
 		    return responseBuilder.body(resource);
@@ -72,7 +72,7 @@ public class UpThumbnail extends FileController {
    }	
 		protected ResponseEntity.BodyBuilder responseBuilder(){
 			ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.ok()
-					.header(HttpHeaders.CACHE_CONTROL, "public, max-age=31536000")
+					.header(HttpHeaders.CACHE_CONTROL, "private, max-age=31536000")
 					.header(HttpHeaders.EXPIRES, ZonedDateTime.now().plusYears(1)
 					    .format(DateTimeFormatter.RFC_1123_DATE_TIME));
 			//	.header(HttpHeaders.CONTENT_TYPE, contentType);

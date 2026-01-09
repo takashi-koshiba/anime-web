@@ -11,7 +11,7 @@ public interface VecDBDao<T> {
 	//private void  insertLineVecs(BigInteger StrVecLineId,List<BigInteger> vecIdList) ;
 
 	public Long insertstrVecParent(int tableId, int parentId,Long childId);
-	public List<T> selectMachedStr(long[] avgNgrams,int[] inputCost,int tableId);
+	public List<T> selectMachedStr(long[] avgNgrams,int[] inputCost,int tableId,int limit);
 	
 		
 	}

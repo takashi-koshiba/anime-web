@@ -6,7 +6,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
+import java.util.logging.Level;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +23,7 @@ import com.example.web.etc.db.Animetable.AnimeService;
 import com.example.web.etc.db.animeVector.insert.AnimeInsertService;
 import com.example.web.etc.sta.ExecProcessget;
 import com.example.web.etc.sta.Kakasi;
+import com.example.web.etc.sta.Log;
 import com.example.web.etc.sta.Setting;
 import com.example.web.etc.sta.TextRep;
 
@@ -38,11 +42,12 @@ public class upload {
 	@PostMapping("/anime-web/api/upload")
 
 	
-	public String start(@RequestPart("img") String img,@RequestParam("foldername") String foldername,@RequestParam("originalName") String originalName,@RequestParam("extension") String extension  )  {
+	public List<String> start(@RequestPart("img") String img,@RequestParam("foldername") String foldername,@RequestParam("originalName") String originalName,@RequestParam("extension") String extension  )  {
 		
 		//DBに存在するか
 		boolean exist=animeService.IsExistItem(originalName);
-
+		List<String > r= new ArrayList<>();
+		
 		
 		//画像のアップロード先
         String fullPath = Setting.getRoot();
@@ -72,6 +77,7 @@ public class upload {
 			      
 			         ffmpeg(originalName,path);
 			     
+			         
 			         Setting.makeAnimeDirectory(foldername);
 			         
 			         Anime anime =new Anime();
@@ -81,26 +87,44 @@ public class upload {
 			         
 			         animeInsertService.insertTitle(-1);
 			         
+			         r.add("ok");
 			         
-			         return "ok";
+			         return r;
 			         
 				}catch(IOException e) {
-				     return "アップロード処理に失敗しました。";
+					String str="アップロード処理に失敗しました。";
+					Log.detail(Level.WARNING, str, e);
+					r.add(str);
+					return r;
+				     
 				}catch(MaxUploadSizeExceededException e) {
-					return "ファイルサイズが大きすぎます";
+					String str="ファイルサイズが大きすぎます";
+					Log.detail(Level.WARNING, str, e);
+					r.add(str);
+					return r;
 				}
 				catch(Exception e) {
-					return "未知のエラー";
+					String str="未知のエラー";
+					Log.detail(Level.WARNING, str, e);
+					r.add(str);
+					return r;
 				}
 				
 			 }else {
-				return "指定したフォルダが存在しません。";
+					String str="指定したフォルダが存在しません。";
+					Log.log(Level.WARNING, str);
+					
+					r.add(str);
+					return r;
 			 }
 			//String folder = "C:\\Users\\muu4\\Documents\\新しいフォルダー\\";
 			
 		
 		}else {
-			return "すでに登録されています。";
+			String str="すでに登録されています。";
+			Log.log(Level.WARNING, str+": "+originalName);
+			r.add(str);
+			return r;
 		}
 		
 	}
@@ -111,13 +135,13 @@ public class upload {
 		String root = Setting.getRoot();
 		
 		Path p = Paths.get(root,"content","anime-web","upload","img","thumbnail",fname);
-		Files.createDirectory(p);
+		Files.createDirectories(p);
 		//String sourcePath=root+"content\\anime-web\\upload\\img\\temp\\"+fname+"."+extension;
 		String savePath=p+"\\"+fname+".avif";
 		
 		//String cmd="echo Y | ffmpeg -i \"{0}\"   -vf scale=480:-1 -compression_level 6 -q:v 18 \"{1}\"" ;
 		//cpu
-		String cmd="echo Y | ffmpeg -i \"{0}\"    -vf \"scale=if(gt(iw\\,ih)\\,220\\,-2):if(gt(iw\\,ih)\\,-2\\,220)\"  -compression_level 6 -q:v 50  -pix_fmt yuv420p \"{1}\"" ;
+		String cmd="echo Y | ffmpeg -i \"{0}\"    -vf \"scale=if(gt(iw\\,ih)\\,320\\,-2):if(gt(iw\\,ih)\\,-2\\,320)\"  -compression_level 6 -q:v 30  -pix_fmt yuv420p \"{1}\"" ;
 		
 		String format= MessageFormat.format(cmd,sourcePath.toString(),savePath);	
 		/*

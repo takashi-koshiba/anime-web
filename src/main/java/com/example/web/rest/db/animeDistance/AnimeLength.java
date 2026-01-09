@@ -27,26 +27,29 @@ public class AnimeLength {
 	
 	//@GetMapping("/anime-web/api/db/animeLen/{txt}")
 	@PostMapping("/anime-web/api/db/animeLen/{modeIndex}")
-	public List<StrDistance> start(@PathVariable("modeIndex")int modeIndex, @RequestParam("txt") String str)  {
+	public List<StrDistance> start(@PathVariable("modeIndex")int modeIndex, @RequestParam("txt") String str, @RequestParam("limit") int limit)  {
 		//String inputText=Kakasi.main(TextRep.main(str ,true),"-JH -KH");
-		String inputText=Kakasi.main(TextRep.main(str ,true),"-KH ");
+		//String inputText=Kakasi.main(TextRep.main(str ,true),"-KH ");
+		String inputText=Kakasi.katakanaToHiragana(TextRep.main(str, true));
 		
 		
-		List<AnimeVecDB> vecList = animeStrVector.selectStr(inputText, modeIndex)
-			    .stream()
-			    .map(v -> (AnimeVecDB) v)   // VecDB → AnimeVecDB にキャスト
-			    .collect(Collectors.toList());
 
-			List<StrDistance> distances = vecList.stream()
-			    .map(v -> {
-			        StrDistance sd = new StrDistance();
-			        sd.setId(v.getVecParent_id() != null ? v.getVecParent_id().intValue() : 0);
-			        sd.setDistance((double) v.getMaxMatched());
-			        sd.setOriginal(v.getOriginal());
-			        sd.setTitle(v.getTitle());
-			        return sd;
-			    })
-			    .collect(Collectors.toList());
+		
+		List<StrDistance> distances =
+			    animeStrVector.selectStr(inputText, modeIndex,limit)
+			        .stream()
+			        .map(v -> (AnimeVecDB) v)
+			         
+			        .map(v -> {
+			            StrDistance sd = new StrDistance();
+			            sd.setId(v.getVecParent_id() != null ? v.getVecParent_id().intValue() : 0);
+			            sd.setDistance((double) v.getMaxLineDiff());
+			            sd.setOriginal(v.getOriginal());
+			            sd.setTitle(v.getTitle());
+			            return sd;
+			        })
+			        .collect(Collectors.toList());
+			
 			return distances;
 		/*
 		String inputText=Kakasi.main(TextRep.main(str ,true),"-JH -KH");

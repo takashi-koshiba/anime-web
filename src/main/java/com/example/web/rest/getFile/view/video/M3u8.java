@@ -57,7 +57,7 @@ public class M3u8 extends FileController {
    }
 	protected ResponseEntity.BodyBuilder responseBuilder(){
 		ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.ok()
-				.header(HttpHeaders.CACHE_CONTROL, "public, max-age=10")
+				.header(HttpHeaders.CACHE_CONTROL, "private, max-age=10")
 				.header(HttpHeaders.EXPIRES, ZonedDateTime.now().plusYears(1)
 				    .format(DateTimeFormatter.RFC_1123_DATE_TIME));
     

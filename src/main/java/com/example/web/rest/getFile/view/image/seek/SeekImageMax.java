@@ -29,12 +29,15 @@ public class SeekImageMax  extends FileController {
 
     private final ResourceLoader resourceLoader;
     private final UploadFileService uploadFileService;
-
-	public SeekImageMax(ResourceLoader resourceLoader, UploadFileService uploadFileService) {
+   
+    
+    
+  
+	public SeekImageMax(ResourceLoader resourceLoader, UploadFileService uploadFileService,HttpSession session) {
         super(Setting.getRoot()+"content\\anime-web\\upload\\file\\maxSeek\\");
         this.resourceLoader = resourceLoader;
         this.uploadFileService = uploadFileService;
-
+        
 		
 	}
 	
@@ -50,6 +53,9 @@ public class SeekImageMax  extends FileController {
 		if(upfile.size()==0) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ファイルのアクセス権がありません。");
 		}
+		
+		session.setAttribute(alias,"");
+		
 
 		Path maxImagePath = Paths.get(Setting.getRoot(),"content","anime-web","upload","file","maxSeek",alias).resolve(fname).toAbsolutePath().normalize();
 	    
@@ -91,7 +97,7 @@ public class SeekImageMax  extends FileController {
 
 		protected ResponseEntity.BodyBuilder responseBuilder(){
 				ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.ok()
-						.header(HttpHeaders.CACHE_CONTROL, "public, max-age=31536000")
+						.header(HttpHeaders.CACHE_CONTROL, "private, max-age=31536000")
 						.header(HttpHeaders.EXPIRES, ZonedDateTime.now().plusYears(1)
 						    .format(DateTimeFormatter.RFC_1123_DATE_TIME));
 				//	.header(HttpHeaders.CONTENT_TYPE, contentType);

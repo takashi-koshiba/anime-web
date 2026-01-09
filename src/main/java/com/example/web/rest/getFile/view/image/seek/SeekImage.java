@@ -2,7 +2,6 @@ package com.example.web.rest.getFile.view.image.seek;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.example.web.etc.db.uploadFile.FileInfo;
 import com.example.web.etc.db.uploadFile.UploadFileService;
 import com.example.web.etc.sta.Img;
 
@@ -41,8 +39,7 @@ public class SeekImage{
 		if(session.getAttribute("id")==null) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "セッションがありません。");
 		}
-		List<FileInfo> upfile= uploadFileService.selectFileOne(session.getAttribute("id").toString(), alias);
-		if(upfile.size()==0) {
+		if(session.getAttribute("alias")==null) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ファイルのアクセス権がありません。");
 		}
 

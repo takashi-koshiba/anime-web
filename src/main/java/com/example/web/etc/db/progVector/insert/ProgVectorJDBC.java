@@ -64,8 +64,8 @@ public class ProgVectorJDBC implements ProgVectorDao {
 
         tempSet.add(str);
         tempSet.add(Kakasi.main(TextRep.main(str, true), "-JH -KH"));
-        tempSet.add(Kakasi.main(TextRep.main(str, true), "-KH "));
-
+        
+        tempSet.add(Kakasi.katakanaToHiragana(TextRep.main(str, true)));
         return tempSet.toArray(new String[0]);
     }
     @Override

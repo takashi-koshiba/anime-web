@@ -1,5 +1,6 @@
 package com.example.web.rest.db.vectorAPI;
 import java.util.List;
+import java.util.logging.Level;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.web.etc.db.animeVector.insert.AnimeInsertService;
 import com.example.web.etc.db.animeVector.select.AnimeStrVector;
 import com.example.web.etc.db.vector.VecDB;
+import com.example.web.etc.sta.Log;
 import com.example.web.index.BeanUser;
 import com.example.web.index.GetIP;
 
@@ -44,7 +46,9 @@ public class AnimeVector {
 		//strVector.selectStr("", 2);
 		//progVector.selectStr("", 2);
 		//全書き込み
+		Log.log(Level.INFO, "ベクトル書き込みスタート");
 		animeInsertService.insertTitle(limitter);
+		Log.log(Level.INFO, "ベクトル書き込み終了");
 		//progInsertService.insertTitle(limitter);
 
 	}
@@ -55,7 +59,7 @@ public class AnimeVector {
 	}
 	@GetMapping("/anime-web/api/db/vectorAPI/AnimeVector/search/{str}")
 	public List<VecDB>  PlayList3(@PathVariable String str) {
-		return animeStrVector.selectStr(str, tableId);
+		return animeStrVector.selectStr(str, tableId,-1);
 	}
 	@GetMapping("/anime-web/api/db/vectorAPI/AnimeVector/showCount")
 	public int   PlayList4() {

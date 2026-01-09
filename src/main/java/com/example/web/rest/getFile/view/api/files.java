@@ -55,7 +55,9 @@ public class files {
 		orderEnum orderText=orderEnum.values()[sort];
 		
 		String  userId=session.getAttribute("id").toString();
-		String inputText=Kakasi.main(TextRep.main(inputStr,true),"-KH");
+		String inputText=Kakasi.katakanaToHiragana(TextRep.main(inputStr,true));
+		
+		
 		
 		inputText = inputText.replace("　", " ");
 		inputText = inputText.replaceAll(" {2,}", " ");

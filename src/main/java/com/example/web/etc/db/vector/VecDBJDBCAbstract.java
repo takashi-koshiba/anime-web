@@ -35,8 +35,10 @@ public abstract class VecDBJDBCAbstract<T extends VecDB> implements VecDBDao<T> 
     			return matchedList.getFirst();
     		}
     		
-    		String sql = "INSERT INTO wordVec (cost, vecAvg) VALUES (?, ?)";
-
+    		String sql =
+    			    "INSERT INTO wordVec (cost, vecAvg) VALUES (?, ?) " +
+    			    "ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id)";
+    		
             KeyHolder keyHolder = new GeneratedKeyHolder();
 
             jdbc.update(connection -> {
@@ -108,7 +110,7 @@ public abstract class VecDBJDBCAbstract<T extends VecDB> implements VecDBDao<T> 
     }
     //ベクトルから文字列の一致率を計算
     @Override
-    public abstract   List<T>  selectMachedStr(long[] avgNgrams,int[] inputCost,int tableId);
+    public abstract   List<T>  selectMachedStr(long[] avgNgrams,int[] inputCost,int tableId,int limit);
     
     /*{
     	List<VecDB> resultList = new ArrayList<>();

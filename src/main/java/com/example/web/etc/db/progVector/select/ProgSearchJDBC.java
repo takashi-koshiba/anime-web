@@ -20,7 +20,7 @@ public class ProgSearchJDBC extends VecDBJDBCAbstract {
     
     
 	@Override
-	public  List<VecDB> selectMachedStr(long[] avgNgrams,int[] inputCost,int tableId){
+	public  List<VecDB> selectMachedStr(long[] avgNgrams,int[] inputCost,int tableId,int limit){
     	List<VecDB> resultList = new ArrayList<>();
     	
     	

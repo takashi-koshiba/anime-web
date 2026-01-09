@@ -30,7 +30,7 @@ public class AnimeInsertJDBC implements AnimeInsertrDao {
 	public void insertTitle(int limitter) {
     	
     	
-    	Log.log(Level.INFO, "ベクトル書き込みスタート");
+    	//Log.log(Level.INFO, "ベクトル書き込みスタート");
 
     	
     	List<AnimeInsert> progList = selectAll(tableId,limitter);
@@ -48,7 +48,7 @@ public class AnimeInsertJDBC implements AnimeInsertrDao {
     		j++;
     	}
 
-    	Log.log(Level.INFO, "ベクトル書き込み終了");
+    //	Log.log(Level.INFO, "ベクトル書き込み終了");
 
     }
    
@@ -145,7 +145,7 @@ public class AnimeInsertJDBC implements AnimeInsertrDao {
 
         tempSet.add(str);
         tempSet.add(Kakasi.main(TextRep.main(str, true), "-JH -KH"));
-        tempSet.add(Kakasi.main(TextRep.main(str, true), "-KH "));
+        tempSet.add(Kakasi.katakanaToHiragana(TextRep.main(str, true)));
 
         return tempSet.toArray(new String[0]);
     }

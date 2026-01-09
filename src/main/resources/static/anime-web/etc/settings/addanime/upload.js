@@ -54,10 +54,19 @@ document.addEventListener("DOMContentLoaded",function(){
 						
 					}
 			    };
+				ajax[i].xhr.onload = function() {
+					if(this.response[0]!="ok")console.error(this.response);
+				}
 			}
 
 			ajax[0].run();
-
+			ajax[0].xhr.onload = function() {
+				if(this.response[0]!="ok")console.error(this.response);
+				
+			}
+								
+								
+			
 		}else{
 			document.getElementById('result').innerText="0/0";
 			

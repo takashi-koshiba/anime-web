@@ -15,8 +15,8 @@ public abstract class VecDBSearvice<T extends VecDB> {
         this.animeJDBC = animeJDBC;
     }
 
-    public List<T> selectMachedStr(long[] avgNgrams, int[] inputCost, int tableId) {
-        return animeJDBC.selectMachedStr(avgNgrams, inputCost, tableId);
+    public List<T> selectMachedStr(long[] avgNgrams, int[] inputCost, int tableId,int limit) {
+        return animeJDBC.selectMachedStr(avgNgrams, inputCost, tableId,limit);
     }
 
     public List<Long> selectVecParentByVec(long[] avgNgram, int[] inputCost) {

@@ -48,7 +48,7 @@ public abstract class StrVector<T extends VecDB> {
 	public void InsertTxt(String str ,int rows,Long StrvecParentId) {
 
 		try {
-			Log.log(Level.INFO, "ベクトルを書き込み中"+str);
+		//	Log.log(Level.INFO, "ベクトルを書き込み中"+str);
 			
 			String split[] = strToArr(str) ;
 			
@@ -62,7 +62,7 @@ public abstract class StrVector<T extends VecDB> {
 			
 			//ベクトルIDとテキストをDBにいれて紐づける
 			vec.insertStrVecLine(StrvecParentId, 0,cost, vecId);
-			Log.log(Level.INFO, "ベクトル書き込み完了"+str);
+		//	Log.log(Level.INFO, "ベクトル書き込み完了"+str);
 			
 			
 		} catch (Exception e) {
@@ -80,7 +80,7 @@ public abstract class StrVector<T extends VecDB> {
 	    Set<Long> parentIdSet = new HashSet<>();
 	    
 	    for (String s : split) {
-	        long ngramAvg = strToVecNgram1D(s, 512, 2);
+	        long ngramAvg = strToVecNgram1D(s,  2);
 	        
 	        int cost = SimilarWards.maxLength(s.length(), false,maxLen);
 	      //  long startTime = System.currentTimeMillis();
@@ -95,13 +95,13 @@ public abstract class StrVector<T extends VecDB> {
 	}
 	//vecの存在確認とインサートを実行
 
-	public List<VecDB> selectStr(String input, int tableId) {
+	public List<VecDB> selectStr(String input, int tableId,int limit) {
 	    if (input.length() > 100) throw new IllegalArgumentException("入力文字が長すぎます");
 
 	    String[] strs = input.trim().split("\\s+|　+");
 	    List<T> all = new ArrayList<>();
 	    for (String str : strs) {
-	        List<T> result = calcMatchedStr(str, tableId);
+	        List<T> result = calcMatchedStr(str, tableId,limit);
 	        all.addAll(result);
 	    }
 
@@ -140,7 +140,7 @@ public abstract class StrVector<T extends VecDB> {
 	}
 
 
-	protected List<T>  calcMatchedStr(String str,int tableId){
+	protected List<T>  calcMatchedStr(String str,int tableId,int limit){
 		String split[] = strToArr(str) ;
 		//List<BigInteger>  vecId = getWordVecs(split,true);
 
@@ -153,14 +153,14 @@ public abstract class StrVector<T extends VecDB> {
 
 	        String s = split[i];
 	        
-	        long avgNgram = strToVecNgram1D(s, 1, 2);
+	        long avgNgram = strToVecNgram1D(s,  2);
 	        
 
 	        avgNgrams[i]=avgNgram;
 	        costs[i]=SimilarWards.maxLength(s.length(), false,maxLen);
 	        
 	    }
-	    List<T> result=vec.selectMachedStr( avgNgrams,costs,tableId);
+	    List<T> result=vec.selectMachedStr( avgNgrams,costs,tableId,limit);
 
 	    
 	    
@@ -181,7 +181,8 @@ public abstract class StrVector<T extends VecDB> {
 	
 	
 	
-	public static long  strToVecNgram1D(String s, int dim, int ngram) {
+	public static long  strToVecNgram1D(String s, int ngram) {
+		int dim=3;
 		long[] vec = new long[dim];
 	    int L = s.length();
 	    if (L < ngram) return 0L;
@@ -216,6 +217,7 @@ public abstract class StrVector<T extends VecDB> {
 
 	    return sum / dim;
 	}
+
 
 
 

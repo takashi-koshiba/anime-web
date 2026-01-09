@@ -39,11 +39,15 @@ public class NoImage {
 		    ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.ok()
 		         //   .header(HttpHeaders.CACHE_CONTROL, "public, max-age=604800") 
 		         //   .header(HttpHeaders.EXPIRES, String.valueOf(System.currentTimeMillis() + 604800000L)); //7日間
-		    		.header(HttpHeaders.CACHE_CONTROL, "public, max-age=31536000")
+		    		.header(HttpHeaders.CACHE_CONTROL, "private, max-age=60")
 		    		.header(HttpHeaders.CONTENT_TYPE, "image/webp")
-		    		.header(HttpHeaders.EXPIRES, ZonedDateTime.now().plusYears(1)
+		    		 .header(
+		    		            HttpHeaders.EXPIRES,
+		    		            ZonedDateTime.now()
+		    		                .plusMinutes(1)
+		    		                .format(DateTimeFormatter.RFC_1123_DATE_TIME)
+		    		        );
 		    		
-		    		.format(DateTimeFormatter.RFC_1123_DATE_TIME));
 
 		    return responseBuilder.body(resource);
 		

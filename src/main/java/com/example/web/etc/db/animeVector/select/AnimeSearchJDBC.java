@@ -18,47 +18,53 @@ public class AnimeSearchJDBC extends VecDBJDBCAbstract<AnimeVecDB> {
     @Autowired
     private JdbcTemplate jdbc;
 
-    public List<AnimeVecDB> selectMachedStr(long[] avgNgrams, int[] inputCost, int tableId) {
+    public List<AnimeVecDB> selectMachedStr(long[] avgNgrams, int[] inputCost, int tableId,int limit ) {
         List<AnimeVecDB> resultList = new ArrayList<>();
 
         try {
             List<Object> params = new ArrayList<>();
             StringBuilder sql = new StringBuilder();
 
-            sql.append("select ABS(rowCost-diff)/rowCost as matchRatio, rowCost, parentId, strVecId, rowNumber, countRow, wordCost,originalName,foldername ");
-            sql.append("from ( ");
-            sql.append("select row_number() over(PARTITION BY parentId order by count(*)  desc) idrank, ");
-            sql.append("min(ABS(strvec.cost-").append(avgNgrams.length).append(")) as diff, ");
-            sql.append("max(strvec.cost) as rowCost, parentId, strVecId, rownumber, count(*) as countRow, max(t1.cost) as wordCost ");
-            sql.append("from linevecs ");
+            
+            
+            sql.append("select strvecparent.parentId, ");
+            
+            	sql.append("min(ABS((strvec.cost*(strvec.cost+1)/2)-(t1.matchCount*(t1.matchCount+1)/2))) as diff, ");
+            	sql.append("anime.originalname,anime.foldername,max(matchCount) as matchCount from strvec ");
             sql.append("join ( ");
-            sql.append("select id, cost from wordvec where ");
+            
+            	sql.append("select linevecs.strvecid,count(*) as matchCount ");
+            	sql.append("from linevecs ");
+            	sql.append("join ( ");
+            	for (int i = 0; i < avgNgrams.length; i++) {
+            		if (i != 0) sql.append(" union all ");
+            		sql.append("select id from wordvec where cost=? and vecAvg=? ");
 
-            for (int i = 0; i < avgNgrams.length; i++) {
-                if (i != 0) sql.append(" or ");
-                sql.append("(cost=? and vecAvg=?) ");
-                params.add(inputCost[i]);
-                params.add(avgNgrams[i]);
-            }
-
-            sql.append(") as t1 on linevecs.vecId = t1.id ");
-            sql.append("join strvec on linevecs.strVecId = strvec.id ");
-            sql.append("join strvecparent on strvec.vecParent_id = strvecparent.id ");
-            sql.append("where tableId = ? ");
-            sql.append("group by parentId, strVecId, rownumber ");
-            sql.append(") as t1 ");
-            sql.append("join anime on t1 .parentId=anime.id ");
-            sql.append("where idrank = 1 ");
+            		params.add(inputCost[i]);
+            		params.add(avgNgrams[i]);
+            	}
+            	sql.append(") w on w.id = linevecs.vecId ");
+            	sql.append("group by linevecs.strvecid ");
+            sql.append(")as t1 ");
+            sql.append("on strvec.id=t1.strvecid ");
+            sql.append("join strvecparent on strvecparent.id=strvec.vecparent_id ");
+            sql.append("join anime on strvecparent.parentId=anime.id ");
+            sql.append("where strvecparent.tableid=? ");
             params.add(tableId);
-            sql.append("order by countRow desc, matchRatio");
+            
+            sql.append("group by strvecparent.parentId ");
+            sql.append("order by diff ");
+            
+            if(limit!=-1)sql.append("limit "+limit);
+            
+            
 
             List<Map<String, Object>> result = jdbc.queryForList(sql.toString(), params.toArray());
 
             for (Map<String, Object> map : result) {
                 Long vecParent_id = ((Number) map.get("parentId")).longValue();
-                int maxMatched = ((Number) map.get("countRow")).intValue();
-
-                double maxLineDiff = ((Number) map.get("matchRatio")).doubleValue();
+                Integer maxMatched = ((Number) map.get("matchCount")).intValue();
+                double maxLineDiff = ((Number) map.get("diff")).doubleValue();
                 String originalName = (String)map.get("originalName");
                 String foldername = (String)map.get("foldername");
 
@@ -69,7 +75,7 @@ public class AnimeSearchJDBC extends VecDBJDBCAbstract<AnimeVecDB> {
             if (result.isEmpty()) {
                 resultList.add(new AnimeVecDB(null, 0, 0, -1, 0, 1, "", ""));
             }
-
+            
         } catch (Exception e) {
             Log.detail(Level.WARNING, "SQLが失敗しました。", e);
             throw e;
@@ -78,4 +84,6 @@ public class AnimeSearchJDBC extends VecDBJDBCAbstract<AnimeVecDB> {
         
         return resultList;
     }
+
+	
 }

@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.example.web.etc.db.uploadFile.FileInfo;
 import com.example.web.etc.db.uploadFile.UploadFileService;
 import com.example.web.etc.sta.FileController;
 import com.example.web.etc.sta.GetExtension;
@@ -50,8 +49,7 @@ public class SeekResource extends FileController {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "セッションがありません。");
 		}
 		
-		List<FileInfo> upfile= uploadFileService.selectFileOne(session.getAttribute("id").toString(), alias);
-		if(upfile.size()==0) {
+		if(session.getAttribute("alias")==null) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ファイルのアクセス権がありません。");
 		}
 		
@@ -148,7 +146,7 @@ public class SeekResource extends FileController {
 	}
 	protected ResponseEntity.BodyBuilder responseBuilder(){
 			ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.ok()
-					.header(HttpHeaders.CACHE_CONTROL, "public, max-age=31536000")
+					.header(HttpHeaders.CACHE_CONTROL, "private, max-age=31536000")
 					.header(HttpHeaders.EXPIRES, ZonedDateTime.now().plusYears(1)
 					    .format(DateTimeFormatter.RFC_1123_DATE_TIME));
 			//	.header(HttpHeaders.CONTENT_TYPE, contentType);

@@ -17,6 +17,7 @@ public class AnimeJDBC implements AnimeDao {
 
     @Override
     public int insert(Anime anime) {
+    	
         int row = jdbc.update("INSERT INTO anime(originalName, foldername) VALUES(?, ?)",
                 anime.getOriginalName(), anime.getFoldername());
         return row;

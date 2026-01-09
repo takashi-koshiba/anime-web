@@ -44,10 +44,11 @@ document.addEventListener("DOMContentLoaded",function(){
 		if(result){
 			let len=result.length>10?10:result.length;
 			for(let i=0;i<len;i++){
+				/*
 				if(result[i]['distance']<=0){
 					return 
 				}
-				
+			*/	
 				createSearchElem(searchResult,result[i]['original'],result[i]['id']);
 				searchResult.style.display='block';
 			}
@@ -67,7 +68,7 @@ document.addEventListener("DOMContentLoaded",function(){
 		let url=location.protocol+"api/db/animeLen/"+modeIndex;
 		let ajax_search = new class_ajax(url);
 		ajax_search.args('txt', param);
-		
+		ajax_search.args('limit', 10);
 		return new Promise((resolve, reject) => {
 	        ajax_search.xhr.onload = function() {
 	            if (this.status >= 200 && this.status < 300) {
