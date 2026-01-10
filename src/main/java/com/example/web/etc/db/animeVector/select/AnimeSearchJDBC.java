@@ -53,7 +53,7 @@ public class AnimeSearchJDBC extends VecDBJDBCAbstract<AnimeVecDB> {
             params.add(tableId);
             
             sql.append("group by strvecparent.parentId ");
-            sql.append("order by diff ");
+            sql.append("order by matchCount desc ,diff ");
             
             if(limit!=-1)sql.append("limit "+limit);
             

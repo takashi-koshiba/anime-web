@@ -141,7 +141,7 @@ public class upload {
 		
 		//String cmd="echo Y | ffmpeg -i \"{0}\"   -vf scale=480:-1 -compression_level 6 -q:v 18 \"{1}\"" ;
 		//cpu
-		String cmd="echo Y | ffmpeg -i \"{0}\"    -vf \"scale=if(gt(iw\\,ih)\\,320\\,-2):if(gt(iw\\,ih)\\,-2\\,320)\"  -compression_level 6 -q:v 30  -pix_fmt yuv420p \"{1}\"" ;
+		String cmd="echo Y | ffmpeg -i \"{0}\"    -vf \"scale=if(gt(iw\\,ih)\\,420\\,-2):if(gt(iw\\,ih)\\,-2\\,420)\"  -compression_level 6 -q:v 24  -pix_fmt yuv420p \"{1}\"" ;
 		
 		String format= MessageFormat.format(cmd,sourcePath.toString(),savePath);	
 		/*
