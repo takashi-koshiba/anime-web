@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded",function(){
 								alert("ファイル名をひらがなに変換しました。修正してからアップロードしてください。")
 							}else{
 								document.getElementById('result').innerText="エラー";
-								alert("そのファイルはアップロードできません。");
+								alert("そのファイルはアップロードできません。すでに登録済みされています。");
 								
 							}
 							

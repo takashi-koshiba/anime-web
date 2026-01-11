@@ -36,6 +36,9 @@ document.addEventListener("DOMContentLoaded",function(){
 				
 				//console.dir(originalName[i]);
 			    ajax[i].xhr.onload = function() {
+					let result=JSON.parse(this.response);
+					
+					console.dir(i);
 					if (i + 1 < fileCount) {//次のファイルを送信
 						document.getElementById('result').innerText=i+"/"+fileCount;
 						ajax[i + 1].run();
@@ -46,7 +49,7 @@ document.addEventListener("DOMContentLoaded",function(){
 					}
 					
 					
-					if(this.response!="ok"){
+					if(result!="ok"){
 						//エラーを出力
 						
 						error.value=error.value+foldername[i].value+"は"+this.response+"\n";
@@ -54,17 +57,21 @@ document.addEventListener("DOMContentLoaded",function(){
 						
 					}
 			    };
+				/*
 				ajax[i].xhr.onload = function() {
-					if(this.response[0]!="ok")console.error(this.response);
+					let result=JSON.parse(this.response);
+					if(result!="ok")console.error(result);
 				}
+				*/
 			}
 
 			ajax[0].run();
+/*			
 			ajax[0].xhr.onload = function() {
 				if(this.response[0]!="ok")console.error(this.response);
 				
 			}
-								
+	*/							
 								
 			
 		}else{
