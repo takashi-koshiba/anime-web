@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -25,9 +26,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.example.web.etc.db.uploadFile.FileInfo;
 import com.example.web.etc.db.uploadFile.UploadFileService;
 import com.example.web.etc.sta.FileController;
 import com.example.web.etc.sta.GetExtension;
+import com.example.web.etc.sta.Log;
 import com.example.web.etc.sta.Setting;
 
 @RestController
@@ -49,8 +52,15 @@ public class SeekResource extends FileController {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "セッションがありません。");
 		}
 		
-		if(session.getAttribute("alias")==null) {
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ファイルのアクセス権がありません。");
+		String key="alias:" + session.getAttribute("id") + ":" + alias;
+		if(session.getAttribute(key)==null) {
+			List<FileInfo> upfile= uploadFileService.selectFileOne(session.getAttribute("id").toString(), alias);
+			if(upfile.size()==0) {
+				throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ファイルのアクセス権がありません。/anime-web/get-file/anime/image/seek/{alias}/{frame}");
+			}
+			Log.log(Level.INFO, "セッション許可:user"+session.getAttribute("id")+"alias:"+alias);
+			
+			session.setAttribute(key, "");
 		}
 		
 		Path root=Paths.get( "content/anime-web/upload/file/seek-image/");

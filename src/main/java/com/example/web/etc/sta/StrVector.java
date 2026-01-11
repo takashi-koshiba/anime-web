@@ -101,6 +101,8 @@ public abstract class StrVector<T extends VecDB> {
 	    String[] strs = input.trim().split("\\s+|　+");
 	    List<T> all = new ArrayList<>();
 	    for (String str : strs) {
+	    	
+	    	
 	        List<T> result = calcMatchedStr(str, tableId,limit);
 	        all.addAll(result);
 	    }

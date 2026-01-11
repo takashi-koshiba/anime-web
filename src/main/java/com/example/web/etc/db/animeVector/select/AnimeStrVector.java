@@ -2,7 +2,6 @@ package com.example.web.etc.db.animeVector.select;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -51,37 +50,65 @@ public class AnimeStrVector extends StrVector<AnimeVecDB> {
         List<AnimeVecDB> all = new ArrayList<>();
 
         for (String str : strs) {
-            List<AnimeVecDB> result = calcMatchedStr(str, tableId,limit);
+        	if(str.length()<2) continue;
+        	
+        	
+            List<AnimeVecDB> result = calcMatchedStr(str, tableId,-1);
    
             all.addAll(result);
             
         }
         
        
+        List<VecDB> sortedList = all.stream()
+        	    .filter(Objects::nonNull)
+        	    .filter(v -> v.getVecParent_id() != null)
+        	    // グループ化して集約
+        	    .collect(Collectors.groupingBy(
+        	        AnimeVecDB::getVecParent_id,
+        	        Collectors.reducing(
+        	            null,
+        	            v -> v,
+        	            (a, b) -> {
+        	                if (a == null) return b;
 
-        Map<Long, AnimeVecDB> summarized = all.stream()
-            .filter(Objects::nonNull)
-            .filter(v -> v.getVecParent_id() != null)
-            .collect(Collectors.groupingBy(
-                AnimeVecDB::getVecParent_id,
-                Collectors.collectingAndThen(
-                    Collectors.toList(),
-                    list -> {
-                        
-                        double sum = list.stream().mapToDouble(AnimeVecDB::getMaxLineDiff).sum();
-                        double avgLineDiff = list.isEmpty() ? 0.0 : sum / strs.length;
-                        return new AnimeVecDB(list.get(0).getVecParent_id(),list.get(0).getMaxMatched(), avgLineDiff, -1, 0, 1, list.get(0).getOriginal(), list.get(0).getTitle());
-                    }
-                )
-            ));
-        
-        List<VecDB> sortedList = summarized.values().stream()
-            .sorted(Comparator
-                .comparingDouble(AnimeVecDB::getMaxMatched).reversed()
-                .thenComparing(Comparator.comparingDouble(AnimeVecDB::getMaxLineDiff))
-            )
-            .collect(Collectors.toList());
-        
-        return sortedList;
+        	                int sumMatched = a.getMaxMatched() + b.getMaxMatched();
+        	                double sumDiff = a.getMaxLineDiff() + b.getMaxLineDiff();
+
+        	                return new AnimeVecDB(
+        	                    a.getVecParent_id(),
+        	                    sumMatched,
+        	                    sumDiff, 
+        	                    -1, 0, 1,
+        	                    a.getOriginal(),
+        	                    a.getTitle()
+        	                );
+        	            }
+        	        )
+        	    ))
+        	    .values().stream() 
+        	    .map(v -> {
+        	        // 平均を計算
+        	        double avgDiff = v.getMaxLineDiff() / strs.length;
+        	        return new AnimeVecDB(
+        	            v.getVecParent_id(),
+        	            v.getMaxMatched(),
+        	            avgDiff,
+        	            -1, 0, 1,
+        	            v.getOriginal(),
+        	            v.getTitle()
+        	        );
+        	    })
+        	   
+        	    .sorted(Comparator
+        	        .comparingInt(AnimeVecDB::getMaxMatched).reversed()
+        	        .thenComparingDouble(AnimeVecDB::getMaxLineDiff)
+        	    )
+        	    .limit(limit)
+        	    .map(v -> (VecDB)v) 
+        	    .collect(Collectors.toList());
+
+        	return sortedList;
+
     }
 }

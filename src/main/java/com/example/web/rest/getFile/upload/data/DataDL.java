@@ -51,7 +51,7 @@ public class DataDL extends FileController {
 		List<FileInfo> upfile= uploadFileService.selectFileOne(session.getAttribute("id").toString(), alias);
 		
 		if(upfile.size()==0) {
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ファイルのアクセス権がありません。");
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ファイルのアクセス権がありません。/anime-web/get-file/anime/data/data-dl/{alias}");
 		}
 		fileType  fType = upfile.getFirst().getType();
 

@@ -601,15 +601,15 @@ document.addEventListener("DOMContentLoaded",function(){
 							if(prevFrame!=currentSeekFrame &&canLoadSeekImg){
 								canLoadSeekImg=false;
 
-								let imgData;
+								let imgPath="/anime-web/get-file/anime/image/seek-image/"+alias+"/";
 								if (Number.isNaN(currentSeekFrame)){
-									imgData = await getSeekImage(alias, 0);
+									imgPath =  imgPath+0
 									
 								}else {
-									imgData = await getSeekImage(alias, currentSeekFrame);
+									imgPath =  imgPath+currentSeekFrame;
 								}
 								
-								renderSeekThumbnail(cvs, imgData, percent, 200, canvasW,currentSeekFrame);
+								renderSeekThumbnail(cvs, imgPath, percent, 200, canvasW,currentSeekFrame);
 								prevFrame=currentSeekFrame;
 								canLoadSeekImg=true;
 							}
@@ -639,28 +639,31 @@ document.addEventListener("DOMContentLoaded",function(){
 		}
 
 		
-		function renderSeekThumbnail(cvs, result, percent, seekMaxX, canvasW,currentSeekFrame) {
-		    //高さを90pxでリサイズ
-			const h = 90;
-		    const imgRatio = result.height / h;
-		    const w = result.width / imgRatio;
-			const imgMargin=5;//サムネの背景の余白
-			const margin = parseFloat(window.getComputedStyle(canvas).marginLeft);
-		    const canvasPosY = 150 - h - margin * 2 - 30;
-			const elemWidth=canvasW[0];
-			
-		    //let seekImgPosX = (currentSeekPosX / seekMaxX) * elemWidth - (w + imgMargin * 2) / 2;
-			let seekImgPosX = (elemWidth+margin)*percent-(w/2)-imgMargin;
-			
-
-
-			//画像のサムネイルが範囲外にならないように調整
-			if(seekImgPosX<0)seekImgPosX=0;
-			else if(seekImgPosX+w+imgMargin*2>canvas.width)seekImgPosX=canvas.width-(w+imgMargin*2);
-			
+		function renderSeekThumbnail(cvs, imgPath, percent, seekMaxX, canvasW,currentSeekFrame) {
+		   
 		    const image = new Image();
-		    image.src = result.imgPath;
+		    image.src = imgPath;
 		    image.onload = () => {
+				//高さを90pxでリサイズ
+						const h = 90;
+					    const imgRatio = image.height / h;
+					    const w = image.width / imgRatio;
+						const imgMargin=5;//サムネの背景の余白
+						const margin = parseFloat(window.getComputedStyle(canvas).marginLeft);
+					    const canvasPosY = 150 - h - margin * 2 - 30;
+						const elemWidth=canvasW[0];
+						
+					    //let seekImgPosX = (currentSeekPosX / seekMaxX) * elemWidth - (w + imgMargin * 2) / 2;
+						let seekImgPosX = (elemWidth+margin)*percent-(w/2)-imgMargin;
+						
+
+
+						//画像のサムネイルが範囲外にならないように調整
+						if(seekImgPosX<0)seekImgPosX=0;
+						else if(seekImgPosX+w+imgMargin*2>canvas.width)seekImgPosX=canvas.width-(w+imgMargin*2);
+						
+						
+				////
 		        cvs.clearRect(0, 0, canvas.width, canvas.height);
 		        cvs.save();
 		
@@ -1284,13 +1287,15 @@ document.addEventListener("DOMContentLoaded",function(){
 		
 	}
 
-	
+	/*
 	async function getSeekImage(alias,frame) {
-		let url="/anime-web/get-file/anime/image/seek/"+alias+"/"+frame;
+		
+		let url="/anime-web/get-file/anime/image/seek-image/"+alias+"/"+frame;
 		let data = await getData(url);
 
 		return data;
 	}
+	*/
 	function addPageButton(){
 		
 		let pegeButtons = document.getElementById('pegeButtons');

@@ -49,7 +49,7 @@ public class UpThumbnail extends FileController {
 
 		List<FileInfo> upfile= uploadFileService.selectFileOne(session.getAttribute("id").toString(), alias);
 		if(upfile.size()==0) {
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ファイルのアクセス権がありません。");
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ファイルのアクセス権がありません。/anime-web/get-file/anime/image/upthumbnail/{alias}");
 		}
 
 		Path root=Paths.get( "content/anime-web/upload/file/thumbnail/");

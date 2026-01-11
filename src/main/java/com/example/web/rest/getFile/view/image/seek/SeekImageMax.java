@@ -53,8 +53,7 @@ public class SeekImageMax  extends FileController {
 		if(upfile.size()==0) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ファイルのアクセス権がありません。");
 		}
-		
-		session.setAttribute(alias,"");
+
 		
 
 		Path maxImagePath = Paths.get(Setting.getRoot(),"content","anime-web","upload","file","maxSeek",alias).resolve(fname).toAbsolutePath().normalize();

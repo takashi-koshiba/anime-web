@@ -55,12 +55,11 @@ public class AnimeSearchJDBC extends VecDBJDBCAbstract<AnimeVecDB> {
             sql.append("group by strvecparent.parentId ");
             sql.append("order by matchCount desc ,diff ");
             
-            if(limit!=-1)sql.append("limit "+limit);
+           // if(limit!=-1)sql.append("limit "+limit);
             
             
-
             List<Map<String, Object>> result = jdbc.queryForList(sql.toString(), params.toArray());
-
+            
             for (Map<String, Object> map : result) {
                 Long vecParent_id = ((Number) map.get("parentId")).longValue();
                 Integer maxMatched = ((Number) map.get("matchCount")).intValue();
@@ -78,6 +77,7 @@ public class AnimeSearchJDBC extends VecDBJDBCAbstract<AnimeVecDB> {
             
         } catch (Exception e) {
             Log.detail(Level.WARNING, "SQLが失敗しました。", e);
+           
             throw e;
         }
 

@@ -59,6 +59,7 @@ public class SmallThumbnail extends FileController {
 			//throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ファイルのアクセス権がありません。");
 		}
 
+		
 		Path root=Paths.get( "content/anime-web/upload/file/thumbnail/");
 		String alias2 = upfile.getFirst().getAlias();
 		Path path=Paths.get(Setting.getRoot(),root.toString(),alias2 ,alias2 +".avif").normalize();
