@@ -74,7 +74,8 @@ cd anime-web
 
 <p>・DBをリストア<br>
 <span>　　create database db1<br></span>
-<span>　　mysql -u java -p db1 < exec\program\db1.sql<br></span>　
+<span>　　mysql -u java -p db1 < exec\program\db1_base.sql<br></span>　
+<span>　　mysql -u java -p db1 < exec\program\db1_insert.sql<br></span>　
 </p>
   <br>
 
@@ -139,6 +140,7 @@ http://localhost:8082/anime-web/anime<br>
   <li>rename_anime.php<br></li>
   動画のファイル名の話数を0で埋めます。<br>
   話数と日付の間にスペースなどがないとリネームに失敗します。<br>
+  実行は任意です。<br>
   編集箇所：ファイル中のリネームしたいファイルがあるディレクトリを編集してください。<br>
 
 <br>
@@ -179,7 +181,7 @@ http://localhost:8082/anime-web/anime<br>
 編集ができたら下記の順番で実行してください。<br><br>
 DBを更新と動画ファイルを移動します。<br>
 実行する順番<br>
-rename_anime.php<br>
+rename_anime.php(任意）<br>
 ↓<br>
 animeCheck.py<br>
 ↓<br>
