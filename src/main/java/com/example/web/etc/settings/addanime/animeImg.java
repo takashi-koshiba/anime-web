@@ -7,7 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.example.web.etc.db.animeVector.insert.AnimeInsertService;
+import com.example.web.etc.db.Animetable.AnimeService;
+import com.example.web.etc.db.fulltext_search.prog.insertDB.progInsertTitle;
 import com.example.web.etc.db.progVector.insert.ProgInsertService;
 import com.example.web.index.BeanUser;
 import com.example.web.index.GetIP;
@@ -20,7 +21,10 @@ public class animeImg {
 	ProgInsertService progInsertService;
 	
 	@Autowired
-	AnimeInsertService animeInsertService;
+	progInsertTitle progInsert;
+	
+	@Autowired
+	AnimeService animeService;
 	
 	@GetMapping("/anime-web/etc/settings/addanime/")
 	public ModelAndView  start(HttpServletRequest request) {
@@ -28,8 +32,8 @@ public class animeImg {
 		ModelAndView model;
 		if(user.isAdmin()) {
 			model= new ModelAndView("anime-web/etc/settings/addanime/index");
-			model.addObject("progCount",progInsertService.countSelect());
-			model.addObject("titleCount",animeInsertService.showCount());
+			model.addObject("progCount",progInsert.count());
+			model.addObject("titleCount",animeService.countUnhashedAnime());
 		}else {
 			 model= new ModelAndView("anime-web/etc/error/admin/index");
 			

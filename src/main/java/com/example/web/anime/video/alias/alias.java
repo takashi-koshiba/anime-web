@@ -1,10 +1,13 @@
 package com.example.web.anime.video.alias;
 
 import java.util.List;
+import java.util.logging.Level;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -15,6 +18,9 @@ import org.springframework.web.servlet.ModelAndView;
 import com.example.web.etc.db.Animetable.Anime;
 import com.example.web.etc.db.Animetable.AnimeService;
 import com.example.web.etc.db.animeVector.insert.AnimeInsertService;
+import com.example.web.etc.db.fulltext_search.videoTitle.insertDB.InsertTitle;
+import com.example.web.etc.db.fulltext_search.videoTitle.parent.ParentService;
+import com.example.web.etc.sta.Log;
 import com.example.web.index.BeanUser;
 import com.example.web.index.GetIP;
 
@@ -24,6 +30,14 @@ public class alias {
 	
 	@Autowired
 	AnimeService animeService;
+	
+	
+	@Autowired
+	ParentService parentService;
+	
+	@Autowired
+	InsertTitle insertTitle;
+	
 	
 	@Autowired
 	AnimeInsertService animeInsertService;
@@ -64,10 +78,11 @@ public class alias {
 		
 		insertAlias(models.getTitle(),models.getId());
 		
-		//ベクトル削除
-		animeInsertService.delAnimeVector(models.getId());
+
+		updateHashes(models.getId());
+		//animeInsertService.delAnimeVector(models.getId());
 		//ベクトル追加
-		animeInsertService.insertTitle(-1);
+		//animeInsertService.insertTitle(-1);
 		
 		ModelAndView model= new ModelAndView(path);
 		return model;
@@ -80,6 +95,21 @@ public class alias {
 				animeService.insertAlias(id,str );
 			}
 		}
+		
+	}
+	@Transactional
+	private void updateHashes(int animeId) {
+		try {
+			//ベクトル削除
+			parentService.delete(animeId);
+			//System.out.println(animeService.countUnhashedAnime());
+			//追加
+			insertTitle.InsertOne(animeId);
+		}catch(DataAccessException e) {
+			Log.detail(Level.WARNING, "titleハッシュの更新に失敗しました", e);
+			throw e;
+		}
+		
 		
 	}
 	

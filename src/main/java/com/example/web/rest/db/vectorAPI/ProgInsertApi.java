@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.web.etc.db.animeVector.select.AnimeSelectSearvice;
+import com.example.web.etc.db.fulltext_search.prog.insertDB.progInsertTitle;
 import com.example.web.etc.db.progVector.insert.ProgInsertService;
-import com.example.web.etc.db.progVector.select.ProgStrVector;
 import com.example.web.index.BeanUser;
 import com.example.web.index.GetIP;
 
@@ -18,7 +18,7 @@ public class ProgInsertApi {
 
 
     @Autowired
-    ProgStrVector  progVector;
+    progInsertTitle  progInsert;
     
     
     @Autowired
@@ -41,7 +41,8 @@ public class ProgInsertApi {
 		//progVector.selectStr("", 2);
 		//全書き込み
 		//animeVectorService.insertTitle();
-		progInsertService.insertTitle(limitter);
+		//progInsertService.insertTitle(limitter);
+		progInsert.InsertOne();
 
 	}
 	@PostMapping("/anime-web/api/db/vectorAPI/progInsert/{limitter}")//@PathVariable String id
@@ -52,7 +53,7 @@ public class ProgInsertApi {
 	
 	@PostMapping("/anime-web/api/db/vectorAPI/progInsert/showCount")//@PathVariable String id
 	public Long  PlayList3(HttpServletRequest request) throws IllegalAccessException {
-		return progInsertService.countSelect();
+		return (long) progInsert.count();
 
 	}
 	

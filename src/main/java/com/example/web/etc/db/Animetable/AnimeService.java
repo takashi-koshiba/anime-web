@@ -54,6 +54,17 @@ public class AnimeService {
     public List<Anime> selectAliasOne(Integer id){
     	return animeJDBC.selectAliasOne(id);
     }
+    public List<Anime> selectUnhashedAnime(){
+    	return animeJDBC.selectUnhashedAnime();
+    }
+    public List<Anime> selectUnhashedAnime(int animeId){
+    	return animeJDBC.selectUnhashedAnime(animeId);
+    }
+    public int countUnhashedAnime() {
+    	return animeJDBC.countUnhashedAnime();
+    }
+    
+    
 
 
 }

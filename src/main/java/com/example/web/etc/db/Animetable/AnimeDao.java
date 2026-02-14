@@ -13,5 +13,8 @@ public interface AnimeDao {
 	public List<Anime> selectAliasOne(Integer id);
 	public List<AnimeSort> selectAllSortByText(Integer charId);
 	public List<prefix> selectPrefixAll();
+	public List<Anime> selectUnhashedAnime();
+	public List<Anime> selectUnhashedAnime(int animeId);
+	public int countUnhashedAnime();
 	
 }

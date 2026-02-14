@@ -4,53 +4,93 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.example.web.etc.db.Animetable.Anime;
-import com.example.web.etc.db.Animetable.AnimeService;
-import com.example.web.etc.db.animeVector.select.AnimeStrVector;
-import com.example.web.etc.db.animeVector.select.AnimeVecDB;
-import com.example.web.etc.sta.Kakasi;
+import com.example.web.etc.db.fulltext_search.prog.selectDB.selectprogHash;
+import com.example.web.etc.db.fulltext_search.prog.selectDB.selectprogHashService;
+import com.example.web.etc.db.fulltext_search.videoTitle.selectDB.AnimeHash;
+import com.example.web.etc.db.fulltext_search.videoTitle.selectDB.AnimeHashService;
 import com.example.web.etc.sta.SimilarWards;
-import com.example.web.etc.sta.TextRep;
 @RestController
 
 public class AnimeLength {
-	@Autowired
-	AnimeService animeService;
+	//@Autowired
+	//AnimeService animeService;
 	
 	@Autowired
-	AnimeStrVector animeStrVector;
+	selectprogHashService selectProgService;
+	
+	@Autowired
+	AnimeHashService  animeHashService;
+	
 	
 	//@GetMapping("/anime-web/api/db/animeLen/{txt}")
 	@PostMapping("/anime-web/api/db/animeLen/{modeIndex}")
 	public List<StrDistance> start(@PathVariable("modeIndex")int modeIndex, @RequestParam("txt") String str, @RequestParam("limit") int limit)  {
 		//String inputText=Kakasi.main(TextRep.main(str ,true),"-JH -KH");
 		//String inputText=Kakasi.main(TextRep.main(str ,true),"-KH ");
-		String inputText=Kakasi.katakanaToHiragana(TextRep.main(str, true));
+		
+		if(str.length()>50) {
+			 throw new ResponseStatusException(
+		                HttpStatus.BAD_REQUEST, 
+		                "文字数が多すぎます。"
+		        );
+			 
+		}
+		//String inputText=Kakasi.katakanaToHiragana(TextRep.main(str, true));
 		
 		
+		
+		//タイトル検索
+		if(modeIndex==1) {
 
+			List<StrDistance> distances =
+				    //animeStrVector.selectStr(inputText, modeIndex,limit)
+				    animeHashService.selectByHash(str)
+				        .stream()
+				        .map(v -> (AnimeHash) v)
+				         
+				        .map(v -> {
+				            StrDistance sd = new StrDistance();
+				            sd.setId(v.getAnimeId());
+				            sd.setDistance((double) v.getScore());
+				            sd.setOriginal(v.getOriginalName());
+				            sd.setTitle(v.getFoldername());
+				            return sd;
+				        })
+				        .collect(Collectors.toList());
+				
+				return distances;
+		}else if(modeIndex==2) {//番組表検索
+			List<StrDistance> distances =
+				    //animeStrVector.selectStr(inputText, modeIndex,limit)
+					selectProgService.selectByHash(str)
+				        .stream()
+				        .map(v -> (selectprogHash) v)
+				         
+				        .map(v -> {
+				            StrDistance sd = new StrDistance();
+				            sd.setId(v.getAnimeId());
+				            sd.setDistance((double) v.getScore());
+				            sd.setOriginal(v.getOriginalName());
+				            sd.setTitle(v.getFoldername());
+				            return sd;
+				        })
+				        .collect(Collectors.toList());
+				
+				return distances;
+		}
 		
-		List<StrDistance> distances =
-			    animeStrVector.selectStr(inputText, modeIndex,limit)
-			        .stream()
-			        .map(v -> (AnimeVecDB) v)
-			         
-			        .map(v -> {
-			            StrDistance sd = new StrDistance();
-			            sd.setId(v.getVecParent_id() != null ? v.getVecParent_id().intValue() : 0);
-			            sd.setDistance((double) v.getMaxLineDiff());
-			            sd.setOriginal(v.getOriginal());
-			            sd.setTitle(v.getTitle());
-			            return sd;
-			        })
-			        .collect(Collectors.toList());
-			
-			return distances;
+		throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST, 
+                "パラメータエラー"
+        );
 		/*
 		String inputText=Kakasi.main(TextRep.main(str ,true),"-JH -KH");
 

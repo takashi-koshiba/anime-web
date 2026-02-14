@@ -138,7 +138,7 @@ document.addEventListener("DOMContentLoaded",function(){
 		
 	})
 	
-	//番組名検索ベクトル
+	//番組名検索
 	let remainingTitleCount=document.getElementById('remainingTitleCount');
 	let titleAjaxButton =document.getElementById('titleAjaxButton');
 	let vectorTitleArea=document.getElementById('vectorTitleArea');
@@ -154,7 +154,8 @@ document.addEventListener("DOMContentLoaded",function(){
 				let res = this.response;
 				
 				let titleInsertAjax = [];
-				if (!isNaN(res)) {
+				console.dir(res);
+				if (!isNaN(res) && res>0) {
 					vectorTitleArea.value="実行開始"+"\n";
 					for(let i=0;i<res;i++){
 						titleInsertAjax[i] = new class_ajax('/anime-web/api/db/vectorAPI/AnimeVector/1');
@@ -169,7 +170,7 @@ document.addEventListener("DOMContentLoaded",function(){
 								titleInsertAjax[i+1].run();
 							}
 							else{
-								
+								remainingTitleCount.innerText=0;
 							}
 												
 							
@@ -179,6 +180,17 @@ document.addEventListener("DOMContentLoaded",function(){
 						});
 					}
 					titleInsertAjax[0].run();
+					if(res==1){
+						titleInsertAjax[0].xhr.onload = function() {
+						    if (this.status !== 200) {
+							    vectorTitleArea.value += `HTTPエラー: ${this.status}`+"\n";
+								    return;
+							 }
+							 remainingTitleCount.innerText=0;
+						}
+					}
+					
+					
 					titleInsertAjax[0].xhr.addEventListener('error', function() {
 								vectorTitleArea.value+="通信に失敗しました。"+"\n";
 					});

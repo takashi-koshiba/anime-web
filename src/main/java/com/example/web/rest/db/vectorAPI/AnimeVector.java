@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.web.etc.db.Animetable.AnimeService;
 import com.example.web.etc.db.animeVector.insert.AnimeInsertService;
 import com.example.web.etc.db.animeVector.select.AnimeStrVector;
+import com.example.web.etc.db.fulltext_search.videoTitle.insertDB.InsertTitle;
 import com.example.web.etc.db.vector.VecDB;
 import com.example.web.etc.sta.Log;
 import com.example.web.index.BeanUser;
@@ -28,7 +30,13 @@ public class AnimeVector {
     
     @Autowired
     AnimeInsertService animeInsertService;
-	//@Autowired
+
+    @Autowired
+    InsertTitle insertTitle;
+    
+    @Autowired
+    AnimeService animeService;
+    
 	//ProgInsertService progInsertService;
     int tableId=1;
     
@@ -47,15 +55,16 @@ public class AnimeVector {
 		//progVector.selectStr("", 2);
 		//全書き込み
 		Log.log(Level.INFO, "ベクトル書き込みスタート");
-		animeInsertService.insertTitle(limitter);
+		insertTitle.InsertOne();
 		Log.log(Level.INFO, "ベクトル書き込み終了");
 		//progInsertService.insertTitle(limitter);
 
 	}
 	@PostMapping("/anime-web/api/db/vectorAPI/AnimeVector/{limitter}")
 	public void  PlayList2(@PathVariable  Integer limitter,HttpServletRequest request) throws IllegalAccessException {
-		PlayList(limitter,request);
 
+		PlayList(limitter,request);
+		
 	}
 	@GetMapping("/anime-web/api/db/vectorAPI/AnimeVector/search/{str}")
 	public List<VecDB>  PlayList3(@PathVariable String str) {
@@ -63,12 +72,12 @@ public class AnimeVector {
 	}
 	@GetMapping("/anime-web/api/db/vectorAPI/AnimeVector/showCount")
 	public int   PlayList4() {
-		return animeInsertService.showCount();
+		return animeService.countUnhashedAnime();
 		
 	}
 	@PostMapping("/anime-web/api/db/vectorAPI/AnimeVector/showCount")
 	public int   PlayList5() {
-		return animeInsertService.showCount();
+		return PlayList4();
 		
 	}
 }
