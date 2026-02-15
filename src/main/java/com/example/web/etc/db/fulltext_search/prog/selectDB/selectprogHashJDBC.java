@@ -117,10 +117,13 @@ public class selectprogHashJDBC implements selectprogHashDao {
             String[] ngramStr = NgramHasher.strToArr(s, lenNgram);
 
             for (String n : ngramStr) {
+            	//System.out.println(NgramHasher.strToVecNgram1D(n, lenNgram));
                 hashes[index++] = NgramHasher.strToVecNgram1D(n, lenNgram);
+                
             }
+            
         }
-
+        
         return hashes;
     }
 

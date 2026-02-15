@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded",function(){
 			let res = this.response;
 			
 			let progInsertAjax = [];
-			if (!isNaN(res)) {
+			if (!isNaN(res) && res>0) {
 				vectorArea.value="実行開始"+"\n";
 				for(let i=0;i<res;i++){
 					progInsertAjax[i] = new class_ajax('/anime-web/api/db/vectorAPI/progInsert/1');

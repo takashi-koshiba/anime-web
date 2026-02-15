@@ -1,7 +1,5 @@
 package com.example.web.etc.sta;
 
-import java.util.Arrays;
-
 public final class NgramHasher {
 
 	 private NgramHasher() {} // インスタンス化禁止
@@ -13,8 +11,8 @@ public final class NgramHasher {
 		
 		Integer max= SimilarWards.maxLength(searchTxt.length(), false,lenNgram);
 		String[] split = SimilarWards.splitStr(searchTxt, max, false,lenNgram);
-		String[] uniqueSplit = Arrays.stream(split).distinct().toArray(String[]::new);
-		return uniqueSplit ;
+		//String[] uniqueSplit = Arrays.stream(split).distinct().toArray(String[]::new);
+		return split ;
 		
 	}
 	
